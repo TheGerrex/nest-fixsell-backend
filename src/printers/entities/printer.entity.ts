@@ -13,8 +13,8 @@ export class Printer {
     @Prop({required: true})
     description:      string;
 
-    @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Category'})
-    category_id:      string;
+    @Prop({required: true})
+    category:      string;
 
     @Prop({required: true})
     color:            boolean;

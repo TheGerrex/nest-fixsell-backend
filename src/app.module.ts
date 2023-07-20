@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PrintersModule } from './printers/printers.module';
 import { CategoriesModule } from './categories/categories.module';
+import { PrintersService } from './printers/printers.service';
 
 @Module({
   imports: [

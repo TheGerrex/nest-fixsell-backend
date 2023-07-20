@@ -1,8 +1,12 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsString } from "class-validator";
+import { IsBoolean, IsIn, IsString } from "class-validator";
+
+const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
+const categories = ['Oficina', 'Produccion', "Inyección de Tinta",  'Artes Gráficas', 'Etiquetas'];
 
 export class CreatePrinterDto {
-
+    
+    @IsIn(brands)
     @IsString()
     brand:            string;
 
@@ -11,9 +15,10 @@ export class CreatePrinterDto {
 
     @IsString()
     description:      string;
-
+    
+    @IsIn(categories)
     @IsString()
-    category_id:      string;
+    category:      string;
 
     @IsBoolean()
     @Transform(({ value} ) => value === 'true')
