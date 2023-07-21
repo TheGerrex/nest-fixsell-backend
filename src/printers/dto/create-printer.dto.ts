@@ -1,5 +1,6 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsIn, IsString } from "class-validator";
+import { IsBoolean, IsDecimal, IsIn, IsString } from "class-validator";
+import { Decimal128 } from "mongoose";
 
 const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
 const categories = ['Oficina', 'Produccion', "Inyección de Tinta",  'Artes Gráficas', 'Etiquetas'];
@@ -14,7 +15,13 @@ export class CreatePrinterDto {
     model:            string;
 
     @IsString()
+    img_url:            [string];
+
+    @IsString()
     description:      string;
+
+    @IsDecimal()
+    price:      Decimal128;
     
     @IsIn(categories)
     @IsString()

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
+import { IsNumber } from "class-validator";
+import { Decimal128, Number } from 'mongoose';
 
 
 @Schema()
@@ -9,9 +10,15 @@ export class Printer {
 
     @Prop({unique: true, required: true})
     model:            string;
+    
+    @Prop({required: true})
+    img_url:            [string];
 
     @Prop({required: true})
     description:      string;
+   
+    @Prop({ type: IsNumber })
+    price:      Number;
 
     @Prop({required: true})
     category:      string;
