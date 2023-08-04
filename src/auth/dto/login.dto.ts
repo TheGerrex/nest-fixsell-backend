@@ -1,15 +1,12 @@
-import { IsString,IsNotEmpty, IsEmail, MinLength, IsStrongPassword  } from "class-validator";
+import { IsEmail, IsStrongPassword } from "class-validator";
+
+
 
 export class LoginDto {
+   
+    @IsEmail()
+    email: string;
 
-    @IsNotEmpty()
-    @IsEmail({}, {message: 'Invalid email'})
-    readonly email: string;
-
-    @IsNotEmpty()
-    @IsString()
-    @MinLength(6, {message: 'Password must be at least 6 characters long'})
-    @IsStrongPassword({},{message: 'Password must contain special characters, numbers, uppercase and lowercase letters'})
-    readonly password: string;
-
+    @IsStrongPassword({minLength:8, minLowercase:1, minUppercase:1, minNumbers:1, minSymbols:1})
+    password: string;
 }

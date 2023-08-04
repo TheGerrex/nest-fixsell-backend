@@ -1,57 +1,116 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
-import * as bcrypt from 'bcrypt';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from './entities/user.entity';
+import { Model } from 'mongoose';
+import * as bcryptjs from 'bcryptjs';
+import { UnauthorizedException } from '@nestjs/common';
+import { JwtPayload } from './interfaces/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
-import { SignUpDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
+import { LoginResponse } from './interfaces/login-response';
+import { RegisterUserDto, LoginDto, CreateUserDto, UpdateAuthDto } from './dto';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectModel(User.name)
-        private userModel: Model<User>,
-        private jwtService: JwtService,
-        
-    ) {}
+  constructor(
+  @InjectModel(User.name) 
+  private userModel: Model<User>,
+  private jwtService: JwtService,
+  ) {}
 
-    async signUp(signUpDtp: SignUpDto ): Promise<{token: string}> {
-        const {name, email, password, role} = signUpDtp;
+  async create(createUserDto: CreateUserDto) {
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      
+      const { password, ...userData } = createUserDto
+
+      const newUser = new this.userModel({
+        password: bcryptjs.hashSync(password, 10),
+        ...userData
+      });
+
+      await newUser.save();
+      const {password:_, ...user} = newUser.toJSON();
 
 
-        const user = await this.userModel.create({
-            name,
-            email,
-            password: hashedPassword,
-            role,
-        })
+      return user;
 
-        const token = this.jwtService.sign({id: user._id, role: user.role});
-
-        return {token};
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new BadRequestException(`${createUserDto.email} already exists`);
+      }
+      throw new InternalServerErrorException('something went wrong');
     }
 
-    async login(loginDto: LoginDto): Promise<{token: string}> {
-        const { email, password} = loginDto;
+   
+  }
 
-        const user = await this.userModel.findOne({email});
+  //registers user
+ async register(registerDto: RegisterUserDto): Promise<LoginResponse>{
 
-        if(!user) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
+  const user = await this.create(registerDto);
+  console.log({user});
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+  return{
+    user: user,
+    token: this.getJwtToken({id: user._id}),
 
-        if(!isPasswordValid) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
+  }
+ } 
+  
+ async login(loginDto: LoginDto):Promise<LoginResponse>{
+    
+    const {email, password} = loginDto;
 
-        const token = this.jwtService.sign({id: user._id, role: user.role});
+    const user = await this.userModel.findOne({email});
 
-        return {token};
+    if(!user){
+      throw new UnauthorizedException(`Invalid credentials - email`);
     }
+
+    if(!bcryptjs.compareSync(password, user.password)){
+      throw new UnauthorizedException(`Invalid credentials - password`);
+    }
+
+
+    const{ password:_, ...rest} = user.toJSON();
+
+    return {
+      user:rest,
+      token: this.getJwtToken({id: user.id}),
+      
+    }
+
+  }
+
+  findAll(): Promise<User[]> {
+    return this.userModel.find();
+  }
+
+  async findUserById(id: string){
+    const user = await this.userModel.findById(id);
+    const { password, ...rest} = user.toJSON();
+    return rest;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} auth`;
+  }
+
+  update(id: number, updateAuthDto: UpdateAuthDto) {
+    return `This action updates a #${id} auth`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} auth`;
+  }
+
+  getJwtToken(payload: JwtPayload ){
+    const token = this.jwtService.sign(payload);
+    return token;
+  }
 }
