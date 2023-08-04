@@ -14,16 +14,18 @@ async function bootstrap() {
     })
   );
 
-  // Enable CORS
-  app.enableCors({
-    origin: 'http://localhost:4200',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-    credentials: true,
-    allowedHeaders: 'Content-Type, Accept',
-  });
+  // // Enable CORS
+  // app.enableCors({
+  //   origin: 'http://localhost:4200',
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   preflightContinue: false,
+  //   optionsSuccessStatus: 204,
+  //   credentials: true,
+  //   allowedHeaders: 'Content-Type, Accept',
+  // });
  
+  //enable course for all routes
+  app.enableCors();
 
 
 
