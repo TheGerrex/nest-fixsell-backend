@@ -45,6 +45,9 @@ export class CreatePrinterDto {
     printVelocity:    string;
 
     @IsString()
+    maxPrintSizeSimple:     string;
+    
+    @IsString()
     maxPrintSize:     string;
 
     @IsString()

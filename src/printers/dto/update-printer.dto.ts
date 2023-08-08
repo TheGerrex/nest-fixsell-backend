@@ -40,6 +40,9 @@ export class UpdatePrinterDto extends PartialType(CreatePrinterDto) {
     printVelocity:    string;
 
     @IsString()
+    maxPrintSizeSimple:     string;
+
+    @IsString()
     maxPrintSize:     string;
 
     @IsString()
