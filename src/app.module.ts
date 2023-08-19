@@ -7,7 +7,9 @@ import { PrintersService } from './printers/printers.service';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    MongooseModule.forRoot(process.env.MONGO_URI, {
+      dbName: process.env.MONGO_DB_NAME,
+    }),
     PrintersModule,
   ],
   controllers: [],
