@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PrintersModule } from './printers/printers.module';
 import { PrintersService } from './printers/printers.service';
+import { PkiValidationController } from './pki-validation/pki-validation.controller';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { PrintersService } from './printers/printers.service';
     }),
     PrintersModule,
   ],
-  controllers: [],
+  controllers: [PkiValidationController],
   providers: [],
 })
 export class AppModule {
