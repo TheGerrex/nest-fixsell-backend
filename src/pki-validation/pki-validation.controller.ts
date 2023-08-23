@@ -6,7 +6,7 @@ import * as path from 'path';
 export class PkiValidationController {
     @Get('F12AE154199C39F0A4C13EE8D4F66B41.txt')
     serveAuthFile(@Res() res: Response) {
-        const authFilePath = path.resolve(__dirname, 'F12AE154199C39F0A4C13EE8D4F66B41.txt');
+        const authFilePath = path.resolve(__dirname, '../../F12AE154199C39F0A4C13EE8D4F66B41.txt');
         res.sendFile(authFilePath);
     }
 }
