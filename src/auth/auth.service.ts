@@ -101,12 +101,54 @@ export class AuthService {
     return `This action returns a #${id} auth`;
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+  async update(id: string, updateAuthDto: UpdateAuthDto): Promise<User> {
+    const user = await this.userModel.findById(id);
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    if (!user) {
+      throw new BadRequestException(`User with id ${id} not found`);
+    }
+
+    // Update user properties
+    if (updateAuthDto.email) {
+      user.email = updateAuthDto.email;
+    }
+
+    if (updateAuthDto.password) {
+      user.password = await bcryptjs.hash(updateAuthDto.password, 10);
+    }
+
+    if (updateAuthDto.name) {
+      user.name = updateAuthDto.name;
+    }
+
+    if (updateAuthDto.roles) {
+      user.roles = updateAuthDto.roles;
+    }
+
+    if (updateAuthDto.isActive !== undefined) {
+      user.isActive = updateAuthDto.isActive;
+    }
+    // Save updated user
+    try {
+      console.log(user);
+      await user.save();
+      const { password: _, ...rest } = user.toJSON();
+      return rest;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+  
+  
+  async remove(id: string): Promise<void> {
+    try {
+      const result = await this.userModel.deleteOne({ _id: id }).exec();
+      if (result.deletedCount === 0) {
+        throw new BadRequestException(`User with id ${id} not found`);
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   getJwtToken(payload: JwtPayload ){
