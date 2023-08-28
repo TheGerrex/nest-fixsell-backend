@@ -28,11 +28,11 @@ export class CreatePrinterDto {
     category:      string;
 
     @IsBoolean()
-    @Transform(({ value} ) => value === 'true')
+    //@Transform(({ value} ) => value === 'true')
     color:            boolean;
 
     @IsBoolean()
-    @Transform(({ value} ) => value === 'true')
+    //@Transform(({ value} ) => value === 'true')
     rentable:         boolean;
 
     @IsString()
@@ -54,7 +54,7 @@ export class CreatePrinterDto {
     maxPaperWeight:   string;
 
     @IsBoolean()
-    @Transform(({ value} ) => value === 'true')
+   // @Transform(({ value} ) => value === 'true')
     duplexUnit:       boolean;
 
     @IsString()
