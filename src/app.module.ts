@@ -6,7 +6,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PrintersModule } from './printers/printers.module';
 import { PrintersService } from './printers/printers.service';
 import { AuthModule } from './auth/auth.module';
-import { PkiValidationController } from './pki-validation/pki-validation.controller';
 
 
 @Module({
@@ -20,7 +19,7 @@ import { PkiValidationController } from './pki-validation/pki-validation.control
 
     
   ],
-  controllers: [PkiValidationController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {
