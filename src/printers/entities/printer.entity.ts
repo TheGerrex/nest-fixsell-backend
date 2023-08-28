@@ -38,6 +38,9 @@ export class Printer {
     @Prop({required: true})
     printVelocity:    string;
 
+    @Prop()
+    maxPrintSizeSimple:     string;
+    
     @Prop({required: true})
     maxPrintSize:     string;
 

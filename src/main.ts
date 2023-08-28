@@ -6,6 +6,7 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableCors();
 
   app.useGlobalPipes( 
     new ValidationPipe({
@@ -14,21 +15,6 @@ async function bootstrap() {
     })
   );
 
-  // // Enable CORS
-  // app.enableCors({
-  //   origin: 'http://localhost:4200',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   preflightContinue: false,
-  //   optionsSuccessStatus: 204,
-  //   credentials: true,
-  //   allowedHeaders: 'Content-Type, Accept',
-  // });
- 
-  //enable course for all routes
-  app.enableCors();
-
-
-
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
