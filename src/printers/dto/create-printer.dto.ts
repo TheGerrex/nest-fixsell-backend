@@ -1,65 +1,73 @@
-import { Transform } from "class-transformer";
-import { IsBoolean, IsDecimal, IsIn, IsString } from "class-validator";
-import { Decimal128 } from "mongoose";
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsDecimal, IsIn, IsString, IsUrl } from 'class-validator';
+import { Decimal128 } from 'mongoose';
 
 const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
-const categories = ['Oficina', 'Produccion', "Inyección de Tinta",  'Artes Gráficas', 'Etiquetas'];
+const categories = [
+  'Oficina',
+  'Produccion',
+  'Inyección de Tinta',
+  'Artes Gráficas',
+  'Etiquetas',
+];
 
 export class CreatePrinterDto {
-    
-    @IsIn(brands)
-    @IsString()
-    brand:            string;
+  @IsIn(brands)
+  @IsString()
+  brand: string;
 
-    @IsString()
-    model:            string;
+  @IsString()
+  model: string;
 
-    @IsString()
-    img_url:            [string];
+  @IsString()
+  img_url: [string];
 
-    @IsString()
-    description:      string;
+  @IsString()
+  description: string;
 
-    @IsDecimal()
-    price:      Decimal128;
-    
-    @IsIn(categories)
-    @IsString()
-    category:      string;
+  @IsDecimal()
+  price: Decimal128;
 
-    @IsBoolean()
-    //@Transform(({ value} ) => value === 'true')
-    color:            boolean;
+  @IsIn(categories)
+  @IsString()
+  category: string;
 
-    @IsBoolean()
-    //@Transform(({ value} ) => value === 'true')
-    rentable:         boolean;
+  @IsBoolean()
+  //@Transform(({ value} ) => value === 'true')
+  color: boolean;
 
-    @IsString()
-    powerConsumption: string;
+  @IsBoolean()
+  //@Transform(({ value} ) => value === 'true')
+  rentable: boolean;
 
-    @IsString()
-    dimensions:       string;
+  @IsString()
+  powerConsumption: string;
 
-    @IsString()
-    printVelocity:    string;
+  @IsString()
+  dimensions: string;
 
-    @IsString()
-    maxPrintSizeSimple:     string;
-    
-    @IsString()
-    maxPrintSize:     string;
+  @IsString()
+  printVelocity: string;
 
-    @IsString()
-    maxPaperWeight:   string;
+  @IsString()
+  maxPrintSizeSimple: string;
 
-    @IsBoolean()
-   // @Transform(({ value} ) => value === 'true')
-    duplexUnit:       boolean;
+  @IsString()
+  maxPrintSize: string;
 
-    @IsString()
-    paperSizes:       string;
+  @IsString()
+  maxPaperWeight: string;
 
-    @IsString()
-    applicableOS:     string;
+  @IsBoolean()
+  // @Transform(({ value} ) => value === 'true')
+  duplexUnit: boolean;
+
+  @IsString()
+  paperSizes: string;
+
+  @IsString()
+  applicableOS: string;
+
+  @IsUrl()
+  datasheetUrl: string;
 }
