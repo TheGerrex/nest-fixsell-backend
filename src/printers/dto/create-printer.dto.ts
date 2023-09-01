@@ -70,4 +70,7 @@ export class CreatePrinterDto {
 
   @IsUrl()
   datasheetUrl: string;
+
+  @IsString()
+  printerFunction: string;
 }

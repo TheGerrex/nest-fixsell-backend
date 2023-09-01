@@ -57,6 +57,9 @@ export class Printer {
 
   @Prop({ required: true })
   datasheetUrl: string;
+
+  @Prop({ required: true })
+  printerFunction: string;
 }
 
 export const PrinterSchema = SchemaFactory.createForClass(Printer);

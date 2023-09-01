@@ -65,4 +65,7 @@ export class UpdatePrinterDto extends PartialType(CreatePrinterDto) {
 
   @IsUrl()
   datasheetUrl: string;
+
+  @IsString()
+  printerFunction: string;
 }
