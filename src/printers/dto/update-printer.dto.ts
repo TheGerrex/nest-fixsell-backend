@@ -68,4 +68,10 @@ export class UpdatePrinterDto extends PartialType(CreatePrinterDto) {
 
   @IsString()
   printerFunction: string;
+
+  @IsString()
+  img_url: [string];
+
+  @IsString()
+  barcode: [string];
 }

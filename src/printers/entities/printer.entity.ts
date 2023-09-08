@@ -60,6 +60,9 @@ export class Printer {
 
   @Prop({ required: true })
   printerFunction: string;
+
+  @Prop({ required: true })
+  barcode: [string];
 }
 
 export const PrinterSchema = SchemaFactory.createForClass(Printer);

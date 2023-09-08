@@ -73,4 +73,7 @@ export class CreatePrinterDto {
 
   @IsString()
   printerFunction: string;
+
+  @IsString()
+  barcode: [string];
 }
