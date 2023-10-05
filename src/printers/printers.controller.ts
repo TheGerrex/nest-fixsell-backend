@@ -25,6 +25,11 @@ export class PrintersController {
     return this.printersService.findOne(id);
   }
 
+  @Get('deal')
+  findDealPrinters(): Promise<Printer[]> {
+    return this.printersService.findDealPrinters();
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePrinterDto: UpdatePrinterDto) {
     return this.printersService.update(id, updatePrinterDto);

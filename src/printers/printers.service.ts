@@ -27,6 +27,10 @@ export class PrintersService {
     return await this.printerModel.find().exec()
   }
 
+  async findDealPrinters(): Promise<Printer[]> {
+    return this.printerModel.find({ isDeal: true }).exec();
+  }
+
   async findOne(id: string): Promise<Printer> {
     try {
       const objectId = new ObjectId(id);
@@ -82,4 +86,6 @@ export class PrintersService {
       throw error;
     }
   }
+
+  
 }
