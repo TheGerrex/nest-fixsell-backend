@@ -78,20 +78,20 @@ export class CreatePrinterDto {
   barcode: [string];
 
   @IsDate()
-  dealEndDate: Date;
+  dealEndDate: Date = null;
 
   @IsDate()
-  dealStartDate: Date;
+  dealStartDate: Date = null;
 
   @IsDecimal()
-  dealPrice: Decimal128;
+  dealPrice: Decimal128 = null;
   
   @IsDecimal()
-  dealDiscountPercentage: Decimal128;
+  dealDiscountPercentage: Decimal128 = null;
 
   @IsBoolean()
-  isDeal: boolean;
+  isDeal: boolean = false;
 
   @IsString()
-  dealDescription: string;
+  dealDescription: string = null;
 }

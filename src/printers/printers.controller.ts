@@ -15,6 +15,11 @@ export class PrintersController {
     return this.printersService.create(createPrinterDto);
   }
 
+  @Get('deal')
+  findDealPrinters() {
+    return this.printersService.findDealPrinters();
+  }
+
   @Get()
   findAll() {
     return this.printersService.findAll();
@@ -23,11 +28,6 @@ export class PrintersController {
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Printer> {
     return this.printersService.findOne(id);
-  }
-
-  @Get('deal')
-  findDealPrinters() {
-    return this.printersService.findDealPrinters();
   }
 
   @Patch(':id')
