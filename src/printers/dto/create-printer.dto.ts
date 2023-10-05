@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsDecimal, IsIn, IsString, IsUrl } from 'class-validator';
+import { IsBoolean, IsDate, IsDecimal, IsIn, IsString, IsUrl, isDate } from 'class-validator';
 import { Decimal128 } from 'mongoose';
 
 const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
@@ -76,4 +76,22 @@ export class CreatePrinterDto {
 
   @IsString()
   barcode: [string];
+
+  @IsDate()
+  dealEndDate: Date;
+
+  @IsDate()
+  dealStartDate: Date;
+
+  @IsDecimal()
+  dealPrice: Decimal128;
+  
+  @IsDecimal()
+  dealDiscountPercentage: Decimal128;
+
+  @IsBoolean()
+  isDeal: boolean;
+
+  @IsString()
+  dealDescription: string;
 }

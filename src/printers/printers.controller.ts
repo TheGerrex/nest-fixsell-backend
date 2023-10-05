@@ -16,7 +16,6 @@ export class PrintersController {
 
   @Get()
   findAll() {
-    // return from(this.printersService.findAll());
     return this.printersService.findAll();
   }
 
@@ -26,7 +25,7 @@ export class PrintersController {
   }
 
   @Get('deal')
-  findDealPrinters(): Promise<Printer[]> {
+  findDealPrinters() {
     return this.printersService.findDealPrinters();
   }
 

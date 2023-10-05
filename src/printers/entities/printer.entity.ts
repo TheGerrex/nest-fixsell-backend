@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNumber } from 'class-validator';
-import { Decimal128, Number } from 'mongoose';
+import { Date, Decimal128, Number } from 'mongoose';
 
 @Schema()
 export class Printer {
@@ -10,6 +10,9 @@ export class Printer {
   @Prop({ unique: true, required: true })
   model: string;
 
+  @Prop({ required: false })
+  datasheet_url: string;
+  
   @Prop({ required: true })
   img_url: [string];
 
@@ -42,6 +45,9 @@ export class Printer {
 
   @Prop({ required: true })
   maxPrintSize: string;
+  
+  @Prop({ required: true })
+  PrintSize: string;
 
   @Prop({ required: true })
   maxPaperWeight: string;
@@ -56,13 +62,28 @@ export class Printer {
   applicableOS: string;
 
   @Prop({ required: true })
-  datasheetUrl: string;
-
-  @Prop({ required: true })
-  printerFunction: string;
+  printerFunctions: string;
 
   @Prop({ required: true })
   barcode: [string];
+
+  @Prop({ required: false })
+  dealEndDate: Date;
+
+  @Prop({ required: false })
+  dealStartDate: Date;
+
+  @Prop({ required: false })
+  dealPrice: Number;
+  
+  @Prop({ required: false })
+  dealDiscountPercentage: Number;
+
+  @Prop({ required: false })
+  isDeal: boolean;
+
+  @Prop({ required: false })
+  dealDescription: string;
 }
 
 export const PrinterSchema = SchemaFactory.createForClass(Printer);
