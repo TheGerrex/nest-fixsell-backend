@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNumber } from 'class-validator';
-import { Date, Decimal128, Number } from 'mongoose';
+import { Date, Decimal128, Number, SchemaTypes } from 'mongoose';
 
 @Schema()
 export class Printer {
@@ -67,17 +67,17 @@ export class Printer {
   @Prop({ required: true })
   barcode: [string];
 
-  @Prop({ required: false })
+  @Prop({ type: Date })
   dealEndDate: Date;
 
-  @Prop({ required: false })
+  @Prop({ type: Date })
   dealStartDate: Date;
 
-  @Prop({ required: false })
-  dealPrice: Number;
+  @Prop({ type: SchemaTypes.Decimal128 })
+  dealPrice: Decimal128;
   
-  @Prop({ required: false })
-  dealDiscountPercentage: Number;
+  @Prop({ type: SchemaTypes.Decimal128 })
+  dealDiscountPercentage: Decimal128;
 
   @Prop({ required: false })
   isDeal: boolean;
