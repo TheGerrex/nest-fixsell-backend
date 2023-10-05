@@ -6,6 +6,7 @@ import { Printer } from './entities/printer.entity';
 
 @Controller('printers')
 export class PrintersController {
+  
   constructor(private readonly printersService: PrintersService) {}
 
   @Post()

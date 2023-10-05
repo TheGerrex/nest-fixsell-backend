@@ -79,7 +79,7 @@ export class Printer {
   @Prop({ type: SchemaTypes.Decimal128 })
   dealDiscountPercentage: Decimal128;
 
-  @Prop({ required: false })
+  @Prop({ type: Boolean, required: false })
   isDeal: boolean;
 
   @Prop({ required: false })
