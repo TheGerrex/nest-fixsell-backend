@@ -4,8 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 
 import { PrintersModule } from './printers/printers.module';
-import { PrintersService } from './printers/printers.service';
 import { AuthModule } from './auth/auth.module';
+import { EmailModule } from './email/email.module';
 
 
 @Module({
@@ -14,13 +14,10 @@ import { AuthModule } from './auth/auth.module';
     MongooseModule.forRoot(process.env.MONGO_URI, {
       dbName: process.env.MONGO_DB_NAME,
     }),
+    EmailModule,
     PrintersModule,
     AuthModule,
-
-    
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {
 }
