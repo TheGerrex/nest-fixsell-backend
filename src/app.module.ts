@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrintersModule } from './printers/printers.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
+import { ProductModule } from './inventory/product/product.module';
+import { ProductCategoriesModule } from './inventory/product-categories/product-categories.module';
+import { ProductOperationsLogisticsModule } from './inventory/product-operations-logistics/product-operations-logistics.module';
 
 @Module({
   imports: [
@@ -20,12 +23,12 @@ import { EmailModule } from './email/email.module';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
         type: 'postgres',
-        host: process.env.POSTGRESS_HOST,
-        port: 5432,
-        password: process.env.POSTGRES_PASSWORD,
-        username: 'postgres',
+        host: config.get<string>('POSTGRESS_HOST'),
+        port: config.get<number>('POSTGRESS_PORT'),
+        password: config.get<string>('POSTGRESS_PASSWORD'),
+        username: config.get<string>('POSTGRESS_USER'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        database: 'fixsell_erp',
+        database: config.get<string>('POSTGRESS_DB'),
 
         synchronize: true,
         logging: true,
@@ -41,6 +44,9 @@ import { EmailModule } from './email/email.module';
     EmailModule,
     PrintersModule,
     AuthModule,
+    ProductModule,
+    ProductCategoriesModule,
+    ProductOperationsLogisticsModule,
   ],
 })
 export class AppModule {}
