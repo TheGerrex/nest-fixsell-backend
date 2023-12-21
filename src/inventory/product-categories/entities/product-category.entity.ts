@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm';
 import { Product } from '../../product/entities/product.entity';
 
@@ -34,6 +35,6 @@ export class ProductCategory {
   })
   withdrawal_strategy: 'fifo' | 'lifo' | 'nearest' | 'least packages';
 
-  @OneToMany(() => Product, (product) => product.product_category)
+  @ManyToMany(() => Product, (product) => product.product_categories)
   products: Product[];
 }

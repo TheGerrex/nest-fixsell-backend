@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { ProductCategory } from 'src/inventory/product-categories/entities/product-category.entity';
 
 @Entity()
@@ -27,11 +34,12 @@ export class Product {
   @Column()
   product_value: string;
 
-  @ManyToOne(
+  @ManyToMany(
     () => ProductCategory,
     (productCategory) => productCategory.products,
   )
-  product_category: ProductCategory;
+  @JoinTable()
+  product_categories: ProductCategory[];
 
   @Column()
   product_intern_id: string;
