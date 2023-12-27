@@ -56,7 +56,9 @@ export class ProductService {
           `Product with name ${createProductDto.name} already exists.`,
         );
       }
-      throw new InternalServerErrorException('Something went wrong.');
+      throw new InternalServerErrorException(
+        error.message || 'Something went wrong.',
+      );
     }
   }
 
