@@ -62,19 +62,90 @@ export class ProductService {
     }
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll() {
+    try {
+      return this.productRepository.find({
+        relations: ['product_categories'],
+      });
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(
+        error.message || 'Something went wrong.',
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOneById(id: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['product_categories'],
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found.`);
+    }
+
+    return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async findOneByName(name: string): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { name },
+      relations: ['product_categories'],
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product with name ${name} not found.`);
+    }
+
+    return product;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async update(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    let productCategories = [];
+    if (
+      Array.isArray(updateProductDto.product_categories) &&
+      updateProductDto.product_categories.length > 0
+    ) {
+      productCategories = await this.productCategoryRepository.find({
+        where: {
+          category_name: In(updateProductDto.product_categories),
+        },
+      });
+      if (
+        productCategories.length !== updateProductDto.product_categories.length
+      ) {
+        throw new NotFoundException(
+          `One or more product categories not found.`,
+        );
+      }
+    }
+
+    await this.productRepository.update(id, {
+      ...updateProductDto,
+      product_categories: productCategories,
+    });
+
+    const updatedProduct = await this.productRepository.findOne({
+      where: { id },
+      relations: ['product_categories'],
+    });
+
+    if (!updatedProduct) {
+      throw new NotFoundException(`Product with id ${id} not found.`);
+    }
+
+    return updatedProduct;
+  }
+
+  async remove(id: string): Promise<void> {
+    const result = await this.productRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Product with id ${id} not found.`);
+    }
   }
 }
