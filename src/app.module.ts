@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -18,30 +19,40 @@ import { DealsModule } from './deals/deals.module';
     MongooseModule.forRoot(process.env.MONGO_URI, {
       dbName: process.env.MONGO_DB_NAME,
     }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.POSTGRES_DB_HOST,
+      port: +process.env.POSTGRES_DB_PORT,
+      database: process.env.POSTGRES_DB_NAME,
+      username: process.env.POSTGRES_DB_USERNAME,
+      password: process.env.POSTGRES_PASSWORD,
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
 
     // postgresql
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('POSTGRESS_HOST'),
-        port: config.get<number>('POSTGRESS_PORT'),
-        password: config.get<string>('POSTGRESS_PASSWORD'),
-        username: config.get<string>('POSTGRESS_USER'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        database: config.get<string>('POSTGRESS_DB'),
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: async (config: ConfigService) => ({
+    //     type: 'postgres',
+    //     host: config.get<string>('POSTGRESS_HOST'),
+    //     port: config.get<number>('POSTGRESS_PORT'),
+    //     password: config.get<string>('POSTGRESS_PASSWORD'),
+    //     username: config.get<string>('POSTGRESS_USER'),
+    //     entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    //     database: config.get<string>('POSTGRESS_DB'),
 
-        synchronize: true,
-        logging: true,
-        ssl: true,
-        extra: {
-          ssl: {
-            rejectUnauthorized: false,
-          },
-        },
-      }),
-    }),
+    //     synchronize: true,
+    //     logging: true,
+    //     ssl: true,
+    //     extra: {
+    //       ssl: {
+    //         rejectUnauthorized: false,
+    //       },
+    //     },
+    //   }),
+    // }),
 
     EmailModule,
     PrintersModule,
@@ -54,3 +65,4 @@ import { DealsModule } from './deals/deals.module';
   ],
 })
 export class AppModule {}
+
