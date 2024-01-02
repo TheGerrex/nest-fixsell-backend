@@ -9,6 +9,8 @@ import { EmailModule } from './email/email.module';
 import { ProductModule } from './inventory/product/product.module';
 import { ProductCategoriesModule } from './inventory/product-categories/product-categories.module';
 import { ProductOperationsLogisticsModule } from './inventory/product-operations-logistics/product-operations-logistics.module';
+import { ReceptionModule } from './inventory/reception/reception.module';
+import { DealsModule } from './deals/deals.module';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import { ProductOperationsLogisticsModule } from './inventory/product-operations
     ProductModule,
     ProductCategoriesModule,
     ProductOperationsLogisticsModule,
+    ReceptionModule,
+    DealsModule,
   ],
 })
 export class AppModule {}

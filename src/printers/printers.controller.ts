@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PrintersService } from './printers.service';
 import { CreatePrinterDto } from './dto/create-printer.dto';
 import { UpdatePrinterDto } from './dto/update-printer.dto';
@@ -6,7 +14,6 @@ import { Printer } from './entities/printer.entity';
 
 @Controller('printers')
 export class PrintersController {
-  
   constructor(private readonly printersService: PrintersService) {}
 
   @Post()
@@ -15,10 +22,10 @@ export class PrintersController {
     return this.printersService.create(createPrinterDto);
   }
 
-  @Get('deal')
-  findDealPrinters() {
-    return this.printersService.findDealPrinters();
-  }
+  // @Get('deal')
+  // findDealPrinters() {
+  //   return this.printersService.findDealPrinters();
+  // }
 
   @Get()
   findAll() {

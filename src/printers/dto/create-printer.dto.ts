@@ -1,6 +1,11 @@
-import { Transform } from 'class-transformer';
-import { IsBoolean, IsDate, IsDecimal, IsIn, IsString, IsUrl, isDate } from 'class-validator';
-import { Decimal128 } from 'mongoose';
+import {
+  IsBoolean,
+  IsDecimal,
+  IsIn,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
 const categories = [
@@ -19,25 +24,27 @@ export class CreatePrinterDto {
   @IsString()
   model: string;
 
-  @IsString()
-  img_url: [string];
+  @IsOptional()
+  @IsUrl()
+  datasheet_url?: string;
+
+  @IsString({ each: true })
+  img_url: string[];
 
   @IsString()
   description: string;
 
   @IsDecimal()
-  price: Decimal128;
+  price: number;
 
   @IsIn(categories)
   @IsString()
   category: string;
 
   @IsBoolean()
-  //@Transform(({ value} ) => value === 'true')
   color: boolean;
 
   @IsBoolean()
-  //@Transform(({ value} ) => value === 'true')
   rentable: boolean;
 
   @IsString()
@@ -49,17 +56,20 @@ export class CreatePrinterDto {
   @IsString()
   printVelocity: string;
 
+  @IsOptional()
   @IsString()
-  maxPrintSizeSimple: string;
+  maxPrintSizeSimple?: string;
 
   @IsString()
   maxPrintSize: string;
 
   @IsString()
+  printSize: string;
+
+  @IsString()
   maxPaperWeight: string;
 
   @IsBoolean()
-  // @Transform(({ value} ) => value === 'true')
   duplexUnit: boolean;
 
   @IsString()
@@ -68,30 +78,9 @@ export class CreatePrinterDto {
   @IsString()
   applicableOS: string;
 
-  @IsUrl()
-  datasheetUrl: string;
-
   @IsString()
-  printerFunction: string;
+  printerFunctions: string;
 
-  @IsString()
-  barcode: [string];
-
-  @IsDate()
-  dealEndDate: Date = null;
-
-  @IsDate()
-  dealStartDate: Date = null;
-
-  @IsDecimal()
-  dealPrice: Decimal128 = null;
-  
-  @IsDecimal()
-  dealDiscountPercentage: Decimal128 = null;
-
-  @IsBoolean()
-  isDeal: boolean = false;
-
-  @IsString()
-  dealDescription: string = null;
+  @IsString({ each: true })
+  barcode: string[];
 }

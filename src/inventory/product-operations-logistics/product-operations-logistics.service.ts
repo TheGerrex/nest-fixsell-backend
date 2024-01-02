@@ -4,21 +4,35 @@ import { Repository } from 'typeorm';
 import { CreateProductOperationsLogisticDto } from './dto/create-product-operations-logistic.dto';
 import { UpdateProductOperationsLogisticDto } from './dto/update-product-operations-logistic.dto';
 import { ProductOperationsLogistic } from './entities/product-operations-logistic.entity';
+import { Product } from '../product/entities/product.entity';
 
 @Injectable()
 export class ProductOperationsLogisticsService {
   constructor(
     @InjectRepository(ProductOperationsLogistic)
     private productOperationsLogisticRepository: Repository<ProductOperationsLogistic>,
+    @InjectRepository(Product) // Inject the Product repository
+    private productRepository: Repository<Product>, // Define the productRepository
   ) {}
 
   async create(
     createProductOperationsLogisticDto: CreateProductOperationsLogisticDto,
   ): Promise<ProductOperationsLogistic> {
-    const productOperationsLogistic =
-      this.productOperationsLogisticRepository.create(
-        createProductOperationsLogisticDto,
+    const product = await this.productRepository.findOne({
+      where: { id: createProductOperationsLogisticDto.productId },
+    });
+    if (!product) {
+      throw new NotFoundException(
+        `Product with id ${createProductOperationsLogisticDto.productId} not found.`,
       );
+    }
+
+    const productOperationsLogistic =
+      this.productOperationsLogisticRepository.create({
+        ...createProductOperationsLogisticDto,
+        product: product,
+      });
+
     return this.productOperationsLogisticRepository.save(
       productOperationsLogistic,
     );

@@ -105,6 +105,15 @@ export class ProductService {
     id: string,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
+    let product = await this.productRepository.findOne({
+      where: { id: id },
+      relations: ['product_categories'],
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found.`);
+    }
+
     let productCategories = [];
     if (
       Array.isArray(updateProductDto.product_categories) &&
@@ -124,10 +133,12 @@ export class ProductService {
       }
     }
 
-    await this.productRepository.update(id, {
+    product = {
+      ...product,
       ...updateProductDto,
       product_categories: productCategories,
-    });
+    };
+    await this.productRepository.save(product);
 
     const updatedProduct = await this.productRepository.findOne({
       where: { id },

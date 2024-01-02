@@ -1,6 +1,15 @@
-import { IsOptional, IsString, IsNumber, IsInt } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsInt,
+  isString,
+} from 'class-validator';
 
 export class CreateProductOperationsLogisticDto {
+  @IsString()
+  productId: string;
+
   @IsOptional()
   @IsString()
   routes?: string;

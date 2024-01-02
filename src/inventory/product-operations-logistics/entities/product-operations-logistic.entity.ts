@@ -13,7 +13,7 @@ export class ProductOperationsLogistic {
   @PrimaryGeneratedColumn()
   id: number;
   // product
-  @OneToOne(() => Product)
+  @OneToOne(() => Product, { onDelete: 'CASCADE' })
   @JoinColumn()
   product: Product;
   // routes
