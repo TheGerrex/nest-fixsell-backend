@@ -55,16 +55,17 @@ export class DealsService {
       throw new Error('Printer not found');
     }
 
-    const result = await this.dealRepository.update(
-      { id },
-      { ...updateDealDto, printer },
-    );
+    const deal = await this.dealRepository.findOne({ where: { id } });
 
-    if (result.affected === 0) {
+    if (!deal) {
       throw new Error(`Deal with ID ${id} not found`);
     }
 
-    return await this.dealRepository.findOne({ where: { id } });
+    // Update the deal
+    deal.printer = printer;
+    Object.assign(deal, updateDealDto);
+
+    return await this.dealRepository.save(deal);
   }
 
   async remove(id: number) {
