@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsDecimal,
   IsIn,
@@ -30,40 +31,50 @@ export class CreatePrinterDto {
 
   @IsOptional()
   @IsString({ each: true })
-  img_url: string[];
+  @IsArray()
+  img_url?: string[];
 
   @IsOptional()
   @IsString()
-  description: string;
+  description?: string;
 
   @IsOptional()
   @IsDecimal()
-  price: number;
+  price?: number;
 
   @IsOptional()
   @IsIn(categories)
   @IsString()
-  category: string;
+  category?: string;
 
   @IsOptional()
   @IsBoolean()
-  color: boolean;
+  color?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  rentable: boolean;
+  rentable?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  sellable?: boolean;
+
+  @IsOptional()
+  @IsString({ each: true })
+  @IsArray()
+  tags?: string[];
 
   @IsOptional()
   @IsString()
-  powerConsumption: string;
+  powerConsumption?: string;
 
   @IsOptional()
   @IsString()
-  dimensions: string;
+  dimensions?: string;
 
   @IsOptional()
   @IsString()
-  printVelocity: string;
+  printVelocity?: string;
 
   @IsOptional()
   @IsString()
@@ -71,33 +82,34 @@ export class CreatePrinterDto {
 
   @IsOptional()
   @IsString()
-  maxPrintSize: string;
+  maxPrintSize?: string;
 
   @IsOptional()
   @IsString()
-  printSize: string;
+  printSize?: string;
 
   @IsOptional()
   @IsString()
-  maxPaperWeight: string;
+  maxPaperWeight?: string;
 
   @IsOptional()
   @IsBoolean()
-  duplexUnit: boolean;
+  duplexUnit?: boolean;
 
   @IsOptional()
   @IsString()
-  paperSizes: string;
+  paperSizes?: string;
 
   @IsOptional()
   @IsString()
-  applicableOS: string;
+  applicableOS?: string;
 
   @IsOptional()
   @IsString()
-  printerFunctions: string;
+  printerFunctions?: string;
 
   @IsOptional()
   @IsString({ each: true })
-  barcode: string[];
+  @IsArray()
+  barcode?: string[];
 }

@@ -27,7 +27,7 @@ export class Printer {
   @Column({ nullable: true })
   description: string;
 
-  @Column('decimal', { nullable: true })
+  @Column('float', { default: 100, nullable: true })
   price: number;
 
   @Column({ nullable: true })
@@ -36,8 +36,14 @@ export class Printer {
   @Column({ nullable: true })
   color: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   rentable: boolean;
+
+  @Column({ nullable: true, default: true })
+  sellable: boolean;
+
+  @Column('text', { array: true, default: [] })
+  tags: string[];
 
   @Column({ nullable: true })
   powerConsumption: string;
@@ -69,7 +75,7 @@ export class Printer {
   @Column({ nullable: true })
   applicableOS: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: "Impresión, copiado y escaneo" })
   printerFunctions: string;
 
   @Column('text', { array: true, nullable: true })

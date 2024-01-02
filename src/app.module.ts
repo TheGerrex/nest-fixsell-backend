@@ -12,6 +12,7 @@ import { ProductCategoriesModule } from './inventory/product-categories/product-
 import { ProductOperationsLogisticsModule } from './inventory/product-operations-logistics/product-operations-logistics.module';
 import { ReceptionModule } from './inventory/reception/reception.module';
 import { DealsModule } from './deals/deals.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { DealsModule } from './deals/deals.module';
     ProductOperationsLogisticsModule,
     ReceptionModule,
     DealsModule,
+    SeedModule,
   ],
 })
 export class AppModule {}
