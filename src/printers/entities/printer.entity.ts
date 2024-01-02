@@ -21,58 +21,58 @@ export class Printer {
   @Column({ nullable: true })
   datasheet_url: string;
 
-  @Column('text', { array: true, nullable: false })
+  @Column('text', { array: true, nullable: true })
   img_url: string[];
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   description: string;
 
-  @Column('decimal', { nullable: false })
+  @Column('decimal', { nullable: true })
   price: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   category: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   color: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   rentable: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   powerConsumption: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   dimensions: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   printVelocity: string;
 
   @Column({ nullable: true })
   maxPrintSizeSimple: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   maxPrintSize: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   printSize: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   maxPaperWeight: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   duplexUnit: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   paperSizes: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   applicableOS: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   printerFunctions: string;
 
-  @Column('text', { array: true, nullable: false })
+  @Column('text', { array: true, nullable: true })
   barcode: string[];
 
   @OneToOne(() => Deal, (deal) => deal.printer, { nullable: true, eager: true })
