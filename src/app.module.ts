@@ -52,13 +52,15 @@ import { JoiValidationSchema } from './config/joi.validation';
         database: config.get<string>('POSTGRES_DB_NAME'),
         synchronize: true,
         logging: true,
-        ssl: false,
-        // ssl: true,
-        // extra: {
-        //   ssl: {
-        //     rejectUnauthorized: false,
-        //   },
-        // },
+        ssl: true,
+        extra: {
+          ssl: {
+            // rejectUnauthorized: false,
+            trustServerCertificate: true,
+            Encrypt: true,
+            IntegratedSecurity: false,
+          },
+        },
       }),
     }),
 
