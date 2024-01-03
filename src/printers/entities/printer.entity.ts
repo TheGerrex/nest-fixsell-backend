@@ -36,10 +36,10 @@ export class Printer {
   @Column({ nullable: true })
   color: boolean;
 
-  @Column({ nullable: true, default: false })
+  @Column({ nullable: true })
   rentable: boolean;
 
-  @Column({ nullable: true, default: true })
+  @Column({ nullable: true })
   sellable: boolean;
 
   @Column('text', { array: true, default: [] })
