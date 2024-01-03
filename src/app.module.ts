@@ -55,7 +55,7 @@ import { JoiValidationSchema } from './config/joi.validation';
         ssl: true,
         extra: {
           ssl: {
-            // rejectUnauthorized: false,
+            rejectUnauthorized: false,
             trustServerCertificate: true,
             Encrypt: true,
             IntegratedSecurity: false,
