@@ -50,9 +50,9 @@ import { JoiValidationSchema } from './config/joi.validation';
         username: config.get<string>('POSTGRES_DB_USERNAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         database: config.get<string>('POSTGRES_DB_NAME'),
-
         synchronize: true,
         logging: true,
+        ssl: false,
         // ssl: true,
         // extra: {
         //   ssl: {
