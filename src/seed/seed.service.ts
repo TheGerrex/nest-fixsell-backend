@@ -17,7 +17,7 @@ export class SeedService {
     await this.printerRepository.delete({});
 
     // Read data from the JSON file
-    const jsonString = fs.readFileSync("/Users/thegerrex/code/fixsell/nest-fixsell-backend/src/seed/fixsell_db.printers.json", 'utf-8');
+    const jsonString = fs.readFileSync("src/seed/fixsell_db.printers.json", 'utf-8');
     const printersData = JSON.parse(jsonString);
 
     // Loop through the data and create PrinterEntity instances

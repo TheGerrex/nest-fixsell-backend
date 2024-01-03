@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { PrintersModule } from './printers/printers.module';
 import { AuthModule } from './auth/auth.module';
@@ -15,6 +15,7 @@ import { DealsModule } from './deals/deals.module';
 import { SeedModule } from './seed/seed.module';
 import { EnvConfiguration } from './config/app.config';
 import { JoiValidationSchema } from './config/joi.validation';
+import { any } from 'joi';
 
 @Module({
   imports: [
@@ -42,26 +43,74 @@ import { JoiValidationSchema } from './config/joi.validation';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('POSTGRES_DB_HOST'),
-        port: config.get<number>('POSTGRES_DB_PORT'),
-        password: config.get<string>('POSTGRES_PASSWORD'),
-        username: config.get<string>('POSTGRES_DB_USERNAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        database: config.get<string>('POSTGRES_DB_NAME'),
-        synchronize: true,
-        logging: true,
-        ssl: true,
-        extra: {
-          ssl: {
+      useFactory: async (config: ConfigService): Promise<TypeOrmModuleOptions> => {
+        const isProduction = config.get<string>('NODE_ENV') === 'production';
+
+        const baseConfig = {
+          type: 'postgres',
+          host: config.get<string>('POSTGRES_DB_HOST'),
+          port: config.get<number>('POSTGRES_DB_PORT'),
+          password: config.get<string>('POSTGRES_PASSWORD'),
+          username: config.get<string>('POSTGRES_DB_USERNAME'),
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          database: config.get<string>('POSTGRES_DB_NAME'),
+          synchronize: true,
+          logging: true,
+          ssl: isProduction ? {} : false,
+        };
+
+        if (isProduction) {
+          // Add extra SSL configuration for production
+          baseConfig.ssl = {
             rejectUnauthorized: false,
             trustServerCertificate: true,
             Encrypt: true,
             IntegratedSecurity: false,
-          },
-        },
-      }),
+          };
+        }
+
+        return baseConfig as TypeOrmModuleOptions;
+
+        // return {
+        //   type: 'postgres',
+        //   host: config.get<string>('POSTGRES_DB_HOST'),
+        //   port: config.get<number>('POSTGRES_DB_PORT'),
+        //   password: config.get<string>('POSTGRES_PASSWORD'),
+        //   username: config.get<string>('POSTGRES_DB_USERNAME'),
+        //   entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        //   database: config.get<string>('POSTGRES_DB_NAME'),
+        //   synchronize: true,
+        //   logging: true,
+        //   ssl: isProduction,
+        //   extra: {
+        //     ssl: {
+        //       rejectUnauthorized: false,
+        //       trustServerCertificate: true,
+        //       Encrypt: true,
+        //       IntegratedSecurity: false,
+        //     },
+        //   },
+        // };
+
+        // type: 'postgres',
+        // host: config.get<string>('POSTGRES_DB_HOST'),
+        // port: config.get<number>('POSTGRES_DB_PORT'),
+        // password: config.get<string>('POSTGRES_PASSWORD'),
+        // username: config.get<string>('POSTGRES_DB_USERNAME'),
+        // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        // database: config.get<string>('POSTGRES_DB_NAME'),
+        // synchronize: true,
+        // logging: true,
+        // ssl: true,
+        // extra: {
+        //   ssl: {
+        //     rejectUnauthorized: false,
+        //     trustServerCertificate: true,
+        //     Encrypt: true,
+        //     IntegratedSecurity: false,
+        //   },
+        // },
+      },
     }),
 
     EmailModule,
@@ -75,5 +124,9 @@ import { JoiValidationSchema } from './config/joi.validation';
     SeedModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private config: ConfigService) {
+    console.log(config.get<string>('NODE_ENV'))
+  }
+}
 
