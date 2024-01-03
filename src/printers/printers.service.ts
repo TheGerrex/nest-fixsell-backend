@@ -71,4 +71,12 @@ export class PrintersService {
       throw new NotFoundException('Printer not found');
     }
   }
+
+  async removeAll(): Promise<string> {
+    const deleteResult = await this.printersRepository.delete({});
+    if (!deleteResult.affected) {
+      throw new NotFoundException('Printers not found');
+    }
+    return "Deleted all Printers"
+  }
 }

@@ -46,4 +46,9 @@ export class PrintersController {
   remove(@Param('id') id: string) {
     return this.printersService.remove(id);
   }
+
+  @Delete()
+  removeAll() {
+    return this.printersService.removeAll();
+  }
 }
