@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -11,13 +12,31 @@ import { ProductCategoriesModule } from './inventory/product-categories/product-
 import { ProductOperationsLogisticsModule } from './inventory/product-operations-logistics/product-operations-logistics.module';
 import { ReceptionModule } from './inventory/reception/reception.module';
 import { DealsModule } from './deals/deals.module';
+import { SeedModule } from './seed/seed.module';
+import { EnvConfiguration } from './config/app.config';
+import { JoiValidationSchema } from './config/joi.validation';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`,
+      isGlobal: true,
+      load: [EnvConfiguration],
+      validationSchema: JoiValidationSchema,
+    }),
     MongooseModule.forRoot(process.env.MONGO_URI, {
       dbName: process.env.MONGO_DB_NAME,
     }),
+    // TypeOrmModule.forRoot({
+    //   type: 'postgres',
+    //   host: process.env.POSTGRES_DB_HOST,
+    //   port: +process.env.POSTGRES_DB_PORT,
+    //   database: process.env.POSTGRES_DB_NAME,
+    //   username: process.env.POSTGRES_DB_USERNAME,
+    //   password: process.env.POSTGRES_PASSWORD,
+    //   autoLoadEntities: true,
+    //   synchronize: true,
+    // }),
 
     // postgresql
     TypeOrmModule.forRootAsync({
@@ -25,21 +44,21 @@ import { DealsModule } from './deals/deals.module';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
         type: 'postgres',
-        host: config.get<string>('POSTGRESS_HOST'),
-        port: config.get<number>('POSTGRESS_PORT'),
-        password: config.get<string>('POSTGRESS_PASSWORD'),
-        username: config.get<string>('POSTGRESS_USER'),
+        host: config.get<string>('POSTGRES_DB_HOST'),
+        port: config.get<number>('POSTGRES_DB_PORT'),
+        password: config.get<string>('POSTGRES_PASSWORD'),
+        username: config.get<string>('POSTGRES_DB_USERNAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        database: config.get<string>('POSTGRESS_DB'),
+        database: config.get<string>('POSTGRES_DB_NAME'),
 
         synchronize: true,
         logging: true,
-        ssl: true,
-        extra: {
-          ssl: {
-            rejectUnauthorized: false,
-          },
-        },
+        // ssl: true,
+        // extra: {
+        //   ssl: {
+        //     rejectUnauthorized: false,
+        //   },
+        // },
       }),
     }),
 
@@ -51,6 +70,8 @@ import { DealsModule } from './deals/deals.module';
     ProductOperationsLogisticsModule,
     ReceptionModule,
     DealsModule,
+    SeedModule,
   ],
 })
 export class AppModule {}
+

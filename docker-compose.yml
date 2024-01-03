@@ -1,11 +1,23 @@
-  version: '3'
+version: '3'
 
-  services:
-    db:
-      container_name: mongo_db
-      image: mongo:5.0.16
-      volumes:
-        - ./mongo:/data/db
-      ports:
-        - 27017:27017
-      restart: always
+services:
+  mongo_db:
+    container_name: mongo_fixsell_db
+    image: mongo:5.0.16
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - 27017:27017
+    restart: always
+
+  postgres_db:
+    container_name: postgres_fixsell_db
+    image: postgres:14.3
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
