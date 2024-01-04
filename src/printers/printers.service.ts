@@ -9,6 +9,8 @@ import { UpdatePrinterDto } from './dto/update-printer.dto';
 import { Printer } from './entities/printer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { isUUID } from 'class-validator';
 @Injectable()
 export class PrintersService {
   constructor(
@@ -29,19 +31,35 @@ export class PrintersService {
     }
   }
 
-  async findAll(): Promise<Printer[]> {
-    return await this.printersRepository.find();
+  async findAll(paginationDto: PaginationDto): Promise<Printer[]> {
+    const {limit=20, offset=0} = paginationDto;
+    return await this.printersRepository.find({
+      take: limit,
+      skip: offset,
+    });
   }
 
   // async findDealPrinters(): Promise<Printer[]> {
   //   return this.printerModel.find({ isDeal: true }).exec();
   // }
 
-  async findOne(id: string): Promise<Printer> {
-    const printer = await this.printersRepository.findOne({ where: { id } });
+  async findOne(term: string): Promise<Printer> {
+    let printer: Printer;
+
+    if (isUUID(term)) {
+      printer = await this.printersRepository.findOne({ where: { id: term as any } })
+    } else {
+      const queryBuilder = this.printersRepository.createQueryBuilder();
+      printer = await queryBuilder
+      .where(`UPPER(model) = :model`, {
+        model: term.toUpperCase(),
+      }).getOne();
+    }
+
     if (!printer) {
       throw new NotFoundException('Printer not found');
     }
+    
     return printer;
   }
 

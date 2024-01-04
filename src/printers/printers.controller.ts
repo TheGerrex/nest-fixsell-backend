@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PrintersService } from './printers.service';
 import { CreatePrinterDto } from './dto/create-printer.dto';
 import { UpdatePrinterDto } from './dto/update-printer.dto';
 import { Printer } from './entities/printer.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('printers')
 export class PrintersController {
@@ -27,14 +29,19 @@ export class PrintersController {
   //   return this.printersService.findDealPrinters();
   // }
 
-  @Get()
-  findAll() {
-    return this.printersService.findAll();
+  @Delete()
+  removeAll() {
+    return this.printersService.removeAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Printer> {
-    return this.printersService.findOne(id);
+  @Get()
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.printersService.findAll(paginationDto);
+  }
+
+  @Get(':term')
+  findOne(@Param('term') term: string): Promise<Printer> {
+    return this.printersService.findOne(term);
   }
 
   @Patch(':id')
@@ -47,8 +54,4 @@ export class PrintersController {
     return this.printersService.remove(id);
   }
 
-  @Delete()
-  removeAll() {
-    return this.printersService.removeAll();
-  }
 }
