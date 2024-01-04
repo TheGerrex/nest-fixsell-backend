@@ -21,9 +21,11 @@ export class PrintersService {
   async create(createPrinterDto: CreatePrinterDto): Promise<Printer> {
     try {
       const newPrinter = this.printersRepository.create(createPrinterDto);
-      return await this.printersRepository.save(newPrinter);
+      const savedPrinter = await this.printersRepository.save(newPrinter);
+      console.log('Created printer:', savedPrinter);
+      return savedPrinter;
     } catch (error) {
-      console.error(error); // Log the error details to the console
+      console.error('Error while creating printer:', error);
       if (error.code === '23505') {
         throw new BadRequestException(`${createPrinterDto.model} ya existe.`);
       }
@@ -32,7 +34,7 @@ export class PrintersService {
   }
 
   async findAll(paginationDto: PaginationDto): Promise<Printer[]> {
-    const {limit=20, offset=0} = paginationDto;
+    const { limit = 20, offset = 0 } = paginationDto;
     return await this.printersRepository.find({
       take: limit,
       skip: offset,
@@ -47,19 +49,22 @@ export class PrintersService {
     let printer: Printer;
 
     if (isUUID(term)) {
-      printer = await this.printersRepository.findOne({ where: { id: term as any } })
+      printer = await this.printersRepository.findOne({
+        where: { id: term as any },
+      });
     } else {
       const queryBuilder = this.printersRepository.createQueryBuilder();
       printer = await queryBuilder
-      .where(`UPPER(model) = :model`, {
-        model: term.toUpperCase(),
-      }).getOne();
+        .where(`UPPER(model) = :model`, {
+          model: term.toUpperCase(),
+        })
+        .getOne();
     }
 
     if (!printer) {
       throw new NotFoundException('Printer not found');
     }
-    
+
     return printer;
   }
 
@@ -95,6 +100,6 @@ export class PrintersService {
     if (!deleteResult.affected) {
       throw new NotFoundException('Printers not found');
     }
-    return "Deleted all Printers"
+    return 'Deleted all Printers';
   }
 }

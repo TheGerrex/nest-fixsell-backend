@@ -21,6 +21,7 @@ export class PrintersController {
   @Post()
   create(@Body() createPrinterDto: CreatePrinterDto) {
     console.log(createPrinterDto);
+    console.log('creating printer...');
     return this.printersService.create(createPrinterDto);
   }
 
@@ -53,5 +54,4 @@ export class PrintersController {
   remove(@Param('id') id: string) {
     return this.printersService.remove(id);
   }
-
 }
