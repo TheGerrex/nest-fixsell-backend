@@ -34,11 +34,17 @@ export class PrintersService {
   }
 
   async findAll(paginationDto: PaginationDto): Promise<Printer[]> {
-    const { limit = 20, offset = 0 } = paginationDto;
-    return await this.printersRepository.find({
-      take: limit,
-      skip: offset,
-    });
+    const { limit, offset = 0 } = paginationDto;
+    if (limit) {
+      return await this.printersRepository.find({
+        take: limit,
+        skip: offset,
+      });
+    } else {
+      return await this.printersRepository.find({
+        skip: offset,
+      });
+    }
   }
 
   // async findDealPrinters(): Promise<Printer[]> {
