@@ -36,6 +36,6 @@ export class Consumable {
   @Column()
   location: string;
 
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.consumable)
   orderDetails: OrderDetail[];
 }

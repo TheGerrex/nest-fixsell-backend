@@ -22,7 +22,10 @@ export class OrdersService {
   }
 
   findOne(id: string) {
-    return this.orderRepository.findOne({ where: { id: id } });
+    return this.orderRepository.findOne({
+      where: { id: id },
+      relations: ['orderDetails'],
+    });
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto) {

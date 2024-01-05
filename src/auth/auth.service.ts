@@ -3,22 +3,23 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Model } from 'mongoose';
+import { Repository } from 'typeorm';
 import * as bcryptjs from 'bcryptjs';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtPayload } from './interfaces/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResponse } from './interfaces/login-response';
 import { RegisterUserDto, LoginDto, CreateUserDto, UpdateAuthDto } from './dto';
+import { classToPlain } from 'class-transformer';
+import { UserResponse } from './entities/user-response.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name)
-    private userModel: Model<User>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private jwtService: JwtService,
   ) {}
 
@@ -26,17 +27,17 @@ export class AuthService {
     try {
       const { password, ...userData } = createUserDto;
 
-      const newUser = new this.userModel({
+      const newUser = this.userRepository.create({
         password: bcryptjs.hashSync(password, 10),
         ...userData,
       });
 
-      await newUser.save();
-      const { password: _, ...user } = newUser.toJSON();
+      await this.userRepository.save(newUser);
+      const { password: _, ...user } = newUser;
 
       return user;
     } catch (error) {
-      if (error.code === 11000) {
+      if (error.code === '23505') {
         throw new BadRequestException(`${createUserDto.email} already exists`);
       }
       throw new InternalServerErrorException('something went wrong');
@@ -49,15 +50,15 @@ export class AuthService {
     console.log({ user });
 
     return {
-      user: user,
-      token: this.getJwtToken({ id: user._id }),
+      user: user as UserResponse,
+      token: this.getJwtToken({ id: user.id.toString() }),
     };
   }
 
   async login(loginDto: LoginDto): Promise<LoginResponse> {
     const { email, password } = loginDto;
 
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
       throw new UnauthorizedException(`Invalid credentials - email`);
@@ -67,7 +68,7 @@ export class AuthService {
       throw new UnauthorizedException(`Invalid credentials - password`);
     }
 
-    const { password: _, ...rest } = user.toJSON();
+    const { password: _, ...rest } = user;
 
     return {
       user: rest,
@@ -76,12 +77,12 @@ export class AuthService {
   }
 
   findAll(): Promise<User[]> {
-    return this.userModel.find();
+    return this.userRepository.find();
   }
 
   async findUserById(id: string) {
-    const user = await this.userModel.findById(id);
-    const { password, ...rest } = user.toJSON();
+    const user = await this.userRepository.findOne({ where: { id } });
+    const { password, ...rest } = user;
     return rest;
   }
 
@@ -89,8 +90,11 @@ export class AuthService {
     return `This action returns a #${id} auth`;
   }
 
-  async update(id: string, updateAuthDto: UpdateAuthDto): Promise<User> {
-    const user = await this.userModel.findById(id);
+  async update(
+    id: string,
+    updateAuthDto: UpdateAuthDto,
+  ): Promise<UserResponse> {
+    const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new BadRequestException(`User with id ${id} not found`);
@@ -130,9 +134,9 @@ export class AuthService {
     // Save updated user
     try {
       console.log(user);
-      await user.save();
-      const { password: _, ...rest } = user.toJSON();
-      return rest;
+      await this.userRepository.save(user);
+      const { password: _, ...rest } = user;
+      return rest as UserResponse;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -140,8 +144,8 @@ export class AuthService {
 
   async remove(id: string): Promise<void> {
     try {
-      const result = await this.userModel.deleteOne({ _id: id }).exec();
-      if (result.deletedCount === 0) {
+      const result = await this.userRepository.delete(id);
+      if (result.affected === 0) {
         throw new BadRequestException(`User with id ${id} not found`);
       }
     } catch (error) {

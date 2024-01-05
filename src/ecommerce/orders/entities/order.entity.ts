@@ -52,6 +52,8 @@ export class Order {
   @Column({ nullable: true })
   trackingNumber: string;
 
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
+    eager: true,
+  })
   orderDetails: OrderDetail[];
 }

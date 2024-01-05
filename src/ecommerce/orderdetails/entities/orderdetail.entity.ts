@@ -10,8 +10,10 @@ export class OrderDetail {
   @ManyToOne(() => Order, (order) => order.orderDetails)
   order: Order;
 
-  @ManyToOne(() => Consumable, (consumable) => consumable.orderDetails)
-  product: Consumable;
+  @ManyToOne(() => Consumable, (consumable) => consumable.orderDetails, {
+    eager: true,
+  })
+  consumable: Consumable;
 
   @Column()
   name: string;
