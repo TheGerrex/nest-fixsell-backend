@@ -19,6 +19,6 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column('text', { array: true, default: () => "ARRAY['user']" }) // user, admin, vendor
+  @Column('text', { array: true, default: () => "ARRAY['user']" }) // user, admin, vendor, client
   roles: string[];
 }

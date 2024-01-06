@@ -11,8 +11,10 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService,
-    private AuthService:AuthService,) {}
+  constructor(
+    private jwtService: JwtService,
+    private AuthService: AuthService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -26,13 +28,18 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: process.env.JWT_SEED,
       });
-      
+
       const user = await this.AuthService.findUserById(payload.id);
-      if(!user){
+      if (!user) {
         throw new UnauthorizedException('User does not exist');
       }
-      if(!user.isActive){
+      if (!user.isActive) {
         throw new UnauthorizedException('User is not active');
+      }
+
+      // Check if the user has the 'admin' role
+      if (!user.roles.includes('admin')) {
+        throw new UnauthorizedException('User does not have admin privileges');
       }
 
       request['user'] = user;
