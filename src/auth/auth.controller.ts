@@ -1,10 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto,UpdateAuthDto,LoginDto, RegisterUserDto } from './dto';
+import { CreateUserDto, UpdateAuthDto, LoginDto, RegisterUserDto } from './dto';
 import { AuthGuard } from './guards/auth.guard';
 import { LoginResponse } from './interfaces/login-response';
 import { User } from './entities/user.entity';
-
 
 @Controller('auth')
 export class AuthController {
@@ -15,39 +24,35 @@ export class AuthController {
     return this.authService.create(createUserDto);
   }
 
-
   @Post('/login')
-  login(@Body() loginDto: LoginDto){
+  login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
   @Post('/register')
-  register(@Body() registerDto: RegisterUserDto){
+  register(@Body() registerDto: RegisterUserDto) {
     return this.authService.register(registerDto);
   }
 
-
-  @UseGuards( AuthGuard )
+  @UseGuards(AuthGuard)
   @Get()
-  findAll( @Request() req: Request) {
+  findAll(@Request() req: Request) {
     const user = req['user'];
-    
+
     //return user;
     return this.authService.findAll();
   }
 
   //loginrespose
-  @UseGuards( AuthGuard )
+  @UseGuards(AuthGuard)
   @Get('check-token')
-  checkToken( @Request() req: Request){
-    
+  checkToken(@Request() req: Request) {
     const user = req['user'] as User;
 
     return {
       user,
-      token: this.authService.getJwtToken({id: user._id}),
-
-    }
+      token: this.authService.getJwtToken({ id: user.id }),
+    };
   }
 
   // @Get(':id')
@@ -55,13 +60,13 @@ export class AuthController {
   //   return this.authService.findOne(+id);
   // }
 
-  // @UseGuards( AuthGuard )
+  // @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
     return this.authService.update(id, updateAuthDto);
   }
 
-  @UseGuards( AuthGuard )
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.authService.remove(id);

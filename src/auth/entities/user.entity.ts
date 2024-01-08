@@ -1,28 +1,24 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
-
-@Schema()
+@Entity()
 export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    _id?:string;
+  @Column({ unique: true })
+  email: string;
 
-    @Prop({unique:true,required:true})
-    email:string; 
+  @Column()
+  name: string;
 
-    @Prop({required:true})
-    name:string;
+  @Exclude()
+  @Column()
+  password: string;
 
-    @Prop({required:true, minlength:8})
-    password?:string;
+  @Column({ default: true })
+  isActive: boolean;
 
-    @Prop({default:true})
-    isActive:boolean;
-    
-    @Prop({type: [String], default:['user']}) // user, admin, vendor
-    roles:string[];
-
-
+  @Column('text', { array: true, default: () => "ARRAY['user']" }) // user, admin, vendor, client
+  roles: string[];
 }
-
-export const UserSchema = SchemaFactory.createForClass(User);
-

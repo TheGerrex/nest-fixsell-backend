@@ -17,6 +17,9 @@ import { EnvConfiguration } from './config/app.config';
 import { JoiValidationSchema } from './config/joi.validation';
 import { any } from 'joi';
 import { CommonModule } from './common/common.module';
+import { ConsumablesModule } from './ecommerce/consumables/consumables.module';
+import { OrdersModule } from './ecommerce/orders/orders.module';
+import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module';
 
 @Module({
   imports: [
@@ -124,6 +127,9 @@ import { CommonModule } from './common/common.module';
     DealsModule,
     SeedModule,
     CommonModule,
+    ConsumablesModule,
+    OrdersModule,
+    OrderdetailsModule,
   ],
 })
 export class AppModule {

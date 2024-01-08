@@ -5,17 +5,21 @@ import {
   IsString,
   IsStrongPassword,
   IsBoolean,
+  IsOptional,
 } from 'class-validator';
 
 export class UpdateAuthDto extends PartialType(CreateUserDto) {
+  @IsOptional()
   @IsEmail()
   email: string;
 
+  @IsOptional()
   @IsString()
   name: string;
 
   // @IsStrongPassword({minLength:8, minLowercase:1, minUppercase:1, minNumbers:1, minSymbols:1})
   // password :string;
+  @IsOptional()
   @IsStrongPassword({
     minLength: 8,
     minLowercase: 1,
@@ -24,6 +28,7 @@ export class UpdateAuthDto extends PartialType(CreateUserDto) {
     minSymbols: 1,
   })
   oldPassword: string;
+  @IsOptional()
   @IsStrongPassword({
     minLength: 8,
     minLowercase: 1,
@@ -33,9 +38,11 @@ export class UpdateAuthDto extends PartialType(CreateUserDto) {
   })
   newPassword!: string;
 
+  @IsOptional()
   @IsBoolean()
   isActive: boolean = true;
 
+  @IsOptional()
   @IsString({ each: true })
   roles: string[] = ['user'];
 }
