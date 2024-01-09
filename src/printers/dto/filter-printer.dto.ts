@@ -11,7 +11,7 @@ import {
     Min,
   } from 'class-validator';
   
-  const brands = ['konica Minolta', 'kyocera', 'epson'];
+  const brands = ['konica minolta', 'kyocera', 'epson'];
   const categories = [
     'oficina',
     'produccion',
