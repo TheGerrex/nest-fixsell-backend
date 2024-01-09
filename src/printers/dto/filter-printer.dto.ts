@@ -20,7 +20,7 @@ import {
     'Etiquetas',
   ];
 
-  const paperSizes = ["Carta", "Doble Carta", "Tabloide", "Tabloide +", "Legal", "Rollo 4", "Rollo 4.25", "Rollo 8", "Rollo 8.34", "Rollo 13", ]
+  const printSizes = ["carta", "doble carta", "tabloide", "tabloide plus", "legal", "rollo 4", "rollo 4.25", "rollo 8", "rollo 8.34", "rollo 13", ]
   const printVelocity = ["24-30", "30-40", "40-50", "50-60", "60-80", "80-100", "100+"]
   
   export class FilterPrinterDto {
@@ -38,10 +38,12 @@ import {
     @IsIn(brands)
     @IsString()
     @IsOptional()
+    @Transform(({ value }) => value.toLow)
     brand?: string;
   
     @IsString()
     @IsOptional()
+    @Transform(({ value }) => value.toLowerCase())
     model?: string;
   
     @IsOptional()
@@ -51,6 +53,7 @@ import {
     @IsOptional()
     @IsIn(categories)
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     category?: string;
   
     @IsOptional()
@@ -79,14 +82,17 @@ import {
     @IsOptional()
     @IsString({ each: true })
     @IsArray()
+    @Transform(({ value }) => value.toLowerCase())
     tags?: string[];
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     powerConsumption?: string;
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     dimensions?: string;
   
     @IsIn(printVelocity)
@@ -96,19 +102,23 @@ import {
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     maxPrintSizeSimple?: string;
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     maxPrintSize?: string;
 
-    @IsIn(paperSizes)
+    @IsIn(printSizes)
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     printSize?: string;
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     maxPaperWeight?: string;
   
     @IsOptional()
@@ -118,19 +128,23 @@ import {
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     paperSizes?: string;
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     applicableOS?: string;
   
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value.toLowerCase())
     printerFunctions?: string;
   
     @IsOptional()
     @IsString({ each: true })
     @IsArray()
+    @Transform(({ value }) => value.toLowerCase())
     barcode?: string[];
   }
   
