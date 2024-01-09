@@ -11,13 +11,13 @@ import {
     Min,
   } from 'class-validator';
   
-  const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
+  const brands = ['konica Minolta', 'kyocera', 'epson'];
   const categories = [
-    'Oficina',
-    'Produccion',
-    'Inyección de Tinta',
-    'Artes Gráficas',
-    'Etiquetas',
+    'oficina',
+    'produccion',
+    'inyeccion de tinta',
+    'artes graficas',
+    'etiquetas',
   ];
 
   const printSizes = ["carta", "doble carta", "tabloide", "tabloide plus", "legal", "rollo 4", "rollo 4.25", "rollo 8", "rollo 8.34", "rollo 13", ]
@@ -38,7 +38,7 @@ import {
     @IsIn(brands)
     @IsString()
     @IsOptional()
-    @Transform(({ value }) => value.toLow)
+    @Transform(({ value }) => value.toLowerCase())
     brand?: string;
   
     @IsString()

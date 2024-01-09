@@ -8,7 +8,7 @@
             "https://fixsell-images.s3.amazonaws.com/Konica+Minolta/Artes+Graficas/AccurioPrint+C4065/C4080_Front1.png"
         ],
         "price": 32500,
-        "category": "Artes Gráficas",
+        "category": "Artes Graficas",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -35,7 +35,7 @@
             "https://fixsell-images.s3.amazonaws.com/Konica+Minolta/Artes+Graficas/AccurioPress+C4080/AccurioPress-C4080-Side.png"
         ],
         "price": 100.15,
-        "category": "Artes Gráficas",
+        "category": "Artes Graficas",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -61,7 +61,7 @@
             "https://fixsell-images.s3.amazonaws.com/Konica+Minolta/Artes+Graficas/AcurrioPress+C12000/AccurioPress-C12000-Side.png"
         ],
         "price": 100.15,
-        "category": "Artes Gráficas",
+        "category": "Artes Graficas",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -87,7 +87,7 @@
             "https://fixsell-images.s3.amazonaws.com/Konica+Minolta/Artes+Graficas/AccurioPress+C14000/AccurioPress-C14000-Side.png"
         ],
         "price": 100.15,
-        "category": "Artes Gráficas",
+        "category": "Artes Graficas",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -113,7 +113,7 @@
             "https://fixsell-images.s3.amazonaws.com/Konica+Minolta/Artes+Graficas/Bizhub+Press+C1060/bizhub-press-c1060-full.png"
         ],
         "price": 100.15,
-        "category": "Artes Gráficas",
+        "category": "Artes Graficas",
         "color": true,
         "rentable": true,
         "sellable": false,
@@ -140,7 +140,7 @@
             "https://fixsell-images.s3.amazonaws.com/Konica+Minolta/Artes+Graficas/Bizhub+Press+C2060/bizhub-press-c2060-full.png"
         ],
         "price": 100.15,
-        "category": "Artes Gráficas",
+        "category": "Artes Graficas",
         "color": true,
         "rentable": true,
         "sellable": false,
@@ -1439,7 +1439,7 @@
             "https://fixsell-images.s3.amazonaws.com/Epson/Inyeccion+de+Tinta/Workforce+Pro+WF-M5799/Sin+ti%CC%81tulo-4.png"
         ],
         "price": 100.15,
-        "category": "Inyección de Tinta",
+        "category": "Inyeccion de Tinta",
         "color": false,
         "rentable": false,
         "sellable": true,
@@ -1466,7 +1466,7 @@
             "https://fixsell-images.s3.amazonaws.com/Epson/Inyeccion+de+Tinta/Workforce+Pro+WF-6590/Epson-WorkForce-Pro-WF-6590-side.png"
         ],
         "price": 100.15,
-        "category": "Inyección de Tinta",
+        "category": "Inyeccion de Tinta",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -1494,7 +1494,7 @@
             "https://fixsell-images.s3.amazonaws.com/Epson/Inyeccion+de+Tinta/WorkForce+Pro+WF-C869R/Epson-WorkForce-Pro-WF-C869R-side.png"
         ],
         "price": 100.15,
-        "category": "Inyección de Tinta",
+        "category": "Inyeccion de Tinta",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -1522,7 +1522,7 @@
             "https://fixsell-images.s3.amazonaws.com/Epson/Inyeccion+de+Tinta/WorkForce+Enterprise+WF-C17590/WorkForce-Enterprise-WF-C17590-side.png"
         ],
         "price": 100.15,
-        "category": "Inyección de Tinta",
+        "category": "Inyeccion de Tinta",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -1550,7 +1550,7 @@
             "https://fixsell-images.s3.amazonaws.com/Epson/Inyeccion+de+Tinta/WorkForce+Enterprise+WF-C20590/WorkForce-Enterprise-WF-C20590-side.png"
         ],
         "price": 100.15,
-        "category": "Inyección de Tinta",
+        "category": "Inyeccion de Tinta",
         "color": true,
         "rentable": false,
         "sellable": true,
@@ -1597,7 +1597,7 @@
     {
         "brand": "Epson",
         "model": "ColorWorks C6000AU",
-        "description": "La primera impresora diseñada específicamente como un paso más allá en color para impresoras de transferencia térmica en blanco y negro. La impresora de inyección de tinta ColorWorks CW-C6000A puede producir etiquetas a color de 4\", a pedido, a un precio comparable. Diseñada para aplicaciones urgentes, esta confiable impresora rapidamente imprime etiquetas de hasta 5\" por segundo. Con una resolución de hasta 1200 ppp, la CW-C6000A produce imágenes nítidas comparables a las etiquetas preimpresas. Compatible con ZPL II, SAP y más, y diseñada para adaptarse a la administración remota de impresoras, esta versátil impresora ofrece una integración perfecta con su flujo de trabajo existente. Viene con un cortador automático para crear etiquetas de longitud variable y permitir una fácil separación del trabajo.",
+        "description": "La primera impresora diseñada específicamente como un paso más allá en color para impresoras de transferencia térmica en blanco y negro. La impresora de inyeccion de tinta ColorWorks CW-C6000A puede producir etiquetas a color de 4\", a pedido, a un precio comparable. Diseñada para aplicaciones urgentes, esta confiable impresora rapidamente imprime etiquetas de hasta 5\" por segundo. Con una resolución de hasta 1200 ppp, la CW-C6000A produce imágenes nítidas comparables a las etiquetas preimpresas. Compatible con ZPL II, SAP y más, y diseñada para adaptarse a la administración remota de impresoras, esta versátil impresora ofrece una integración perfecta con su flujo de trabajo existente. Viene con un cortador automático para crear etiquetas de longitud variable y permitir una fácil separación del trabajo.",
         "datasheet_url": "https://fixsell-datasheets.s3.amazonaws.com/Datasheets/Epson/Etiquetas/ColorWorks+C6000AU/Epson_Colorworks_C6000_Datasheet.pdf",
         "img_url": [
             "https://fixsell-images.s3.amazonaws.com/Epson/Etiquetas/ColorWorks+C6000AU/Colorworks-C6000AU-front.png",
@@ -1623,7 +1623,7 @@
     {
         "brand": "Epson",
         "model": "ColorWorks C6500AU",
-        "description": "Las nuevas impresoras de etiquetas de la serie Epson ColorWorks fueron diseñadas para ofrecer la solución ideal para el etiquetado a color y monocromático. Con su diseño compacto, panel de control fácil de navegar y su amplia variedad de impresión en diferentes tamaños de etiquetas, es una solución inteligente. Estas impresoras digitales ofrecen impresión de inyección de tinta con sus cuatro colores, ofreciendo nuevas oportunidades para empresas que gestionan múltiples códigos de parte y requieren etiquetas bajo demanda en muy poco tiempo. La nueva serie de Epson ColorWorks CW-C6500 amplía la gama de Epson para satisfacer las necesidades de los clientes que demandan confiabilidad y productividad en los diversos sectores de la industria.",
+        "description": "Las nuevas impresoras de etiquetas de la serie Epson ColorWorks fueron diseñadas para ofrecer la solución ideal para el etiquetado a color y monocromático. Con su diseño compacto, panel de control fácil de navegar y su amplia variedad de impresión en diferentes tamaños de etiquetas, es una solución inteligente. Estas impresoras digitales ofrecen impresión de inyeccion de tinta con sus cuatro colores, ofreciendo nuevas oportunidades para empresas que gestionan múltiples códigos de parte y requieren etiquetas bajo demanda en muy poco tiempo. La nueva serie de Epson ColorWorks CW-C6500 amplía la gama de Epson para satisfacer las necesidades de los clientes que demandan confiabilidad y productividad en los diversos sectores de la industria.",
         "datasheet_url": "https://fixsell-datasheets.s3.amazonaws.com/Datasheets/Epson/Etiquetas/ColorWorks+C6500AU/Epson_Colorworks_C6500_Datasheet.pdf",
         "img_url": [
             "https://fixsell-images.s3.amazonaws.com/Epson/Etiquetas/ColorWorks+C6500AU/Colorworks-C6500AU-front.png",
@@ -1675,7 +1675,7 @@
     {
         "brand": "Epson",
         "model": "ColorWorks C831",
-        "description": "La Epson ColorWorks C831 es una impresora de etiquetas de inyección de tinta Micro Piezo ideal para tambores o depósitos de formato grande y etiquetas para productos químicos GHS.",
+        "description": "La Epson ColorWorks C831 es una impresora de etiquetas de inyeccion de tinta Micro Piezo ideal para tambores o depósitos de formato grande y etiquetas para productos químicos GHS.",
         "datasheet_url": "https://fixsell-datasheets.s3.amazonaws.com/Datasheets/Epson/Etiquetas/ColorWorks+C831/Epson_Colorworks_C831_Datasheet.pdf",
         "img_url": [
             "https://fixsell-images.s3.amazonaws.com/Epson/Etiquetas/ColorWorks+C831/Colorworks-C831-front.png",
