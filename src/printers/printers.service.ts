@@ -11,7 +11,7 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { FilterPrinterDto } from './dto/filter-printer.dto';
 import { Printer } from './entities/printer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 @Injectable()
 export class PrintersService {
@@ -67,7 +67,7 @@ export class PrintersService {
     });
 
     if (brand) {
-      query = query.andWhere('LOWER(printer.brand) = :brand', { brand });
+      query = query.andWhere('LOWER(printer.brand) IN (:...brand)', { brand });
     }
     
     if (model) {
@@ -75,7 +75,11 @@ export class PrintersService {
     }
     
     if (category) {
-      query = query.andWhere('LOWER(printer.category) = :category', { category });
+      query = query.andWhere('LOWER(printer.category) IN (:...category)', { category });
+    }
+    
+    if (printSize) {
+      query = query.andWhere('LOWER(printer.printSize) IN (:...printSize)', { printSize });
     }
     
     if (tags) {
@@ -96,10 +100,6 @@ export class PrintersService {
     
     if (maxPrintSize) {
       query = query.andWhere('LOWER(printer.maxPrintSize) = :maxPrintSize', { maxPrintSize });
-    }
-    
-    if (printSize) {
-      query = query.andWhere('LOWER(printer.printSize) = :printSize', { printSize });
     }
     
     if (maxPaperWeight) {
@@ -123,30 +123,48 @@ export class PrintersService {
     }
 
     if (printVelocity) {
-      switch (printVelocity) {
-        case '24-30':
-          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 24, max: 30 });
-          break;
-        case '30-40':
-          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 30, max: 40 });
-          break;
-        case '40-50':
-          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 40, max: 50 });
-          break;
-        case '50-60':
-          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 50, max: 60 });
-          break;
-        case '60-80':
-          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 60, max: 80 });
-          break;
-        case '80-100':
-          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 80, max: 100 });
-          break;
-        case '100+':
-          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min', { min: 100 });
-          break;
-      }
+      const velocityConditions = printVelocity.map(velocity => {
+        const [min, max] = velocity.split('-').map(Number);
+        if (max) {
+          return `CAST(printer.printVelocity AS INTEGER) >= ${min} AND CAST(printer.printVelocity AS INTEGER) <= ${max}`;
+        } else {
+          return `CAST(printer.printVelocity AS INTEGER) >= ${min}`;
+        }
+      });
+      query = query.andWhere(new Brackets(qb => {
+        qb.where(velocityConditions.join(' OR '));
+      }));
     }
+    
+    // if (printVelocity) {
+    //   query = query.andWhere('LOWER(printer.printVelocity) IN (:...printVelocity)', { printVelocity });
+    // }
+
+    // if (printVelocity) {
+    //   switch (printVelocity) {
+    //     case '24-30':
+    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 24, max: 30 });
+    //       break;
+    //     case '30-40':
+    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 30, max: 40 });
+    //       break;
+    //     case '40-50':
+    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 40, max: 50 });
+    //       break;
+    //     case '50-60':
+    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 50, max: 60 });
+    //       break;
+    //     case '60-80':
+    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 60, max: 80 });
+    //       break;
+    //     case '80-100':
+    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 80, max: 100 });
+    //       break;
+    //     case '100+':
+    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min', { min: 100 });
+    //       break;
+    //   }
+    // }
   
     if (limit) {
       query = query.take(limit);

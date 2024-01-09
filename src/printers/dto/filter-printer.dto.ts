@@ -35,11 +35,11 @@ import {
     @Type(() => Number) //enableImplicitConversions: true
     offset?: number;
 
-    @IsIn(brands)
-    @IsString()
+    @IsIn(brands, { each: true })
+    @IsString({ each: true })
     @IsOptional()
-    @Transform(({ value }) => value.toLowerCase())
-    brand?: string;
+    @Transform(({ value }) => typeof value === 'string' ? value.toLowerCase().split(',') : value)
+    brand?: string[];
   
     @IsString()
     @IsOptional()
@@ -50,11 +50,11 @@ import {
     @IsDecimal()
     price?: number;
   
+    @IsIn(categories, { each: true })
+    @IsString({ each: true })
     @IsOptional()
-    @IsIn(categories)
-    @IsString()
-    @Transform(({ value }) => value.toLowerCase())
-    category?: string;
+    @Transform(({ value }) => typeof value === 'string' ? value.toLowerCase().split(',') : value)
+    category?: string[];
   
     @IsOptional()
     @IsBoolean()
@@ -95,10 +95,11 @@ import {
     @Transform(({ value }) => value.toLowerCase())
     dimensions?: string;
   
-    @IsIn(printVelocity)
+    // @IsIn(printVelocity, { each: true })
+    @IsString({ each: true })
     @IsOptional()
-    @IsString()
-    printVelocity?: string;
+    @Transform(({ value }) => typeof value === 'string' ? value.toLowerCase().split(',') : value)
+    printVelocity?: string[];
   
     @IsOptional()
     @IsString()
@@ -110,11 +111,11 @@ import {
     @Transform(({ value }) => value.toLowerCase())
     maxPrintSize?: string;
 
-    @IsIn(printSizes)
+    @IsIn(printSizes, { each: true })
+    @IsString({ each: true })
     @IsOptional()
-    @IsString()
-    @Transform(({ value }) => value.toLowerCase())
-    printSize?: string;
+    @Transform(({ value }) => typeof value === 'string' ? value.toLowerCase().split(',') : value)
+    printSize?: string[];
   
     @IsOptional()
     @IsString()
