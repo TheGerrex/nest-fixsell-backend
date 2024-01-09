@@ -4,13 +4,15 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { isUUID } from 'class-validator';
 import { CreatePrinterDto } from './dto/create-printer.dto';
 import { UpdatePrinterDto } from './dto/update-printer.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { FilterPrinterDto } from './dto/filter-printer.dto';
 import { Printer } from './entities/printer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { isUUID } from 'class-validator';
+
 @Injectable()
 export class PrintersService {
   constructor(
@@ -33,19 +35,69 @@ export class PrintersService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<Printer[]> {
-    const { limit, offset = 0 } = paginationDto;
-    if (limit) {
-      return await this.printersRepository.find({
-        take: limit,
-        skip: offset,
-      });
-    } else {
-      return await this.printersRepository.find({
-        skip: offset,
-      });
+  async findAll(filtersPrinterDto: FilterPrinterDto = {}): Promise<Printer[]> {
+    const { limit, offset = 0, printVelocity, ...filterProps } = filtersPrinterDto;
+    
+    let query = this.printersRepository.createQueryBuilder('printer');
+  
+    Object.keys(filterProps).forEach((key) => {
+      console.log(filterProps);
+      if (filterProps[key] !== undefined) {
+        const value = filterProps[key] === 'true' ? true : filterProps[key] === 'false' ? false : filterProps[key];
+        query = query.andWhere(`printer.${key} = :${key}`, { [key]: value });
+      }
+    });
+
+    if (printVelocity) {
+      switch (printVelocity) {
+        case '24-30':
+          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 24, max: 30 });
+          break;
+        case '30-40':
+          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 30, max: 40 });
+          break;
+        case '40-50':
+          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 40, max: 50 });
+          break;
+        case '50-60':
+          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 50, max: 60 });
+          break;
+        case '60-80':
+          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 60, max: 80 });
+          break;
+        case '80-100':
+          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 80, max: 100 });
+          break;
+        case '100+':
+          query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min', { min: 100 });
+          break;
+      }
     }
+  
+    if (limit) {
+      query = query.take(limit);
+    }
+  
+    query = query.skip(offset);
+    
+    return await query.getMany();
   }
+
+  // async findAll(paginationDto: PaginationDto, searchDto: FindConditions<Printer>): Promise<Printer[]> {
+  //   const { limit, offset = 0 } = paginationDto;
+  //   if (limit) {
+  //     return await this.printersRepository.find({
+  //       where: searchDto,
+  //       take: limit,
+  //       skip: offset,
+  //     });
+  //   } else {
+  //     return await this.printersRepository.find({
+  //       where: searchDto,
+  //       skip: offset,
+  //     });
+  //   }
+  // }
 
   // async findDealPrinters(): Promise<Printer[]> {
   //   return this.printerModel.find({ isDeal: true }).exec();

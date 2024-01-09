@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   Query,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { PrintersService } from './printers.service';
 import { CreatePrinterDto } from './dto/create-printer.dto';
 import { UpdatePrinterDto } from './dto/update-printer.dto';
 import { Printer } from './entities/printer.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { FilterPrinterDto } from 'src/printers/dto/filter-printer.dto';
 
 @Controller('printers')
 export class PrintersController {
@@ -38,9 +40,8 @@ export class PrintersController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    console.log('GET /printers - calling findAll method');
-    return this.printersService.findAll(paginationDto);
+  findAll(@Query() filterPrinterDto: FilterPrinterDto) {
+    return this.printersService.findAll(filterPrinterDto);
   }
 
   @Get(':term')

@@ -1663,7 +1663,7 @@
         "printerFunctions": "Impresión",
         "powerConsumption": "110-240 V; 30 W",
         "dimensions": "30.9 x 28.1 x 26.1 cm",
-        "printVelocity": 101.6,
+        "printVelocity": 101,
         "maxPrintSize": "4.25\"",
         "maxPrintSizeSimple": "4.25\"",
         "printSize": "Rollo 4.25\"",
