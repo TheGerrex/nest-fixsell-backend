@@ -49,22 +49,26 @@ export class DealsService {
   async update(id: number, updateDealDto: UpdateDealDto) {
     const printer = await this.printerRepository.findOne({
       where: { id: updateDealDto.printer },
+      relations: ['deal'],
     });
-
+  
     if (!printer) {
       throw new Error('Printer not found');
     }
-
+  
+    if (printer.deal && printer.deal.id !== id) {
+      throw new Error('Printer already has a deal');
+    }
+  
     const deal = await this.dealRepository.findOne({ where: { id } });
-
+  
     if (!deal) {
       throw new Error(`Deal with ID ${id} not found`);
     }
-
+  
     // Update the deal
-    deal.printer = printer;
     Object.assign(deal, updateDealDto);
-
+  
     return await this.dealRepository.save(deal);
   }
 
