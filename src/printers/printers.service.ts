@@ -56,7 +56,8 @@ export class PrintersService {
       barcode, 
       ...filterProps } = filtersPrinterDto;
     
-    let query = this.printersRepository.createQueryBuilder('printer');
+    let query = this.printersRepository.createQueryBuilder('printer')
+    .leftJoinAndSelect('printer.deal', 'deal');
   
     Object.keys(filterProps).forEach((key) => {
       console.log(filterProps);
@@ -135,37 +136,7 @@ export class PrintersService {
         qb.where(velocityConditions.join(' OR '));
       }));
     }
-    
-    // if (printVelocity) {
-    //   query = query.andWhere('LOWER(printer.printVelocity) IN (:...printVelocity)', { printVelocity });
-    // }
 
-    // if (printVelocity) {
-    //   switch (printVelocity) {
-    //     case '24-30':
-    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 24, max: 30 });
-    //       break;
-    //     case '30-40':
-    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 30, max: 40 });
-    //       break;
-    //     case '40-50':
-    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 40, max: 50 });
-    //       break;
-    //     case '50-60':
-    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 50, max: 60 });
-    //       break;
-    //     case '60-80':
-    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 60, max: 80 });
-    //       break;
-    //     case '80-100':
-    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min AND CAST(printer.printVelocity AS INTEGER) <= :max', { min: 80, max: 100 });
-    //       break;
-    //     case '100+':
-    //       query = query.andWhere('CAST(printer.printVelocity AS INTEGER) >= :min', { min: 100 });
-    //       break;
-    //   }
-    // }
-  
     if (limit) {
       query = query.take(limit);
     }
@@ -175,26 +146,6 @@ export class PrintersService {
     return await query.getMany();
   }
 
-  // async findAll(paginationDto: PaginationDto, searchDto: FindConditions<Printer>): Promise<Printer[]> {
-  //   const { limit, offset = 0 } = paginationDto;
-  //   if (limit) {
-  //     return await this.printersRepository.find({
-  //       where: searchDto,
-  //       take: limit,
-  //       skip: offset,
-  //     });
-  //   } else {
-  //     return await this.printersRepository.find({
-  //       where: searchDto,
-  //       skip: offset,
-  //     });
-  //   }
-  // }
-
-  // async findDealPrinters(): Promise<Printer[]> {
-  //   return this.printerModel.find({ isDeal: true }).exec();
-  // }
-
   async findOne(term: string): Promise<Printer> {
     let printer: Printer;
 
@@ -203,12 +154,12 @@ export class PrintersService {
         where: { id: term as any },
       });
     } else {
-      const queryBuilder = this.printersRepository.createQueryBuilder();
-      printer = await queryBuilder
-        .where(`UPPER(model) = :model`, {
-          model: term.toUpperCase(),
-        })
-        .getOne();
+      printer = await this.printersRepository.createQueryBuilder('printer')
+      .leftJoinAndSelect('printer.deal', 'deal')
+      .where(`UPPER(printer.model) = :model`, {
+        model: term.toUpperCase(),
+      })
+      .getOne();
     }
 
     if (!printer) {
