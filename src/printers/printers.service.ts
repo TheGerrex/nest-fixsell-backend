@@ -36,11 +36,11 @@ export class PrintersService {
   }
 
   async findAll(filtersPrinterDto: FilterPrinterDto = {}): Promise<Printer[]> {
-    const { 
-      limit, 
-      offset = 0, 
-      printVelocity, 
-      brand, 
+    const {
+      limit,
+      offset = 0,
+      printVelocity,
+      brand,
       model,
       category,
       tags,
@@ -53,16 +53,23 @@ export class PrintersService {
       paperSizes,
       applicableOS,
       printerFunctions,
-      barcode, 
-      ...filterProps } = filtersPrinterDto;
-    
-    let query = this.printersRepository.createQueryBuilder('printer')
-    .leftJoinAndSelect('printer.deal', 'deal');
-  
+      barcode,
+      ...filterProps
+    } = filtersPrinterDto;
+
+    let query = this.printersRepository
+      .createQueryBuilder('printer')
+      .leftJoinAndSelect('printer.deal', 'deal');
+
     Object.keys(filterProps).forEach((key) => {
       console.log(filterProps);
       if (filterProps[key] !== undefined) {
-        const value = filterProps[key] === 'true' ? true : filterProps[key] === 'false' ? false : filterProps[key];
+        const value =
+          filterProps[key] === 'true'
+            ? true
+            : filterProps[key] === 'false'
+            ? false
+            : filterProps[key];
         query = query.andWhere(`printer.${key} = :${key}`, { [key]: value });
       }
     });
@@ -70,61 +77,85 @@ export class PrintersService {
     if (brand) {
       query = query.andWhere('LOWER(printer.brand) IN (:...brand)', { brand });
     }
-    
+
     if (model) {
       query = query.andWhere('LOWER(printer.model) = :model', { model });
     }
-    
+
     if (category) {
-      query = query.andWhere('LOWER(printer.category) IN (:...category)', { category });
+      query = query.andWhere('LOWER(printer.category) IN (:...category)', {
+        category,
+      });
     }
-    
+
     if (printSize) {
-      query = query.andWhere('LOWER(printer.printSize) IN (:...printSize)', { printSize });
+      query = query.andWhere('LOWER(printer.printSize) IN (:...printSize)', {
+        printSize,
+      });
     }
-    
+
     if (tags) {
       query = query.andWhere('LOWER(printer.tags) = :tags', { tags });
     }
-    
+
     if (powerConsumption) {
-      query = query.andWhere('LOWER(printer.powerConsumption) = :powerConsumption', { powerConsumption });
+      query = query.andWhere(
+        'LOWER(printer.powerConsumption) = :powerConsumption',
+        { powerConsumption },
+      );
     }
-    
+
     if (dimensions) {
-      query = query.andWhere('LOWER(printer.dimensions) = :dimensions', { dimensions });
+      query = query.andWhere('LOWER(printer.dimensions) = :dimensions', {
+        dimensions,
+      });
     }
-    
+
     if (maxPrintSizeSimple) {
-      query = query.andWhere('LOWER(printer.maxPrintSizeSimple) = :maxPrintSizeSimple', { maxPrintSizeSimple });
+      query = query.andWhere(
+        'LOWER(printer.maxPrintSizeSimple) = :maxPrintSizeSimple',
+        { maxPrintSizeSimple },
+      );
     }
-    
+
     if (maxPrintSize) {
-      query = query.andWhere('LOWER(printer.maxPrintSize) = :maxPrintSize', { maxPrintSize });
+      query = query.andWhere('LOWER(printer.maxPrintSize) = :maxPrintSize', {
+        maxPrintSize,
+      });
     }
-    
+
     if (maxPaperWeight) {
-      query = query.andWhere('LOWER(printer.maxPaperWeight) = :maxPaperWeight', { maxPaperWeight });
+      query = query.andWhere(
+        'LOWER(printer.maxPaperWeight) = :maxPaperWeight',
+        { maxPaperWeight },
+      );
     }
-    
+
     if (paperSizes) {
-      query = query.andWhere('LOWER(printer.paperSizes) = :paperSizes', { paperSizes });
+      query = query.andWhere('LOWER(printer.paperSizes) = :paperSizes', {
+        paperSizes,
+      });
     }
-    
+
     if (applicableOS) {
-      query = query.andWhere('LOWER(printer.applicableOS) = :applicableOS', { applicableOS });
+      query = query.andWhere('LOWER(printer.applicableOS) = :applicableOS', {
+        applicableOS,
+      });
     }
-    
+
     if (printerFunctions) {
-      query = query.andWhere('LOWER(printer.printerFunctions) = :printerFunctions', { printerFunctions });
+      query = query.andWhere(
+        'LOWER(printer.printerFunctions) = :printerFunctions',
+        { printerFunctions },
+      );
     }
-    
+
     if (barcode) {
       query = query.andWhere('LOWER(printer.barcode) = :barcode', { barcode });
     }
 
     if (printVelocity) {
-      const velocityConditions = printVelocity.map(velocity => {
+      const velocityConditions = printVelocity.map((velocity) => {
         const [min, max] = velocity.split('-').map(Number);
         if (max) {
           return `CAST(printer.printVelocity AS INTEGER) >= ${min} AND CAST(printer.printVelocity AS INTEGER) <= ${max}`;
@@ -132,17 +163,19 @@ export class PrintersService {
           return `CAST(printer.printVelocity AS INTEGER) >= ${min}`;
         }
       });
-      query = query.andWhere(new Brackets(qb => {
-        qb.where(velocityConditions.join(' OR '));
-      }));
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where(velocityConditions.join(' OR '));
+        }),
+      );
     }
 
     if (limit) {
       query = query.take(limit);
     }
-  
+
     query = query.skip(offset);
-    
+
     return await query.getMany();
   }
 
@@ -154,12 +187,13 @@ export class PrintersService {
         where: { id: term as any },
       });
     } else {
-      printer = await this.printersRepository.createQueryBuilder('printer')
-      .leftJoinAndSelect('printer.deal', 'deal')
-      .where(`UPPER(printer.model) = :model`, {
-        model: term.toUpperCase(),
-      })
-      .getOne();
+      printer = await this.printersRepository
+        .createQueryBuilder('printer')
+        .leftJoinAndSelect('printer.deal', 'deal')
+        .where(`UPPER(printer.model) = :model`, {
+          model: term.toUpperCase(),
+        })
+        .getOne();
     }
 
     if (!printer) {

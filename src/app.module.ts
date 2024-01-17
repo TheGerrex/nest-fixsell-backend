@@ -1,4 +1,3 @@
-
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -47,7 +46,9 @@ import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (config: ConfigService): Promise<TypeOrmModuleOptions> => {
+      useFactory: async (
+        config: ConfigService,
+      ): Promise<TypeOrmModuleOptions> => {
         const isProduction = config.get<string>('NODE_ENV') === 'production';
 
         const baseConfig = {
@@ -134,7 +135,6 @@ import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module
 })
 export class AppModule {
   constructor(private config: ConfigService) {
-    console.log(config.get<string>('NODE_ENV'))
+    console.log(config.get<string>('NODE_ENV'));
   }
 }
-
