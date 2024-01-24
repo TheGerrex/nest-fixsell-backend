@@ -1,65 +1,87 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { IsNumber } from "class-validator";
-import { Decimal128, Number } from 'mongoose';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
+import { Deal } from 'src/deals/entities/deal.entity';
 
-
-@Schema()
+@Entity()
 export class Printer {
-    @Prop({required: true})
-    brand:            string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Prop({unique: true, required: true})
-    model:            string;
-    
-    @Prop({required: true})
-    img_url:            [string];
+  @Column({ nullable: false })
+  brand: string;
 
-    @Prop({required: true})
-    description:      string;
-   
-    @Prop({ type: IsNumber })
-    price:      Number;
+  @Column({ unique: true, nullable: false })
+  model: string;
 
-    @Prop({required: true})
-    category:      string;
+  @Column({ nullable: true })
+  datasheet_url: string;
 
-    @Prop({required: true})
-    color:            boolean;
+  @Column('text', { array: true, nullable: true })
+  img_url: string[];
 
-    @Prop({required: true})
-    rentable:         boolean;
+  @Column({ nullable: true })
+  description: string;
 
-    @Prop({required: true})
-    powerConsumption: string;
+  @Column('float', { default: 100, nullable: true })
+  price: number;
 
-    @Prop({required: true})
-    dimensions:       string;
+  @Column({ nullable: true })
+  category: string;
 
-    @Prop({required: true})
-    printVelocity:    string;
+  @Column({ nullable: true })
+  color: boolean;
 
-    @Prop()
-    maxPrintSizeSimple:     string;
-    
-    @Prop({required: true})
-    maxPrintSize:     string;
+  @Column({ nullable: true })
+  rentable: boolean;
 
-    @Prop({required: true})
-    maxPaperWeight:   string;
+  @Column({ nullable: true })
+  sellable: boolean;
 
-    @Prop({required: true})
-    duplexUnit:       boolean;
+  @Column('text', { array: true, default: [] })
+  tags: string[];
 
-    @Prop({required: true})
-    paperSizes:       string;
+  @Column({ nullable: true })
+  powerConsumption: string;
 
-    @Prop({required: true})
-    applicableOS:     string;
+  @Column({ nullable: true })
+  dimensions: string;
 
+  @Column({ nullable: true })
+  printVelocity: string;
+
+  @Column({ nullable: true })
+  maxPrintSizeSimple: string;
+
+  @Column({ nullable: true })
+  maxPrintSize: string;
+
+  @Column({ nullable: true })
+  printSize: string;
+
+  @Column({ nullable: true })
+  maxPaperWeight: string;
+
+  @Column({ nullable: true })
+  duplexUnit: boolean;
+
+  @Column({ nullable: true })
+  paperSizes: string;
+
+  @Column({ nullable: true })
+  applicableOS: string;
+
+  @Column({ nullable: true, default: 'Impresión, copiado y escaneo' })
+  printerFunctions: string;
+
+  @Column('text', { array: true, nullable: true })
+  barcode: string[];
+
+  @OneToOne(() => Deal, (deal) => deal.printer, { nullable: true, eager: true })
+  @JoinColumn()
+  deal: Deal;
 }
-
-export const PrinterSchema = SchemaFactory.createForClass(Printer)
-
-
-
-

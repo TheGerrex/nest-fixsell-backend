@@ -1,65 +1,115 @@
-import { Transform } from "class-transformer";
-import { IsBoolean, IsDecimal, IsIn, IsString } from "class-validator";
-import { Decimal128 } from "mongoose";
+import {
+  IsArray,
+  IsBoolean,
+  IsDecimal,
+  IsIn,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
-const categories = ['Oficina', 'Produccion', "Inyección de Tinta",  'Artes Gráficas', 'Etiquetas'];
+const categories = [
+  'Oficina',
+  'Produccion',
+  'Inyección de Tinta',
+  'Artes Gráficas',
+  'Etiquetas',
+];
 
 export class CreatePrinterDto {
-    
-    @IsIn(brands)
-    @IsString()
-    brand:            string;
+  @IsIn(brands)
+  @IsString()
+  brand: string;
 
-    @IsString()
-    model:            string;
+  @IsString()
+  model: string;
 
-    @IsString()
-    img_url:            [string];
+  @IsOptional()
+  @IsUrl()
+  datasheet_url?: string;
 
-    @IsString()
-    description:      string;
+  @IsOptional()
+  @IsString({ each: true })
+  @IsArray()
+  img_url?: string[];
 
-    @IsDecimal()
-    price:      Decimal128;
-    
-    @IsIn(categories)
-    @IsString()
-    category:      string;
+  @IsOptional()
+  @IsString()
+  description?: string;
 
-    @IsBoolean()
-    @Transform(({ value} ) => value === 'true')
-    color:            boolean;
+  @IsOptional()
+  @IsDecimal()
+  price?: number;
 
-    @IsBoolean()
-    @Transform(({ value} ) => value === 'true')
-    rentable:         boolean;
+  @IsOptional()
+  @IsIn(categories)
+  @IsString()
+  category?: string;
 
-    @IsString()
-    powerConsumption: string;
+  @IsOptional()
+  @IsBoolean()
+  color?: boolean;
 
-    @IsString()
-    dimensions:       string;
+  @IsOptional()
+  @IsBoolean()
+  rentable?: boolean;
 
-    @IsString()
-    printVelocity:    string;
+  @IsOptional()
+  @IsBoolean()
+  sellable?: boolean;
 
-    @IsString()
-    maxPrintSizeSimple:     string;
-    
-    @IsString()
-    maxPrintSize:     string;
+  @IsOptional()
+  @IsString({ each: true })
+  @IsArray()
+  tags?: string[];
 
-    @IsString()
-    maxPaperWeight:   string;
+  @IsOptional()
+  @IsString()
+  powerConsumption?: string;
 
-    @IsBoolean()
-    @Transform(({ value} ) => value === 'true')
-    duplexUnit:       boolean;
+  @IsOptional()
+  @IsString()
+  dimensions?: string;
 
-    @IsString()
-    paperSizes:       string;
+  @IsOptional()
+  @IsString()
+  printVelocity?: string;
 
-    @IsString()
-    applicableOS:     string;
+  @IsOptional()
+  @IsString()
+  maxPrintSizeSimple?: string;
+
+  @IsOptional()
+  @IsString()
+  maxPrintSize?: string;
+
+  @IsOptional()
+  @IsString()
+  printSize?: string;
+
+  @IsOptional()
+  @IsString()
+  maxPaperWeight?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  duplexUnit?: boolean;
+
+  @IsOptional()
+  @IsString()
+  paperSizes?: string;
+
+  @IsOptional()
+  @IsString()
+  applicableOS?: string;
+
+  @IsOptional()
+  @IsString()
+  printerFunctions?: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  @IsArray()
+  barcode?: string[];
 }

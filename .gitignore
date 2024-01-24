@@ -3,7 +3,9 @@
 /node_modules
 
 mongo/
-.env
+postgres/
+**/*.env
+!config/env/development.env
 
 # Logs
 logs
