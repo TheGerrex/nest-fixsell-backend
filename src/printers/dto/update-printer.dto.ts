@@ -4,7 +4,7 @@ import { IsBoolean, IsIn, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 const brands = ['Konica Minolta', 'Kyocera', 'Epson']
-const categories = ['Oficina', 'Produccion', "Inyección de Tinta",  'Artes Gráficas', 'Etiquetas']
+const categories = ['Oficina', 'Produccion', "Inyeccion de Tinta",  'Artes Graficas', 'Etiquetas']
 
 export class UpdatePrinterDto extends PartialType(CreatePrinterDto) {
 
