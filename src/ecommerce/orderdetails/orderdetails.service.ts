@@ -39,7 +39,6 @@ export class OrderdetailsService {
       console.error(new Error('Consumible not found'));
       throw new NotFoundException('Consumible not found');
     }
-
     orderDetail.consumible = consumible; // assuming you have a consumible property in OrderDetail
 
     return this.orderDetailRepository.save(orderDetail);

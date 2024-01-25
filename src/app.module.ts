@@ -19,7 +19,7 @@ import { CommonModule } from './common/common.module';
 import { ConsumiblesModule } from './ecommerce/consumibles/consumibles.module';
 import { OrdersModule } from './ecommerce/orders/orders.module';
 import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module';
-
+import { FileUploadModule } from './file-upload/file-upload.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -131,6 +131,7 @@ import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module
     ConsumiblesModule,
     OrdersModule,
     OrderdetailsModule,
+    FileUploadModule,
   ],
 })
 export class AppModule {
