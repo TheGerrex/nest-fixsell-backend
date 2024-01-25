@@ -1,6 +1,6 @@
 import { IsString, IsNumber, IsArray } from 'class-validator';
 
-export class CreateConsumableDto {
+export class CreateConsumibleDto {
   @IsString()
   name: string;
 

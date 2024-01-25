@@ -2,7 +2,7 @@ import { OrderDetail } from 'src/ecommerce/orderdetails/entities/orderdetail.ent
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
-export class Consumable {
+export class Consumible {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -36,6 +36,6 @@ export class Consumable {
   @Column()
   location: string;
 
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.consumable)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.consumible)
   orderDetails: OrderDetail[];
 }

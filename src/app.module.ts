@@ -16,7 +16,7 @@ import { EnvConfiguration } from './config/app.config';
 import { JoiValidationSchema } from './config/joi.validation';
 import { any } from 'joi';
 import { CommonModule } from './common/common.module';
-import { ConsumablesModule } from './ecommerce/consumables/consumables.module';
+import { ConsumiblesModule } from './ecommerce/consumibles/consumibles.module';
 import { OrdersModule } from './ecommerce/orders/orders.module';
 import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module';
 
@@ -128,7 +128,7 @@ import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module
     DealsModule,
     SeedModule,
     CommonModule,
-    ConsumablesModule,
+    ConsumiblesModule,
     OrdersModule,
     OrderdetailsModule,
   ],
