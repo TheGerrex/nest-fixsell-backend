@@ -75,7 +75,7 @@ export class Printer {
   @Column({ nullable: true })
   applicableOS: string;
 
-  @Column({ nullable: true, default: "Impresión, copiado y escaneo" })
+  @Column({ nullable: true, default: 'Impresión, copiado y escaneo' })
   printerFunctions: string;
 
   @Column('text', { array: true, nullable: true })

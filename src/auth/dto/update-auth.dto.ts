@@ -40,7 +40,7 @@ export class UpdateAuthDto extends PartialType(CreateUserDto) {
 
   @IsOptional()
   @IsBoolean()
-  isActive: boolean = true;
+  isActive = true;
 
   @IsOptional()
   @IsString({ each: true })

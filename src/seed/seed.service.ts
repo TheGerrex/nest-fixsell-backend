@@ -6,10 +6,9 @@ import * as fs from 'fs';
 
 @Injectable()
 export class SeedService {
-
   constructor(
     @InjectRepository(Printer)
-    private readonly printerRepository: Repository<Printer>
+    private readonly printerRepository: Repository<Printer>,
   ) {}
 
   async executeSeed() {
@@ -17,7 +16,10 @@ export class SeedService {
     await this.printerRepository.delete({});
 
     // Read data from the JSON file
-    const jsonString = fs.readFileSync("src/seed/fixsell_db.printers.json", 'utf-8');
+    const jsonString = fs.readFileSync(
+      'src/seed/fixsell_db.printers.json',
+      'utf-8',
+    );
     const printersData = JSON.parse(jsonString);
 
     // Loop through the data and create PrinterEntity instances
@@ -26,6 +28,6 @@ export class SeedService {
       await this.printerRepository.save(printer);
     }
 
-    return "Seed executed."
+    return 'Seed executed.';
   }
 }

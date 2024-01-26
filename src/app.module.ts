@@ -1,4 +1,3 @@
-
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -17,10 +16,10 @@ import { EnvConfiguration } from './config/app.config';
 import { JoiValidationSchema } from './config/joi.validation';
 import { any } from 'joi';
 import { CommonModule } from './common/common.module';
-import { ConsumablesModule } from './ecommerce/consumables/consumables.module';
+import { ConsumiblesModule } from './ecommerce/consumibles/consumibles.module';
 import { OrdersModule } from './ecommerce/orders/orders.module';
 import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module';
-
+import { FileUploadModule } from './file-upload/file-upload.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -47,7 +46,9 @@ import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (config: ConfigService): Promise<TypeOrmModuleOptions> => {
+      useFactory: async (
+        config: ConfigService,
+      ): Promise<TypeOrmModuleOptions> => {
         const isProduction = config.get<string>('NODE_ENV') === 'production';
 
         const baseConfig = {
@@ -127,14 +128,14 @@ import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module
     DealsModule,
     SeedModule,
     CommonModule,
-    ConsumablesModule,
+    ConsumiblesModule,
     OrdersModule,
     OrderdetailsModule,
+    FileUploadModule,
   ],
 })
 export class AppModule {
   constructor(private config: ConfigService) {
-    console.log(config.get<string>('NODE_ENV'))
+    console.log(config.get<string>('NODE_ENV'));
   }
 }
-

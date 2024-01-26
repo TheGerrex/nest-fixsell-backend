@@ -13,8 +13,8 @@ const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
 const categories = [
   'Oficina',
   'Produccion',
-  'Inyección de Tinta',
-  'Artes Gráficas',
+  'Inyeccion de Tinta',
+  'Artes Graficas',
   'Etiquetas',
 ];
 

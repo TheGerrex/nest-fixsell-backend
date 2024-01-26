@@ -5,7 +5,7 @@ import { CreateOrderdetailDto } from './dto/create-orderdetail.dto';
 import { UpdateOrderdetailDto } from './dto/update-orderdetail.dto';
 import { OrderDetail } from './entities/orderdetail.entity';
 import { Order } from '../orders/entities/order.entity';
-import { Consumable } from '../consumables/entities/consumable.entity';
+import { Consumible } from '../consumibles/entities/consumible.entity';
 import { NotFoundException } from '@nestjs/common';
 @Injectable()
 export class OrderdetailsService {
@@ -14,8 +14,8 @@ export class OrderdetailsService {
     private orderDetailRepository: Repository<OrderDetail>,
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
-    @InjectRepository(Consumable)
-    private consumableRepository: Repository<Consumable>,
+    @InjectRepository(Consumible)
+    private consumibleRepository: Repository<Consumible>,
   ) {}
 
   async create(createOrderdetailDto: CreateOrderdetailDto) {
@@ -31,16 +31,15 @@ export class OrderdetailsService {
     const orderDetail = this.orderDetailRepository.create(createOrderdetailDto);
     orderDetail.order = order;
 
-    //consumable data
-    const consumable = await this.consumableRepository.findOne({
+    //consumible data
+    const consumible = await this.consumibleRepository.findOne({
       where: { id: createOrderdetailDto.productId },
     });
-    if (!consumable) {
-      console.error(new Error('Consumable not found'));
-      throw new NotFoundException('Consumable not found');
+    if (!consumible) {
+      console.error(new Error('Consumible not found'));
+      throw new NotFoundException('Consumible not found');
     }
-
-    orderDetail.consumable = consumable; // assuming you have a consumable property in OrderDetail
+    orderDetail.consumible = consumible; // assuming you have a consumible property in OrderDetail
 
     return this.orderDetailRepository.save(orderDetail);
   }

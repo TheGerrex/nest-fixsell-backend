@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Order } from 'src/ecommerce/orders/entities/order.entity';
-import { Consumable } from 'src/ecommerce/consumables/entities/consumable.entity';
+import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity';
 
 @Entity()
 export class OrderDetail {
@@ -10,10 +10,10 @@ export class OrderDetail {
   @ManyToOne(() => Order, (order) => order.orderDetails)
   order: Order;
 
-  @ManyToOne(() => Consumable, (consumable) => consumable.orderDetails, {
+  @ManyToOne(() => Consumible, (consumible) => consumible.orderDetails, {
     eager: true,
   })
-  consumable: Consumable;
+  consumible: Consumible;
 
   @Column()
   name: string;
