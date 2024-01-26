@@ -19,7 +19,7 @@
         "maxPrintSize": "13\" x 51.18\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 8.1/10; Windows Server 2012/R2/2016/2019; Mac OS X 10.11-14"
@@ -46,7 +46,7 @@
         "maxPrintSize": "13\" x 51.18\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "400 g/m2",
+        "maxPaperWeight": 400,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 8.1/10; Windows Server 2012/R2/2016/2019; Mac OS X 10.11-14"
@@ -72,7 +72,7 @@
         "maxPrintSize": "13\" x 51.18\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "450 g/m2",
+        "maxPaperWeight": 450,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 8.1/10; Windows Server 2012/R2/2016/2019; Mac OS X 10.11-14"
@@ -98,7 +98,7 @@
         "maxPrintSize": "13\" x 51.18\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "450 g/m2",
+        "maxPaperWeight": 450,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 8.1/10; Windows Server 2012/R2/2016/2019; Mac OS X 10.11-14"
@@ -124,7 +124,7 @@
         "maxPrintSize": "13\" x 19\"",
         "maxPrintSizeSimple": "Tabloide Plus",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows: Windows 7, Windows 8, Windows 8.1, Windows 10, Windows Server 2008, Windows Server 2008 R2, Windows Server 2012, Windows Server 2012 R2, Windows Server 2016, Windows Server 2019; Macintosh: Mac OS X 10.8 or later; Linux: RedHat Enterprise Linux 6.5/6.6/7.0, SUSE Linux Enterprise Desktop 11 SP3, SUSE Linux Enterprise Desktop 12"
@@ -151,7 +151,7 @@
         "maxPrintSize": "13\" x 19\"",
         "maxPrintSizeSimple": "Tabloide Plus",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows: Windows 7, Windows 8, Windows 8.1, Windows 10, Windows Server 2008, Windows Server 2008 R2, Windows Server 2012, Windows Server 2012 R2, Windows Server 2016, Windows Server 2019; Macintosh: Mac OS X 10.8 or later; Linux: RedHat Enterprise Linux 6.5/6.6/7.0, SUSE Linux Enterprise Desktop 11 SP3, SUSE Linux Enterprise Desktop 12"
@@ -178,7 +178,7 @@
         "maxPrintSize": "13\"",
         "maxPrintSizeSimple": "13\"",
         "printSize": "Rollo 13",
-        "maxPaperWeight": "256 g/m2",
+        "maxPaperWeight": 256,
         "duplexUnit": false,
         "paperSizes": "Rollo (4\" - 13\")",
         "applicableOS": "Windows 7/8.1/10 pro (64bit)"
@@ -204,7 +204,7 @@
         "maxPrintSize": "8.25\" x 11.75\"",
         "maxPrintSizeSimple": "Carta",
         "printSize": "Carta",
-        "maxPaperWeight": "200 g/m2",
+        "maxPaperWeight": 200,
         "duplexUnit": true,
         "paperSizes": "Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 or later; Linux"
@@ -230,7 +230,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "200 g/m2",
+        "maxPaperWeight": 200,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix; AirPrint (iOS); Mopria (Android);\nKonica Minolta Mobile Print (iOS/Android/Windows 10 Mobile);\nMobile Authentication and Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -257,7 +257,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "210 g/m2",
+        "maxPaperWeight": 210,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix; AirPrint (iOS); Mopria (Android);\nKonica Minolta Mobile Print (iOS/Android/Windows 10 Mobile);\nMobile Authentication and Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -284,7 +284,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "210 g/m2",
+        "maxPaperWeight": 210,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix"
@@ -311,7 +311,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "200 g/m2",
+        "maxPaperWeight": 200,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix; AirPrint (iOS); Mopria (Android);\nKonica Minolta Mobile Print (iOS/Android/Windows 10 Mobile);\nMobile Authentication and Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -339,7 +339,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "200 g/m2",
+        "maxPaperWeight": 200,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix; AirPrint (iOS); Mopria (Android);\nKonica Minolta Mobile Print (iOS/Android/Windows 10 Mobile);\nMobile Authentication and Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -365,7 +365,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix; AirPrint (iOS); Mopria (Android);\nKonica Minolta Mobile Print (iOS/Android/Windows 10 Mobile);\nMobile Authentication and Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -392,7 +392,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "256 g/m2",
+        "maxPaperWeight": 256,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix; AirPrint (iOS); Mopria (Android);\nKonica Minolta Mobile Print (iOS/Android/Windows 10 Mobile);\nMobile Authentication and Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -418,7 +418,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows (x32/x64): XP/Vista/7/8 Windows Server (x32/x64): 2003/2008/2008 R23 /20123 Macintosh OS X 10.6 o posterior Linux/Citrix"
@@ -445,7 +445,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Unix; Linux; Citrix; AirPrint (iOS); Mopria (Android);\nKonica Minolta Mobile Print (iOS/Android/Windows 10 Mobile);\nMobile Authentication and Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -472,7 +472,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows (x32/x64): XP/Vista/7/8 Windows Server (x32/x64): 2003/2008/2008 R23 /20123 Macintosh OS X 10.6 o posterior Linux"
@@ -499,7 +499,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows (x32/x64): XP/Vista/7/8 Windows Server (x32/x64): 2003/2008/2008 R23 /20123 Macintosh OS X 10.6 o posterior Linux"
@@ -524,7 +524,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Linux; Konica Minolta Print Service (Android);\nKonica Minolta Mobile Print (iOS/Android);\nAirPrint (iOS); Mopria (Android); Lector NFC\nOpcional: WiFi Direct"
@@ -551,7 +551,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Linux; Konica Minolta Print Service (Android);\nKonica Minolta Mobile Print (iOS/Android);\nAirPrint (iOS); Mopria (Android); Lector NFC\nOpcional: WiFi Direct"
@@ -579,7 +579,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Linux; Konica Minolta Print Service (Android);\nKonica Minolta Mobile Print (iOS/Android);\nAirPrint (iOS); Mopria (Android); Lector NFC\nOpcional: WiFi Direct"
@@ -606,7 +606,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8.1 (32/64); Windows 10 (32/64); Windows Server 2008 (32/64); Windows Server 2008 R2; Windows Server 2012; Windows Server 2012 R2; Windows Server 2016; Windows Server 2019; Macintosh OS X 10.10 o posterior; Linux; Konica Minolta Print Service (Android);\nKonica Minolta Mobile Print (iOS/Android);\nAirPrint (iOS); Mopria (Android); Lector NFC\nOpcional: WiFi Direct"
@@ -633,7 +633,7 @@
         "maxPrintSize": "11.75\" x 47.25\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A5-A3",
         "applicableOS": "Windows (x32/x64): Vista/7/8\nWindows Server (x32/x64): 2008/2008 R2/2012/2012 R2\nMacintosh OS X 10.6/10.7/10.8/10.9/10.10\nUNIX/Linux/Citrix"
@@ -659,7 +659,7 @@
         "maxPrintSize": "11.75\" x 47.25\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A5-A3",
         "applicableOS": "Windows (x32/x64): Vista/7/8\nWindows Server: 20083\n/2008 R2/2012/2012 R2\nMacintosh OS X 10.6/10.7/10.8/10.9/10.10\nUNIX/Linux/Citrix"
@@ -685,7 +685,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "210 g/m2",
+        "maxPaperWeight": 210,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4",
         "applicableOS": "Windows 7 (32/64); Windows 8.1 (32/64); Windows 10 (32/64);\nWindows Server 2008 (32/64); Windows Server 2008 R2;\nWindows Server 2012; Windows Server 2012 R2;\nWindows Server 2016; Windows Server 2019;\nMacintosh OS X 10.10 or later; Unix; Linux; Citrix AirPrint (iOS); Mopria (Android);\nKonica Minolta Print Service (Android);\nKonica Minolta Mobile Print (iOS/Android)\noptional: WiFi Direct;\nMobile Authentication and Pairing (iOS/Android)"
@@ -712,7 +712,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows VISTA (32/64) Windows 7 (32/64) Windows 8 (32/64) Windows Server 2003 (32/64) Windows Server 2008 (32/64) Windows Server 2008 R2 Windows Server 2012 Windows Server 2012 R2 Macintosh OS X 10.x Unix, Linux, Citrix"
@@ -738,7 +738,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64);\nWindows 10 (32/64); Windows Server 2008 (32/64);\nWindows Server 2008 R2; Windows Server 2012;\nWindows Server 2012 R2; Windows Server 2016;\nMacintosh OS X 10.8 or later; Unix; Linux; Citrix"
@@ -763,7 +763,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64);\nWindows 10 (32/64); Windows Server 2008 (32/64);\nWindows Server 2008 R2; Windows Server 2012;\nWindows Server 2012 R2; Windows Server 2016;\nMacintosh OS X 10.8 o posterior; Unix; Linux; Citrix;AirPrint (iOS); Mopria (Android); Konica Minolta Print Service\n(Android); Konica Minolta Mobile Print (iOS/Android/Windows 10\nMobile); Mobile Authentication y Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct; AirPrint (iOS); Mopria (Android); Google Cloud Print (opcional);\nWiFi Direct (opcional); Konica Minolta Print Service\n(Android); PageScope Mobile (iOS/Android)"
@@ -790,7 +790,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64);\nWindows 10 (32/64); Windows Server 2008 (32/64);\nWindows Server 2008 R2; Windows Server 2012;\nWindows Server 2012 R2; Windows Server 2016;\nMacintosh OS X 10.8 o posterior; Unix; Linux; Citrix;AirPrint (iOS); Mopria (Android); Konica Minolta Print Service\n(Android); Konica Minolta Mobile Print (iOS/Android/Windows 10\nMobile); Mobile Authentication y Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -816,7 +816,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "210 g/m2",
+        "maxPaperWeight": 210,
         "duplexUnit": true,
         "paperSizes": "A6-A4",
         "applicableOS": "Windows Vista (32/64)\nWindows 7 (32/64)\nWindows 8 (32/64)\nWindows 10 (32/64)\nWindows Server 2008 (32/64)\nWindows Server 2008 R2\nWindows Server 2012\nWindows Server 2012 R2\nWindows Server 2016\nMacintosh OS X 10.x\nLinux\nUnix\nCitrix"
@@ -842,7 +842,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 2000/XP/XP64\n Windows VISTA 32/64\n Windows 7 32/64\n Server 2000/2003/2003x64/2008/2008x64/2008 (R2)\n Macintosh 9.x/10.x\n Unix/Linux/Citrix"
@@ -869,7 +869,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 2000/XP/XP64\n Windows VISTA 32/64\n Windows 7 32/64\n Server 2000/2003/2003x64/2008/2008x64/2008 (R2)\n Macintosh 9.x/10.x\n Unix/Linux/Citrix"
@@ -896,7 +896,7 @@
         "maxPrintSize": "11.69\" x 47.2\" ",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows 7 (32/64); Windows 8/8.1 (32/64);\nWindows 10 (32/64); Windows Server 2008 (32/64);\nWindows Server 2008 R2; Windows Server 2012;\nWindows Server 2012 R2; Windows Server 2016;\nMacintosh OS X 10.8 o posterior; Unix; Linux; Citrix;AirPrint (iOS); Mopria (Android); Konica Minolta Print Service\n(Android); Konica Minolta Mobile Print (iOS/Android/Windows 10\nMobile); Mobile Authentication y Pairing (iOS/Android)\nOpcional: Google Cloud Print; WiFi Direct"
@@ -923,7 +923,7 @@
         "maxPrintSize": "13\" x 19.2\"",
         "maxPrintSizeSimple": "Tabloide Plus",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "PCL, PS, complemento PS:\nWindows 7*1\n/8.1*1\n/10*1\nWindows Server 2008/2008 R2/2012/\n2012 R2/2016\nMac OS X 10.8/10.9/10.10/10.11/10.12"
@@ -949,7 +949,7 @@
         "maxPrintSize": "13\" x 19.2\"",
         "maxPrintSizeSimple": "Tabloide Plus",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "PCL, PS, PS Plug-in:\nWindows 7*1\n/8.1*1\n/10*1\nWindows Server 2008/2008R2/2012/2012R2/2016\nMac OS X 10.8 /10.9/10.10/10.11/10.12"
@@ -974,7 +974,7 @@
         "maxPrintSize": "13\" x 19.2\"",
         "maxPrintSizeSimple": "Tabloide Plus",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "PCL, PS, PS Plug-in:\nWindows 7*1\n/8.1*1\n/10*1\nWindows Server 2008/2008R2/2012/2012R2/2016\nMac OS X 10.8 /10.9/10.10/10.11/10.12"
@@ -999,7 +999,7 @@
         "maxPrintSize": "13\" x 19.2\"",
         "maxPrintSizeSimple": "Tabloide Plus",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": null
@@ -1024,7 +1024,7 @@
         "maxPrintSize": "11\" x 17\"",
         "maxPrintSizeSimple": "Doble Carta",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows: Windows 7, Windows 8, Windows 8.1, Windows 10, Windows Server 2008, Windows Server 2008 R2, Windows Server 2012, Windows Server 2012 R2, Windows Server 2016, Windows Server 2019; Macintosh: Mac OS X 10.8 or later; Linux: RedHat Enterprise Linux 6.5/6.6/7.0, SUSE Linux Enterprise Desktop 11 SP3, SUSE Linux Enterprise Desktop 12"
@@ -1049,7 +1049,7 @@
         "maxPrintSize": "12\" x 18\"",
         "maxPrintSizeSimple": "Tabloide",
         "printSize": "Tabloide",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "A6-SRA3",
         "applicableOS": "Windows: Windows 7, Windows 8, Windows 8.1, Windows 10, Windows Server 2008, Windows Server 2008 R2, Windows Server 2012, Windows Server 2012 R2, Windows Server 2016, Windows Server 2019; Macintosh: Mac OS X 10.8 or later; Linux: RedHat Enterprise Linux 6.5/6.6/7.0, SUSE Linux Enterprise Desktop 11 SP3, SUSE Linux Enterprise Desktop 12"
@@ -1074,7 +1074,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS X versión 10.5 o superior, Unix, Linux así como otros sistemas operativos bajo petición"
@@ -1100,7 +1100,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS X versión 10.5 o superior, Unix, Linux así como otros sistemas operativos bajo petición"
@@ -1126,7 +1126,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS X versión 10.5 o superior, Unix, Linux así como otros sistemas operativos bajo petición"
@@ -1152,7 +1152,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS versiones 10.8 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1178,7 +1178,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS versiones 10.8 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1205,7 +1205,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS versiones 10.8 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1232,7 +1232,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS versiones 10.8 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1260,7 +1260,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS versiones 10.8 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1287,7 +1287,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS versiones 10.8 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1313,7 +1313,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "220 g/m2",
+        "maxPaperWeight": 220,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos de Windows, MAC OS versiones 10.8 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1342,7 +1342,7 @@
         "maxPrintSize": "12\" x 48\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Windows: (32 y 64 bits), Windows 7/8.1/10/Server 2012/Server 2012 R2/Server 2016/Server 2019 o poterior; Mac OS X v10.0 o posterior; Chrome OS; Linux."
@@ -1370,7 +1370,7 @@
         "maxPrintSize": "11.69\" x 18\"",
         "maxPrintSizeSimple": "Doble Carta",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos actuales de Windows, Mac OS X versiones 10.9 o superior, UNIX, LINUX, así como otros sistemas operativos bajo petición"
@@ -1397,7 +1397,7 @@
         "maxPrintSize": "12.59\" x 17.71\"",
         "maxPrintSizeSimple": "Doble Carta",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos actuales de Windows, Mac OS X versiónes 10.9 o superior, UNIX LINUX, así como otros sistemas operativos bajo petición"
@@ -1425,7 +1425,7 @@
         "maxPrintSize": "12.59\" x 17.71\"",
         "maxPrintSizeSimple": "Doble Carta",
         "printSize": "Doble Carta",
-        "maxPaperWeight": "300 g/m2",
+        "maxPaperWeight": 300,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Todos los sistemas operativos actuales de Windows, Mac OS X versiónes 10.9 o superior, UNIX LINUX, así como otros sistemas operativos bajo petición"
@@ -1450,7 +1450,7 @@
         "maxPrintSize": "8.5\" x 14\"",
         "maxPrintSizeSimple": "Legal",
         "printSize": "Carta",
-        "maxPaperWeight": "256 g/m2",
+        "maxPaperWeight": 256,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Windows 10 (32-bit, 64-bit), Windows 8.1, Windows 8 (32-bit, 64-bit), Windows 7 (32-bit, 64-bit), Windows Vista (32-bit, 64-bit), Windows® XP SP313 (32-bit), Windows® XP Professional x64 Edition, Windows Server 2016, Windows Server 2012 R2, Windows Server 2012, Windows Server 2008 R2, Windows Server 2008, Windows Server 2003 R2, Windows Server 2003, Mac OS X 10.6.8 y MacOS 10.13.x"
@@ -1477,7 +1477,7 @@
         "maxPrintSize": "8.5\" x 47.2\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Carta",
-        "maxPaperWeight": "256 g/m2",
+        "maxPaperWeight": 256,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Windows 10 (32-bit, 64-bit), Windows 8.1, Windows 8 (32-bit, 64-bit), Windows 7 (32-bit, 64-bit), Windows Vista (32-bit, 64-bit), Windows® XP SP313 (32-bit), Windows® XP Professional x64 Edition, Windows Server 2016, Windows Server 2012 R2, Windows Server 2012, Windows Server 2008 R2, Windows Server 2008, Windows Server 2003 R2, Windows Server 2003, Mac OS X 10.6.8 y MacOS 10.13.x"
@@ -1505,7 +1505,7 @@
         "maxPrintSize": "13\" x 47\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "256 g/m2",
+        "maxPaperWeight": 256,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Windows 10 (32-bit, 64-bit), Windows 8.1, Windows 8 (32-bit, 64-bit), Windows 7 (32-bit, 64-bit), Windows Vista (32-bit, 64-bit), Windows® XP SP313 (32-bit), Windows® XP Professional x64 Edition, Windows Server 2016, Windows Server 2012 R2, Windows Server 2012, Windows Server 2008 R2, Windows Server 2008, Windows Server 2003 R2, Windows Server 2003, Mac OS X 10.6.8 y MacOS 10.13.x"
@@ -1533,7 +1533,7 @@
         "maxPrintSize": "13\" x 47\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Windows 10 (32-bit, 64-bit), Windows 8.1, Windows 8 (32-bit, 64-bit), Windows 7 (32-bit, 64-bit), Windows Vista (32-bit, 64-bit), Windows® XP SP313 (32-bit), Windows® XP Professional x64 Edition, Windows Server 2016, Windows Server 2012 R2, Windows Server 2012, Windows Server 2008 R2, Windows Server 2008, Windows Server 2003 R2, Windows Server 2003, Mac OS X 10.6.8 y MacOS 10.13.x"
@@ -1561,7 +1561,7 @@
         "maxPrintSize": "13\" x 47\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "350 g/m2",
+        "maxPaperWeight": 350,
         "duplexUnit": true,
         "paperSizes": "Legal, Carta, A6-A4, B5, B6, Tamaños Personalizados",
         "applicableOS": "Windows 10 (32-bit, 64-bit), Windows 8.1, Windows 8 (32-bit, 64-bit), Windows 7 (32-bit, 64-bit), Windows Vista (32-bit, 64-bit), Windows® XP SP313 (32-bit), Windows® XP Professional x64 Edition, Windows Server 2016, Windows Server 2012 R2, Windows Server 2012, Windows Server 2008 R2, Windows Server 2008, Windows Server 2003 R2, Windows Server 2003, Mac OS X 10.6.8 y MacOS 10.13.x"
@@ -1589,7 +1589,7 @@
         "maxPrintSize": "4.09\"",
         "maxPrintSizeSimple": "4.09\"",
         "printSize": "Rollo 4",
-        "maxPaperWeight": "0.19 mm",
+        "maxPaperWeight": 190,
         "duplexUnit": false,
         "paperSizes": "Rollo (2\" - 4.25\")",
         "applicableOS": "Microsoft Windows XP 32-bit (SP3)/64-bit (SP2), Vista 32-bit/64-bit(SP2), Windows 7 32-bit/64-bit (SP1), Windows 8 32-bit/64-bit, Windows Server 2012, Windows® Server 2012 R2, Windows Server 2008 (32-bit, 64‐bit), Windows Server 2003 R2 (32-bit)"
@@ -1615,7 +1615,7 @@
         "maxPrintSize": "4.25\"",
         "maxPrintSizeSimple": "4.25\"",
         "printSize": "Rollo 4.25",
-        "maxPaperWeight": "0.236 mm",
+        "maxPaperWeight": 236,
         "duplexUnit": false,
         "paperSizes": "Rollo (1\" - 4.5\")",
         "applicableOS": "Windows 10, 8.1, 8.7, 7 SP1, Vista SP2, Server, Mac 10.6.8 o superior y Linux"
@@ -1641,7 +1641,7 @@
         "maxPrintSize": "8.34\"",
         "maxPrintSizeSimple": "8.34\"",
         "printSize": "Rollo 8.34",
-        "maxPaperWeight": "0.236 mm",
+        "maxPaperWeight": 236,
         "duplexUnit": false,
         "paperSizes": "Rollo (1\" - 8.5\")",
         "applicableOS": "Windows® 10, 8.1, 8.7, 7 SP1, Vista SP2, Server, Mac® 10.6.8 o superior, Linux®"
@@ -1667,7 +1667,7 @@
         "maxPrintSize": "4.25\"",
         "maxPrintSizeSimple": "4.25\"",
         "printSize": "Rollo 4.25",
-        "maxPaperWeight": "0.19 mm",
+        "maxPaperWeight": 190,
         "duplexUnit": false,
         "paperSizes": "Rollo (1.2\" - 4.25\"); Continuo (2\" - 4.25\")",
         "applicableOS": "Microsoft Windows XP 32-bit (SP3)/64-bit (SP2), Vista 32-bit/64-bit(SP2), Windows 7 32-bit/64-bit (SP1), Windows 8 32-bit/64-bit"
@@ -1693,7 +1693,7 @@
         "maxPrintSize": "8\"",
         "maxPrintSizeSimple": "8\"",
         "printSize": "Rollo 8",
-        "maxPaperWeight": "0.19 mm",
+        "maxPaperWeight": 190,
         "duplexUnit": false,
         "paperSizes": "Formulario continuo (ancho: 76.2 - 241.3 mm, largo (una página): 12.7 - 558.8 mm, espesor: .065 - .19 mm)",
         "applicableOS": "Microsoft Windows XP 32-bit (SP3)/64-bit (SP2), Vista 32-bit/64-bit(SP2), Windows 7 32-bit/64-bit (SP1), Windows 8 32-bit/64-bit"
@@ -1720,7 +1720,7 @@
         "maxPrintSize": "8.5\" x 47.2\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Carta",
-        "maxPaperWeight": "250 g/m2",
+        "maxPaperWeight": 250,
         "duplexUnit": true,
         "paperSizes": "8,9 cm x 12,7 cm, 10,2 cm x 15,2 cm, 12,5 cm x 17,8 cm, 20,3 cm x 25,4 cm, 21,6 cm x 27,9 cm, 21,6 cm x 35,6 cm, A4, A6, media carta, ejecutivo, definible por el usuario (8,9\" - 119,9\" de largo)",
         "applicableOS": "Windows 10 (32-bit, 64-bit), Windows 8.1, Windows 8 (32-bit, 64-bit), Windows 7 (32-bit, 64-bit), Windows Vista (32-bit, 64-bit), Windows® XP SP313 (32-bit), Windows® XP Professional x64 Edition, Windows Server 2016, Windows Server 2012 R2, Windows Server 2012, Windows Server 2008 R2, Windows Server 2008, Windows Server 2003 R2, Windows Server 2003, Mac OS X 10.6.x, MacOS 10.11.x9, MacOS Server"
@@ -1749,7 +1749,7 @@
         "maxPrintSize": "13\" x 47\"",
         "maxPrintSizeSimple": "Banner",
         "printSize": "Tabloide Plus",
-        "maxPaperWeight": "250 g/m2",
+        "maxPaperWeight": 250,
         "duplexUnit": true,
         "paperSizes": "8,9 x 12,7 cm, 10,2 x 15,2 cm, 12,5 x 17,8 cm, 20,3 x 25,4 cm, 21,6 x 27,9 cm, 21,6 x 35,6 cm, A3, A4, A5, A6, B4, B5, media carta, ejecutivo, 27,9 x 43,2 cm, 33,0 x 48,3 cm, de\u001fnible por el usuario (8,9” - 119,9” de largo)",
         "applicableOS": "Windows 10 (32-bit, 64-bit), Windows 8.1, Windows 8 (32-bit, 64-bit), Windows 7 (32-bit, 64-bit), Windows Vista (32-bit, 64-bit), Windows® XP SP313 (32-bit), Windows® XP Professional x64 Edition, Windows Server 2016, Windows Server 2012 R2, Windows Server 2012, Windows Server 2008 R2, Windows Server 2008, Windows Server 2003 R2, Windows Server 2003, Mac OS X 10.6.8 y MacOS 10.12.x"

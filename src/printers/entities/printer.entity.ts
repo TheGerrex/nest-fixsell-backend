@@ -63,8 +63,8 @@ export class Printer {
   @Column({ nullable: true })
   printSize: string;
 
-  @Column({ nullable: true })
-  maxPaperWeight: string;
+  @Column("integer",{ nullable: true })
+  maxPaperWeight: number;
 
   @Column({ nullable: true })
   duplexUnit: boolean;

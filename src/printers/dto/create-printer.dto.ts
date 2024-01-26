@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsDecimal,
   IsIn,
+  IsInt,
   IsOptional,
   IsString,
   IsUrl,
@@ -89,8 +90,8 @@ export class CreatePrinterDto {
   printSize?: string;
 
   @IsOptional()
-  @IsString()
-  maxPaperWeight?: string;
+  @IsInt()
+  maxPaperWeight?: number;
 
   @IsOptional()
   @IsBoolean()
