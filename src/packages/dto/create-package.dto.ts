@@ -46,4 +46,8 @@ export class CreatePackageDto {
   @IsOptional()
   @IsNumber()
   packageExtraClickPrice?: number;
+
+  @IsOptional()
+  @IsNumber()
+  packageDepositPrice?: number;
 }

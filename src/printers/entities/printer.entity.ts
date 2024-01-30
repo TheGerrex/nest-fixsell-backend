@@ -91,5 +91,5 @@ export class Printer {
     eager: true,
   })
   @JoinColumn()
-  package: Package;
+  packages: Package;
 }

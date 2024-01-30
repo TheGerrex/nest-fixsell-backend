@@ -56,7 +56,7 @@ export class PackagesService {
       throw new Error('Printer not found');
     }
 
-    if (printer.deal && printer.package.id !== id) {
+    if (printer.deal && printer.packages.id !== id) {
       throw new Error('Printer already has a package');
     }
 
@@ -87,7 +87,7 @@ export class PackagesService {
       .getOne();
 
     if (printer) {
-      printer.package = null;
+      printer.packages = null;
       await this.printerRepository.save(printer);
     }
 

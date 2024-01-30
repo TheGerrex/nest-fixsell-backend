@@ -7,10 +7,10 @@ export class Package {
   @PrimaryGeneratedColumn()
   id: number;
   // printer id relation
-  @OneToOne(() => Printer, (printer) => printer.package)
+  @OneToOne(() => Printer, (printer) => printer.packages)
   printer: Printer;
 
-  // number of years
+  // number of months
   @Column({ type: 'int', nullable: true })
   packageDuration: number;
 
@@ -41,4 +41,8 @@ export class Package {
   // precio por click extra
   @Column({ type: 'decimal', nullable: true })
   packageExtraClickPrice: number;
+
+  //precio deposito
+  @Column({ type: 'decimal', nullable: true })
+  packageDepositPrice: number;
 }
