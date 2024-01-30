@@ -6,6 +6,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Deal } from 'src/deals/entities/deal.entity';
+import { Package } from 'src/packages/entities/package.entity';
 
 @Entity()
 export class Printer {
@@ -63,7 +64,7 @@ export class Printer {
   @Column({ nullable: true })
   printSize: string;
 
-  @Column("integer",{ nullable: true })
+  @Column('integer', { nullable: true })
   maxPaperWeight: number;
 
   @Column({ nullable: true })
@@ -84,4 +85,11 @@ export class Printer {
   @OneToOne(() => Deal, (deal) => deal.printer, { nullable: true, eager: true })
   @JoinColumn()
   deal: Deal;
+
+  @OneToOne(() => Package, (package_) => package_.printer, {
+    nullable: true,
+    eager: true,
+  })
+  @JoinColumn()
+  package: Package;
 }

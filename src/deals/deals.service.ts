@@ -94,6 +94,6 @@ export class DealsService {
     // Now you can delete the deal
     const result = await this.dealRepository.delete({ id });
 
-    return `Deal with ID ${id} has been removed`;
+    return `Deal with ID ${id} has been removed` + result;
   }
 }
