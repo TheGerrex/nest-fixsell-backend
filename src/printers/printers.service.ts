@@ -59,7 +59,8 @@ export class PrintersService {
 
     let query = this.printersRepository
       .createQueryBuilder('printer')
-      .leftJoinAndSelect('printer.deal', 'deal');
+      .leftJoinAndSelect('printer.deal', 'deal')
+      .leftJoinAndSelect('printer.packages', 'packages');
 
     Object.keys(filterProps).forEach((key) => {
       console.log(filterProps);
@@ -190,6 +191,7 @@ export class PrintersService {
       printer = await this.printersRepository
         .createQueryBuilder('printer')
         .leftJoinAndSelect('printer.deal', 'deal')
+        .leftJoinAndSelect('printer.packages', 'packages')
         .where(`UPPER(printer.model) = :model`, {
           model: term.toUpperCase(),
         })
