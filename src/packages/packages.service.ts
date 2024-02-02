@@ -37,19 +37,23 @@ export class PackagesService {
   }
 
   async findOne(id: number) {
-    const packages = await this.packageRepository.findOne({ where: { id } });
+    const packageEntity = await this.packageRepository
+      .createQueryBuilder('package')
+      .leftJoinAndSelect('package.printer', 'printer')
+      .where('package.id = :id', { id })
+      .getOne();
 
-    if (!packages) {
+    if (!packageEntity) {
       throw new Error(`package with ID ${id} not found`);
     }
 
-    return packages;
+    return packageEntity;
   }
 
   async update(id: number, updatePackageDto: UpdatePackageDto) {
     const printer = await this.printerRepository.findOne({
       where: { id: updatePackageDto.printer },
-      relations: ['package'],
+      relations: ['packages'],
     });
 
     if (!printer) {
@@ -60,16 +64,16 @@ export class PackagesService {
       throw new Error('Printer already has a package');
     }
 
-    const deal = await this.packageRepository.findOne({ where: { id } });
+    const packages = await this.packageRepository.findOne({ where: { id } });
 
-    if (!deal) {
+    if (!packages) {
       throw new Error(`Deal with ID ${id} not found`);
     }
 
     // Update the deal
-    Object.assign(deal, updatePackageDto);
+    Object.assign(packages, updatePackageDto);
 
-    return await this.packageRepository.save(deal);
+    return await this.packageRepository.save(packages);
   }
 
   async remove(id: number) {
