@@ -1,24 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+import * as fs from 'fs';
+import * as path from 'path';
+import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class FileUploadService {
-  private s3;
-  constructor(private configService: ConfigService) {
-    this.s3 = new AWS.S3({
+  private readonly s3: S3;
+
+  constructor(private readonly configService: ConfigService) {
+    this.s3 = new S3({
       accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
       secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
       region: this.configService.get('AWS_REGION'),
     });
   }
 
-  async uploadFile(file) {
+  async uploadFile(file, rootfolder, subrootfolder) {
+    const filePath = `${rootfolder}/${subrootfolder}/${Date.now()}-${
+      file.originalname
+    }`;
+
     const params = {
       Bucket: this.configService.get('AWS_BUCKET_NAME'),
-      Key: `${Date.now()}-${file.originalname}`,
+      Key: filePath,
       Body: file.buffer,
-      ContentType: file.mimetype, // Corrected casing
+      ContentType: file.mimetype,
       ContentDisposition: 'inline',
     };
 
@@ -29,7 +37,7 @@ export class FileUploadService {
   async uploadMultipleFiles(files) {
     const urls = [];
     for (const file of files) {
-      const url = await this.uploadFile(file);
+      const url = await this.uploadFile(file, 'rootfolder', 'subrootfolder');
       urls.push(url);
     }
     return urls;
