@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as AWS from 'aws-sdk';
-import * as fs from 'fs';
-import * as path from 'path';
 import { S3 } from 'aws-sdk';
 
 @Injectable()
@@ -17,8 +14,8 @@ export class FileUploadService {
     });
   }
 
-  async uploadFile(file, rootfolder, subrootfolder) {
-    const filePath = `${rootfolder}/${subrootfolder}/${Date.now()}-${
+  async uploadFile(file, rootFolder, subRootFolder, childFolder) {
+    const filePath = `${rootFolder}/${subRootFolder}/${childFolder}/${Date.now()}-${
       file.originalname
     }`;
 
@@ -37,7 +34,12 @@ export class FileUploadService {
   async uploadMultipleFiles(files) {
     const urls = [];
     for (const file of files) {
-      const url = await this.uploadFile(file, 'rootfolder', 'subrootfolder');
+      const url = await this.uploadFile(
+        file,
+        'rootFolder',
+        'subRootFolder',
+        'childFolder',
+      );
       urls.push(url);
     }
     return urls;

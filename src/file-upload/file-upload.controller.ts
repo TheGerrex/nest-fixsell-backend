@@ -21,13 +21,15 @@ export class FileUploadController {
   )
   async uploadFile(
     @UploadedFile() file,
-    @Body('rootfolder') rootfolder: string,
-    @Body('subrootfolder') subrootfolder: string,
+    @Body('rootFolder') rootFolder: string,
+    @Body('subRootfolder') subRootfolder: string,
+    @Body('childFolder') childFolder: string,
   ) {
     const url = await this.fileUploadService.uploadFile(
       file,
-      rootfolder,
-      subrootfolder,
+      rootFolder,
+      subRootfolder,
+      childFolder,
     );
     return { url };
   }
@@ -52,8 +54,9 @@ export class FileUploadController {
   async uploadPdf(@UploadedFile() file) {
     const url = await this.fileUploadService.uploadFile(
       file,
-      'rootfolder',
-      'subrootfolder',
+      'rootFolder',
+      'subRootfolder',
+      'childFolder',
     );
     return { url };
   }
