@@ -7,4 +7,9 @@ export const EnvConfiguration = () => ({
   postgres_db_host: process.env.POSTGRES_DB_HOST,
   postgres_db_port: process.env.POSTGRES_DB_PORT,
   postgres_db_username: process.env.POSTGRES_DB_USERNAME,
+  jwt_seed: process.env.JWT_SEED,
+  aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
+  aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
+  aws_region: process.env.AWS_REGION,
+  aws_bucket_name: process.env.AWS_BUCKET_NAME,
 });
