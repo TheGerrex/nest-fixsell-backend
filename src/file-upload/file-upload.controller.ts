@@ -4,6 +4,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
@@ -18,8 +19,18 @@ export class FileUploadController {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
     }),
   )
-  async uploadFile(@UploadedFile() file) {
-    const url = await this.fileUploadService.uploadFile(file);
+  async uploadFile(
+    @UploadedFile() file,
+    @Body('rootFolder') rootFolder: string,
+    @Body('subRootfolder') subRootfolder: string,
+    @Body('childFolder') childFolder: string,
+  ) {
+    const url = await this.fileUploadService.uploadFile(
+      file,
+      rootFolder,
+      subRootfolder,
+      childFolder,
+    );
     return { url };
   }
 
@@ -41,7 +52,12 @@ export class FileUploadController {
     }),
   )
   async uploadPdf(@UploadedFile() file) {
-    const url = await this.fileUploadService.uploadFile(file);
+    const url = await this.fileUploadService.uploadFile(
+      file,
+      'rootFolder',
+      'subRootfolder',
+      'childFolder',
+    );
     return { url };
   }
 
