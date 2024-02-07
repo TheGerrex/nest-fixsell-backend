@@ -5,7 +5,8 @@
 mongo/
 postgres/
 **/*.env
-!config/env/development.env
+src/config/env/development.env
+src/config/env/production.env
 
 # Logs
 logs
