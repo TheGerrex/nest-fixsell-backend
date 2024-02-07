@@ -40,8 +40,17 @@ export class FileUploadController {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
     }),
   )
-  async uploadMultipleFiles(@UploadedFiles() files) {
-    const urls = await this.fileUploadService.uploadMultipleFiles(files);
+  async uploadMultipleFiles(
+    @UploadedFiles() files,
+    @Body('rootFolder') rootFolder: string,
+    @Body('subRootfolder') subRootfolder: string,
+    @Body('childFolder') childFolder: string,) {
+    const urls = await this.fileUploadService.uploadMultipleFiles(
+      files,
+      rootFolder,
+      subRootfolder,
+      childFolder,
+      );
     return { urls };
   }
 
@@ -67,8 +76,16 @@ export class FileUploadController {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
     }),
   )
-  async uploadMultiplePdfs(@UploadedFiles() files) {
-    const urls = await this.fileUploadService.uploadMultipleFiles(files);
+  async uploadMultiplePdfs(
+    @UploadedFiles() files,
+    @Body('rootFolder') rootFolder: string,
+    @Body('subRootfolder') subRootfolder: string,
+    @Body('childFolder') childFolder: string,) {
+    const urls = await this.fileUploadService.uploadMultipleFiles(
+      files, 
+      rootFolder,
+      subRootfolder,
+      childFolder);
     return { urls };
   }
 }

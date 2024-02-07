@@ -31,15 +31,10 @@ export class FileUploadService {
     return uploadResult.Location;
   }
 
-  async uploadMultipleFiles(files) {
+  async uploadMultipleFiles(files, rootFolder, subRootFolder, childFolder) {
     const urls = [];
     for (const file of files) {
-      const url = await this.uploadFile(
-        file,
-        'rootFolder',
-        'subRootFolder',
-        'childFolder',
-      );
+      const url = await this.uploadFile(file, rootFolder, subRootFolder, childFolder);
       urls.push(url);
     }
     return urls;
