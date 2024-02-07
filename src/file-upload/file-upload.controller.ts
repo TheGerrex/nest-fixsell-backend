@@ -5,10 +5,12 @@ import {
   UploadedFile,
   UploadedFiles,
   Body,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
-
+import { ConfigService } from '@nestjs/config';
+import { S3 } from 'aws-sdk';
 @Controller('upload')
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
@@ -70,5 +72,12 @@ export class FileUploadController {
   async uploadMultiplePdfs(@UploadedFiles() files) {
     const urls = await this.fileUploadService.uploadMultipleFiles(files);
     return { urls };
+  }
+
+  // delete file
+  @Delete('file')
+  async deleteFile(@Body('url') url: string) {
+    await this.fileUploadService.deleteFile(url);
+    return { message: 'File deleted successfully' };
   }
 }
