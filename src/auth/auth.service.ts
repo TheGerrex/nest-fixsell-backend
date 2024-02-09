@@ -14,6 +14,7 @@ import { LoginResponse } from './interfaces/login-response';
 import { RegisterUserDto, LoginDto, CreateUserDto, UpdateAuthDto } from './dto';
 import { classToPlain } from 'class-transformer';
 import { UserResponse } from './entities/user-response.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -154,7 +156,9 @@ export class AuthService {
   }
 
   getJwtToken(payload: JwtPayload) {
-    const token = this.jwtService.sign(payload);
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_SEED'),
+    });
     return token;
   }
 }

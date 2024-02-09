@@ -12,4 +12,6 @@ export const EnvConfiguration = () => ({
   aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
   aws_region: process.env.AWS_REGION,
   aws_bucket_name: process.env.AWS_BUCKET_NAME,
+  host_api: process.env.HOST_API,
+  port: process.env.PORT,
 });

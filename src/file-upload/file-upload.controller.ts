@@ -38,7 +38,7 @@ export class FileUploadController {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body('rootFolder') rootFolder: string,
-    @Body('subRootfolder') subRootfolder: string,
+    @Body('parentFolder') parentFolder: string,
     @Body('childFolder') childFolder: string,
   ) {
 
@@ -52,7 +52,7 @@ export class FileUploadController {
     // const url = await this.fileUploadService.uploadFile(
     //   file,
     //   rootFolder,
-    //   subRootfolder,
+    //   parentFolder,
     //   childFolder,
     // );
     // return { url };
@@ -62,17 +62,30 @@ export class FileUploadController {
   @UseInterceptors(
     FilesInterceptor('image', 10, {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+      fileFilter: fileImageFilter,
+      
     }),
   )
   async uploadMultipleFiles(
-    @UploadedFiles() files,
+    @UploadedFiles() files: Express.Multer.File[],
     @Body('rootFolder') rootFolder: string,
-    @Body('subRootfolder') subRootfolder: string,
+    @Body('parentFolder') parentFolder: string,
     @Body('childFolder') childFolder: string,) {
+    
+    
+    if (!files) {
+      throw new BadRequestException('No hay archivo');
+    }
+    
+    // console.log({ files })
+
+    // const secureUrls: string[] = files.map(file => `${this.configService.get('HOST_API')}/upload/image/${file.filename}`);
+
+    // return { secureUrls };
     const urls = await this.fileUploadService.uploadMultipleFiles(
       files,
       rootFolder,
-      subRootfolder,
+      parentFolder,
       childFolder,
       );
     return { urls };
@@ -88,7 +101,7 @@ export class FileUploadController {
     const url = await this.fileUploadService.uploadFile(
       file,
       'rootFolder',
-      'subRootfolder',
+      'parentFolder',
       'childFolder',
     );
     return { url };
@@ -103,12 +116,12 @@ export class FileUploadController {
   async uploadMultiplePdfs(
     @UploadedFiles() files,
     @Body('rootFolder') rootFolder: string,
-    @Body('subRootfolder') subRootfolder: string,
+    @Body('parentFolder') parentFolder: string,
     @Body('childFolder') childFolder: string,) {
     const urls = await this.fileUploadService.uploadMultipleFiles(
       files, 
       rootFolder,
-      subRootfolder,
+      parentFolder,
       childFolder);
     return { urls };
   }

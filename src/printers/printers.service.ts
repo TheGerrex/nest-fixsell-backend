@@ -12,28 +12,16 @@ import { FilterPrinterDto } from './dto/filter-printer.dto';
 import { Printer } from './entities/printer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
+import * as path from 'path';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class PrintersService {
   constructor(
     @InjectRepository(Printer)
     private printersRepository: Repository<Printer>,
+    private fileUploadService: FileUploadService
   ) {}
-
-  async create(createPrinterDto: CreatePrinterDto): Promise<Printer> {
-    try {
-      const newPrinter = this.printersRepository.create(createPrinterDto);
-      const savedPrinter = await this.printersRepository.save(newPrinter);
-      console.log('Created printer:', savedPrinter);
-      return savedPrinter;
-    } catch (error) {
-      console.error('Error while creating printer:', error);
-      if (error.code === '23505') {
-        throw new BadRequestException(`${createPrinterDto.model} ya existe.`);
-      }
-      throw new InternalServerErrorException('Algo salio muy mal.');
-    }
-  }
 
   async findAll(filtersPrinterDto: FilterPrinterDto = {}): Promise<Printer[]> {
     const {
@@ -205,23 +193,106 @@ export class PrintersService {
     return printer;
   }
 
-  async update(
-    id: string,
-    updatePrinterDto: UpdatePrinterDto,
-  ): Promise<Printer> {
-    const updateResult = await this.printersRepository.update(
-      id,
-      updatePrinterDto,
-    );
+  async create(createPrinterDto: CreatePrinterDto): Promise<Printer> {
+    try {
+      const newPrinter = this.printersRepository.create(createPrinterDto);
+      let savedPrinter = await this.printersRepository.save(newPrinter);
+  
+      if (createPrinterDto.img_url) {
+        const newUrls = [];
+        for (const tempFilePath of createPrinterDto.img_url) {
+          const url = new URL(tempFilePath);
+          const oldPath = url.pathname.substring(1);
+          const fileName = path.basename(oldPath);
+          const decodedFileName = decodeURIComponent(fileName);
+          const newPath = `imagenes/${encodeURIComponent(savedPrinter.brand.replace(/ /g, '_'))}/${encodeURIComponent(savedPrinter.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+  
+          await this.fileUploadService.renameFile(oldPath, newPath);
+          const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+          newUrls.push(newUrl);
+        }
+        savedPrinter.img_url = newUrls;
+        savedPrinter = await this.printersRepository.save(savedPrinter);
+      }
+  
+      if (createPrinterDto.datasheet_url) {
+        const url = new URL(createPrinterDto.datasheet_url);
+        const oldPath = url.pathname.substring(1);
+        const fileName = path.basename(oldPath);
+        const decodedFileName = decodeURIComponent(fileName);
+        const newPath = `datasheets/${encodeURIComponent(savedPrinter.brand.replace(/ /g, '_'))}/${encodeURIComponent(savedPrinter.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+  
+        await this.fileUploadService.renameFile(oldPath, newPath);
+        const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+        savedPrinter.datasheet_url = newUrl;
+        savedPrinter = await this.printersRepository.save(savedPrinter);
+      }
+  
+      return savedPrinter;
+    } catch (error) {
+      console.error('Error while creating printer:', error);
+      if (error.code === '23505') {
+        throw new BadRequestException(`${createPrinterDto.model} ya existe.`);
+      }
+      throw new InternalServerErrorException('Algo salio muy mal.');
+    }
+  }
+  
+  async update(id: string, updatePrinterDto: UpdatePrinterDto): Promise<Printer> {
+    let printerToUpdate = await this.printersRepository.findOne({
+      where: { id },
+    });
+  
+    if (!printerToUpdate) {
+      throw new NotFoundException(`Printer with ID ${id} not found`);
+    }
+  
+    if (updatePrinterDto.img_url) {
+      const newUrls = [];
+      for (const tempFilePath of updatePrinterDto.img_url) {
+        if (tempFilePath.includes('temp')) {
+          // This is a new image
+          const url = new URL(tempFilePath);
+          const oldPath = url.pathname.substring(1);
+          const fileName = path.basename(oldPath);
+          const decodedFileName = decodeURIComponent(fileName);
+          const newPath = `imagenes/${encodeURIComponent(printerToUpdate.brand.replace(/ /g, '_'))}/${encodeURIComponent(printerToUpdate.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+          await this.fileUploadService.renameFile(oldPath, newPath);
+          const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+          newUrls.push(newUrl);
+        } else {
+          // This is an existing image
+          newUrls.push(tempFilePath);
+        }
+      }
+      updatePrinterDto.img_url = newUrls;
+    }
+  
+    if (updatePrinterDto.datasheet_url) {
+      const url = new URL(updatePrinterDto.datasheet_url);
+      const oldPath = url.pathname.substring(1);
+      const fileName = path.basename(oldPath);
+      const decodedFileName = decodeURIComponent(fileName);
+      const newPath = `datasheets/${encodeURIComponent(printerToUpdate.brand.replace(/ /g, '_'))}/${encodeURIComponent(printerToUpdate.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+      await this.fileUploadService.renameFile(oldPath, newPath);
+      const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+      updatePrinterDto.datasheet_url = newUrl;
+    }
+  
+    const updateResult = await this.printersRepository.update(id, updatePrinterDto);
+    
     if (!updateResult.affected) {
       throw new NotFoundException('Printer not found');
     }
+  
     const updatedPrinter = await this.printersRepository.findOne({
       where: { id },
     });
+    
     if (!updatedPrinter) {
       throw new NotFoundException('Printer not found');
     }
+  
     return updatedPrinter;
   }
 

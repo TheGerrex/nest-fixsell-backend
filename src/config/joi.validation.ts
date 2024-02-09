@@ -19,4 +19,6 @@ export const JoiValidationSchema = Joi.object({
   AWS_SECRET_ACCESS_KEY: Joi.string().required(),
   AWS_REGION: Joi.string().default('us-east-1'),
   AWS_BUCKET_NAME: Joi.string().default('fixsell-website-images'),
+  HOST_API: Joi.string().default('http://localhost:3000'),
+  PORT: Joi.number().default(3000),
 });

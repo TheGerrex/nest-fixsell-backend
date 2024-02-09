@@ -39,9 +39,14 @@ export class FileUploadService {
   }
 
   async uploadFile(file, rootFolder, subRootFolder, childFolder) {
-    const filePath = `${rootFolder}/${subRootFolder}/${childFolder}/${Date.now()}-${
-      file.originalname
-    }`;
+    let filePath;
+    if (subRootFolder && childFolder) {
+      // If the brand and model are provided, use them in the file name
+      filePath = `${rootFolder}/${subRootFolder}/${childFolder}/${Date.now()}-${file.originalname}`;
+    } else {
+      // Otherwise, create a temporary file with a unique name
+      filePath = `${rootFolder}/temp/${Date.now()}-${file.originalname}`;
+    }
 
     const params = {
       Bucket: this.configService.get('AWS_BUCKET_NAME'),
@@ -85,6 +90,21 @@ export class FileUploadService {
         throw error;
       }
     }
+  }
+
+  async renameFile(oldPath, newPath) {
+    const copyParams = {
+      Bucket: this.configService.get('AWS_BUCKET_NAME'),
+      CopySource: `${this.configService.get('AWS_BUCKET_NAME')}/${oldPath}`,
+      Key: newPath,
+    };
+    await this.s3.copyObject(copyParams).promise();
+  
+    const deleteParams = {
+      Bucket: this.configService.get('AWS_BUCKET_NAME'),
+      Key: oldPath,
+    };
+    await this.s3.deleteObject(deleteParams).promise();
   }
 
   getStaticProductImage(imageName: string) {

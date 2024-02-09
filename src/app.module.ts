@@ -14,7 +14,6 @@ import { DealsModule } from './deals/deals.module';
 import { SeedModule } from './seed/seed.module';
 import { EnvConfiguration } from './config/app.config';
 import { JoiValidationSchema } from './config/joi.validation';
-import { any } from 'joi';
 import { CommonModule } from './common/common.module';
 import { ConsumiblesModule } from './ecommerce/consumibles/consumibles.module';
 import { OrdersModule } from './ecommerce/orders/orders.module';
@@ -24,7 +23,7 @@ import { PackagesModule } from './packages/packages.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`,
+      envFilePath: `${process.cwd()}/src/config/env/${process.env.NODE_ENV}.env`,
       isGlobal: true,
       load: [EnvConfiguration],
       validationSchema: JoiValidationSchema,
@@ -32,16 +31,6 @@ import { PackagesModule } from './packages/packages.module';
     MongooseModule.forRoot(process.env.MONGO_URI, {
       dbName: process.env.MONGO_DB_NAME,
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'postgres',
-    //   host: process.env.POSTGRES_DB_HOST,
-    //   port: +process.env.POSTGRES_DB_PORT,
-    //   database: process.env.POSTGRES_DB_NAME,
-    //   username: process.env.POSTGRES_DB_USERNAME,
-    //   password: process.env.POSTGRES_PASSWORD,
-    //   autoLoadEntities: true,
-    //   synchronize: true,
-    // }),
 
     // postgresql
     TypeOrmModule.forRootAsync({
@@ -76,46 +65,7 @@ import { PackagesModule } from './packages/packages.module';
         }
 
         return baseConfig as TypeOrmModuleOptions;
-
-        // return {
-        //   type: 'postgres',
-        //   host: config.get<string>('POSTGRES_DB_HOST'),
-        //   port: config.get<number>('POSTGRES_DB_PORT'),
-        //   password: config.get<string>('POSTGRES_PASSWORD'),
-        //   username: config.get<string>('POSTGRES_DB_USERNAME'),
-        //   entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        //   database: config.get<string>('POSTGRES_DB_NAME'),
-        //   synchronize: true,
-        //   logging: true,
-        //   ssl: isProduction,
-        //   extra: {
-        //     ssl: {
-        //       rejectUnauthorized: false,
-        //       trustServerCertificate: true,
-        //       Encrypt: true,
-        //       IntegratedSecurity: false,
-        //     },
-        //   },
-        // };
-
-        // type: 'postgres',
-        // host: config.get<string>('POSTGRES_DB_HOST'),
-        // port: config.get<number>('POSTGRES_DB_PORT'),
-        // password: config.get<string>('POSTGRES_PASSWORD'),
-        // username: config.get<string>('POSTGRES_DB_USERNAME'),
-        // entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        // database: config.get<string>('POSTGRES_DB_NAME'),
-        // synchronize: true,
-        // logging: true,
-        // ssl: true,
-        // extra: {
-        //   ssl: {
-        //     rejectUnauthorized: false,
-        //     trustServerCertificate: true,
-        //     Encrypt: true,
-        //     IntegratedSecurity: false,
-        //   },
-        // },
+        
       },
     }),
 
