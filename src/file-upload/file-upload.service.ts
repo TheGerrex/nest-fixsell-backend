@@ -1,6 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3, IAM } from 'aws-sdk';
+import { existsSync } from 'fs';
+import { join } from 'path';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class FileUploadService {
@@ -82,5 +85,15 @@ export class FileUploadService {
         throw error;
       }
     }
+  }
+
+  getStaticProductImage(imageName: string) {
+    const path = join(__dirname, '../../static/products', imageName);
+
+    if (!existsSync(path)) {
+        throw new BadRequestException(`No se encontro producto con la imagen ${imageName}`);
+    }
+
+    return path;
   }
 }
