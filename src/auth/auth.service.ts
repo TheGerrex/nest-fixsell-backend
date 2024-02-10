@@ -40,7 +40,7 @@ export class AuthService {
       return user;
     } catch (error) {
       if (error.code === '23505') {
-        throw new BadRequestException(`${createUserDto.email} already exists`);
+        throw new BadRequestException(`${createUserDto.email} ya existe.`);
       }
       throw new InternalServerErrorException('something went wrong');
     }
@@ -63,11 +63,11 @@ export class AuthService {
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      throw new UnauthorizedException(`Invalid credentials - email`);
+      throw new UnauthorizedException(`Credenciales no validas - email`);
     }
 
     if (!bcryptjs.compareSync(password, user.password)) {
-      throw new UnauthorizedException(`Invalid credentials - password`);
+      throw new UnauthorizedException(`Credeniales no validas - contraseña`);
     }
 
     const { password: _, ...rest } = user;
@@ -99,7 +99,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
-      throw new BadRequestException(`User with id ${id} not found`);
+      throw new BadRequestException(`Usuario con el id: ${id} no encontrado`);
     }
 
     // Update user properties
@@ -114,7 +114,7 @@ export class AuthService {
       );
 
       if (!isOldPasswordValid) {
-        throw new BadRequestException('Old password is incorrect');
+        throw new BadRequestException('Contraseña antigua no válida');
       }
 
       user.password = await bcryptjs.hash(updateAuthDto.newPassword, 10);
@@ -148,7 +148,7 @@ export class AuthService {
     try {
       const result = await this.userRepository.delete(id);
       if (result.affected === 0) {
-        throw new BadRequestException(`User with id ${id} not found`);
+        throw new BadRequestException(`Usuario con el id: ${id} no encontrado`);
       }
     } catch (error) {
       throw new InternalServerErrorException(error.message);
