@@ -27,7 +27,6 @@ export class CreatePrinterDto {
   model: string;
 
   @IsOptional()
-  @IsUrl()
   datasheet_url?: string;
 
   @IsOptional()
@@ -74,8 +73,8 @@ export class CreatePrinterDto {
   dimensions?: string;
 
   @IsOptional()
-  @IsString()
-  printVelocity?: string;
+  @IsInt()
+  printVelocity?: number;
 
   @IsOptional()
   @IsString()

@@ -52,8 +52,8 @@ export class Printer {
   @Column({ nullable: true })
   dimensions: string;
 
-  @Column({ nullable: true })
-  printVelocity: string;
+  @Column('int', { nullable: true })
+  printVelocity: number;
 
   @Column({ nullable: true })
   maxPrintSizeSimple: string;

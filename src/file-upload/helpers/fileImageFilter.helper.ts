@@ -1,15 +1,17 @@
+import { BadRequestException } from "@nestjs/common";
+
 export const fileImageFilter = ( req: Express.Request, file: Express.Multer.File, callback: Function ) => {
 
     // console.log({ file })
     if ( !file ) return callback( new Error('No hay archivo'), false );
 
-    const fileExptension = file.mimetype.split('/')[1];
+    const fileExtension = file.mimetype.split('/')[1].toLocaleLowerCase();
     const validExtensions = ['jpg','jpeg','png'];
 
-    if (  validExtensions.includes( fileExptension ) ) {
+    if (  validExtensions.includes( fileExtension ) ) {
         return callback( null, true );
     } else {
-        return callback( new Error('Tipo de archivo invalido (.jpg, .jpeg, .png,'), false );
+        return callback(  new BadRequestException(`Tipo de archivo invalido (.${fileExtension})`), false );
     }
 
 }

@@ -14,13 +14,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import * as path from 'path';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrintersService {
   constructor(
     @InjectRepository(Printer)
     private printersRepository: Repository<Printer>,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    private configService: ConfigService,
   ) {}
 
   async findAll(filtersPrinterDto: FilterPrinterDto = {}): Promise<Printer[]> {
@@ -208,7 +210,7 @@ export class PrintersService {
           const newPath = `imagenes/${encodeURIComponent(savedPrinter.brand.replace(/ /g, '_'))}/${encodeURIComponent(savedPrinter.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
   
           await this.fileUploadService.renameFile(oldPath, newPath);
-          const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+          const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
           newUrls.push(newUrl);
         }
         savedPrinter.img_url = newUrls;
@@ -223,7 +225,7 @@ export class PrintersService {
         const newPath = `datasheets/${encodeURIComponent(savedPrinter.brand.replace(/ /g, '_'))}/${encodeURIComponent(savedPrinter.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
   
         await this.fileUploadService.renameFile(oldPath, newPath);
-        const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+        const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
         savedPrinter.datasheet_url = newUrl;
         savedPrinter = await this.printersRepository.save(savedPrinter);
       }
@@ -257,8 +259,11 @@ export class PrintersService {
           const fileName = path.basename(oldPath);
           const decodedFileName = decodeURIComponent(fileName);
           const newPath = `imagenes/${encodeURIComponent(printerToUpdate.brand.replace(/ /g, '_'))}/${encodeURIComponent(printerToUpdate.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
-          await this.fileUploadService.renameFile(oldPath, newPath);
-          const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+          const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
+          if (newUrl !== tempFilePath) {
+            // The file has been edited, so rename it
+            await this.fileUploadService.renameFile(oldPath, newPath);
+          }
           newUrls.push(newUrl);
         } else {
           // This is an existing image
@@ -274,8 +279,11 @@ export class PrintersService {
       const fileName = path.basename(oldPath);
       const decodedFileName = decodeURIComponent(fileName);
       const newPath = `datasheets/${encodeURIComponent(printerToUpdate.brand.replace(/ /g, '_'))}/${encodeURIComponent(printerToUpdate.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
-      await this.fileUploadService.renameFile(oldPath, newPath);
-      const newUrl = `https://fixsell-website-images.s3.amazonaws.com/${newPath}`;
+      const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
+      if (newUrl !== updatePrinterDto.datasheet_url) {
+        // The file has been edited, so rename it
+        await this.fileUploadService.renameFile(oldPath, newPath);
+      }
       updatePrinterDto.datasheet_url = newUrl;
     }
   

@@ -29,10 +29,6 @@ export class FileUploadController {
     FileInterceptor('image', {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
       fileFilter: fileImageFilter,
-      storage: diskStorage({
-        destination: './static/products',
-        filename: fileNamer
-      })
     }),
   )
   async uploadFile(
@@ -46,16 +42,13 @@ export class FileUploadController {
       throw new BadRequestException('No hay archivo');
     }
 
-    const secureUrl = `${this.configService.get('HOST_API')}/upload/image/${file.filename}`
-
-    return { secureUrl };
-    // const url = await this.fileUploadService.uploadFile(
-    //   file,
-    //   rootFolder,
-    //   parentFolder,
-    //   childFolder,
-    // );
-    // return { url };
+    const url = await this.fileUploadService.uploadFile(
+      file,
+      rootFolder,
+      parentFolder,
+      childFolder,
+    );
+    return { url };
   }
 
   @Post('image/multiple')
@@ -76,12 +69,7 @@ export class FileUploadController {
     if (!files) {
       throw new BadRequestException('No hay archivo');
     }
-    
-    // console.log({ files })
 
-    // const secureUrls: string[] = files.map(file => `${this.configService.get('HOST_API')}/upload/image/${file.filename}`);
-
-    // return { secureUrls };
     const urls = await this.fileUploadService.uploadMultipleFiles(
       files,
       rootFolder,
@@ -95,14 +83,20 @@ export class FileUploadController {
   @UseInterceptors(
     FileInterceptor('pdf', {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+      fileFilter: filePdfFilter,
     }),
   )
-  async uploadPdf(@UploadedFile() file) {
+  async uploadPdf(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('rootFolder') rootFolder: string,
+    @Body('parentFolder') parentFolder: string,
+    @Body('childFolder') childFolder: string,
+    ) {
     const url = await this.fileUploadService.uploadFile(
       file,
-      'rootFolder',
-      'parentFolder',
-      'childFolder',
+      rootFolder,
+      parentFolder,
+      childFolder,
     );
     return { url };
   }
@@ -111,10 +105,11 @@ export class FileUploadController {
   @UseInterceptors(
     FilesInterceptor('pdf', 10, {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+      fileFilter: filePdfFilter,
     }),
   )
   async uploadMultiplePdfs(
-    @UploadedFiles() files,
+    @UploadedFiles() files: Express.Multer.File[],
     @Body('rootFolder') rootFolder: string,
     @Body('parentFolder') parentFolder: string,
     @Body('childFolder') childFolder: string,) {
