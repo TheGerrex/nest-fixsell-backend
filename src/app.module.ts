@@ -88,6 +88,8 @@ import { PackagesModule } from './packages/packages.module';
 })
 export class AppModule {
   constructor(private config: ConfigService) {
-    console.log(config.get<string>('NODE_ENV'));
+    console.log(this.config.get<string>('NODE_ENV'));
+    console.log(this.config.get<string>('POSTGRES_DB_HOST'));
+    console.log(this.config.get<string>('HOST_API'));
   }
 }
