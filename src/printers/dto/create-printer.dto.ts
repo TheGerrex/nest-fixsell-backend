@@ -9,13 +9,14 @@ import {
   IsUrl,
 } from 'class-validator';
 
-const brands = ['Konica Minolta', 'Kyocera', 'Epson'];
+const brands = ['Konica Minolta', 'Kyocera', 'Epson', 'Audley', 'Prixato'];
 const categories = [
   'Oficina',
   'Produccion',
   'Inyeccion de Tinta',
   'Artes Graficas',
   'Etiquetas',
+  'Plotter',
 ];
 
 export class CreatePrinterDto {

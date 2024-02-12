@@ -11,13 +11,14 @@ import {
   Min,
 } from 'class-validator';
 
-const brands = ['konica minolta', 'kyocera', 'epson'];
+const brands = ['konica minolta', 'kyocera', 'epson', 'audley', 'prixato'];
 const categories = [
   'oficina',
   'produccion',
   'inyeccion de tinta',
   'artes graficas',
   'etiquetas',
+  'plotter',
 ];
 
 const printSizes = [
