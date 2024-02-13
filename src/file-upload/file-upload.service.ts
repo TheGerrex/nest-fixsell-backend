@@ -40,9 +40,10 @@ export class FileUploadService {
 
   async uploadFile(file, rootFolder, subRootFolder, childFolder) {
     let filePath;
+    const formattedFileName = this.formatFileName(file.originalname);
     if (subRootFolder && childFolder) {
       // If the brand and model are provided, use them in the file name
-      filePath = `${rootFolder}/${subRootFolder}/${childFolder}/${Date.now()}-${file.originalname}`;
+      filePath = `${rootFolder}/${subRootFolder}/${childFolder}/${Date.now()}-${formattedFileName}`;
     } else {
       // Otherwise, create a temporary file with a unique name
       filePath = `${rootFolder}/temp/${Date.now()}-${file.originalname}`;
@@ -98,13 +99,23 @@ export class FileUploadService {
       CopySource: `${this.configService.get('AWS_BUCKET_NAME')}/${oldPath}`,
       Key: newPath,
     };
-    await this.s3.copyObject(copyParams).promise();
+
+    try {
+      await this.s3.copyObject(copyParams).promise();
+    } catch (error) {
+      throw new BadRequestException(`Failed to copy file from ${oldPath} to ${newPath}: ${error.message}`);
+    }
   
     const deleteParams = {
       Bucket: this.configService.get('AWS_BUCKET_NAME'),
       Key: oldPath,
     };
-    await this.s3.deleteObject(deleteParams).promise();
+
+    try {
+      await this.s3.deleteObject(deleteParams).promise();
+    } catch (error) {
+      throw new BadRequestException(`Failed to delete file at ${oldPath}: ${error.message}`);
+    }
   }
 
   getStaticProductImage(imageName: string) {
@@ -115,5 +126,9 @@ export class FileUploadService {
     }
 
     return path;
+  }
+
+  private formatFileName(fileName: string): string {
+    return fileName.replace(/ /g, '_');
   }
 }

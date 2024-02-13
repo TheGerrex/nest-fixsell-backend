@@ -257,14 +257,19 @@ export class PrintersService {
           const url = new URL(tempFilePath);
           const oldPath = url.pathname.substring(1);
           const fileName = path.basename(oldPath);
-          const decodedFileName = decodeURIComponent(fileName);
+          const decodedFileName = decodeURIComponent(fileName).replace(/â¯/g, '_');
           const newPath = `imagenes/${encodeURIComponent(printerToUpdate.brand.replace(/ /g, '_'))}/${encodeURIComponent(printerToUpdate.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
           const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
           if (newUrl !== tempFilePath) {
-            // The file has been edited, so rename it
-            await this.fileUploadService.renameFile(oldPath, newPath);
+            try {
+              // The file has been edited, so rename it
+              await this.fileUploadService.renameFile(oldPath, newPath);
+            } catch (error) {
+              throw new BadRequestException(`Failed to rename file from ${oldPath} to ${newPath}: ${error.message}`);
+            }
           }
-          newUrls.push(newUrl);
+          const decodedNewUrl = decodeURIComponent(newUrl);
+          newUrls.push(decodedNewUrl);
         } else {
           // This is an existing image
           newUrls.push(tempFilePath);
