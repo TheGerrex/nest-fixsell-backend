@@ -9,6 +9,6 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
   controllers: [PrintersController],
   providers: [PrintersService, FileUploadService],
   imports: [TypeOrmModule.forFeature([Printer])],
-  exports: [PrintersService],
+  exports: [PrintersService, TypeOrmModule],
 })
 export class PrintersModule {}

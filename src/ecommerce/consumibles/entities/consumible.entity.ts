@@ -1,5 +1,13 @@
 import { OrderDetail } from 'src/ecommerce/orderdetails/entities/orderdetail.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Printer } from 'src/printers/entities/printer.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 
 @Entity()
 export class Consumible {
@@ -36,6 +44,13 @@ export class Consumible {
   @Column()
   location: string;
 
+  // Relations
+
+  //printers many to many
+  @ManyToMany(() => Printer, (printer) => printer.consumibles)
+  printers: Printer[];
+
+  //orderdetail
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.consumible)
   orderDetails: OrderDetail[];
 }

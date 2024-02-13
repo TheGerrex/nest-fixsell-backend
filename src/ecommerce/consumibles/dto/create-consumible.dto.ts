@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsArray } from 'class-validator';
+import { IsString, IsNumber, IsArray, IsOptional } from 'class-validator';
 
 export class CreateConsumibleDto {
   @IsString()
@@ -31,4 +31,10 @@ export class CreateConsumibleDto {
 
   @IsString()
   location: string;
+
+  // printers
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  printersIds?: string[];
 }

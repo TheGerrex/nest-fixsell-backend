@@ -50,7 +50,8 @@ export class PrintersService {
     let query = this.printersRepository
       .createQueryBuilder('printer')
       .leftJoinAndSelect('printer.deal', 'deal')
-      .leftJoinAndSelect('printer.packages', 'packages');
+      .leftJoinAndSelect('printer.packages', 'packages')
+      .leftJoinAndSelect('printer.consumibles', 'consumibles');
 
     Object.keys(filterProps).forEach((key) => {
       console.log(filterProps);
@@ -182,6 +183,7 @@ export class PrintersService {
         .createQueryBuilder('printer')
         .leftJoinAndSelect('printer.deal', 'deal')
         .leftJoinAndSelect('printer.packages', 'packages')
+        .leftJoinAndSelect('printer.consumibles', 'consumibles')
         .where(`UPPER(printer.model) = :model`, {
           model: term.toUpperCase(),
         })
@@ -199,7 +201,7 @@ export class PrintersService {
     try {
       const newPrinter = this.printersRepository.create(createPrinterDto);
       let savedPrinter = await this.printersRepository.save(newPrinter);
-  
+
       if (createPrinterDto.img_url) {
         const newUrls = [];
         for (const tempFilePath of createPrinterDto.img_url) {
@@ -207,29 +209,41 @@ export class PrintersService {
           const oldPath = url.pathname.substring(1);
           const fileName = path.basename(oldPath);
           const decodedFileName = decodeURIComponent(fileName);
-          const newPath = `imagenes/${encodeURIComponent(savedPrinter.brand.replace(/ /g, '_'))}/${encodeURIComponent(savedPrinter.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
-  
+          const newPath = `imagenes/${encodeURIComponent(
+            savedPrinter.brand.replace(/ /g, '_'),
+          )}/${encodeURIComponent(
+            savedPrinter.model.replace(/ /g, '_'),
+          )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+
           await this.fileUploadService.renameFile(oldPath, newPath);
-          const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
+          const newUrl = `https://${this.configService.get(
+            'AWS_BUCKET_NAME',
+          )}.s3.amazonaws.com/${newPath}`;
           newUrls.push(newUrl);
         }
         savedPrinter.img_url = newUrls;
         savedPrinter = await this.printersRepository.save(savedPrinter);
       }
-  
+
       if (createPrinterDto.datasheet_url) {
         const url = new URL(createPrinterDto.datasheet_url);
         const oldPath = url.pathname.substring(1);
         const fileName = path.basename(oldPath);
         const decodedFileName = decodeURIComponent(fileName);
-        const newPath = `datasheets/${encodeURIComponent(savedPrinter.brand.replace(/ /g, '_'))}/${encodeURIComponent(savedPrinter.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
-  
+        const newPath = `datasheets/${encodeURIComponent(
+          savedPrinter.brand.replace(/ /g, '_'),
+        )}/${encodeURIComponent(
+          savedPrinter.model.replace(/ /g, '_'),
+        )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+
         await this.fileUploadService.renameFile(oldPath, newPath);
-        const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
+        const newUrl = `https://${this.configService.get(
+          'AWS_BUCKET_NAME',
+        )}.s3.amazonaws.com/${newPath}`;
         savedPrinter.datasheet_url = newUrl;
         savedPrinter = await this.printersRepository.save(savedPrinter);
       }
-  
+
       return savedPrinter;
     } catch (error) {
       console.error('Error while creating printer:', error);
@@ -239,16 +253,19 @@ export class PrintersService {
       throw new InternalServerErrorException('Algo salio muy mal.');
     }
   }
-  
-  async update(id: string, updatePrinterDto: UpdatePrinterDto): Promise<Printer> {
+
+  async update(
+    id: string,
+    updatePrinterDto: UpdatePrinterDto,
+  ): Promise<Printer> {
     let printerToUpdate = await this.printersRepository.findOne({
       where: { id },
     });
-  
+
     if (!printerToUpdate) {
       throw new NotFoundException(`Printer with ID ${id} not found`);
     }
-  
+
     if (updatePrinterDto.img_url) {
       const newUrls = [];
       for (const tempFilePath of updatePrinterDto.img_url) {
@@ -257,15 +274,26 @@ export class PrintersService {
           const url = new URL(tempFilePath);
           const oldPath = url.pathname.substring(1);
           const fileName = path.basename(oldPath);
-          const decodedFileName = decodeURIComponent(fileName).replace(/â¯/g, '_');
-          const newPath = `imagenes/${encodeURIComponent(printerToUpdate.brand.replace(/ /g, '_'))}/${encodeURIComponent(printerToUpdate.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
-          const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
+          const decodedFileName = decodeURIComponent(fileName).replace(
+            /â¯/g,
+            '_',
+          );
+          const newPath = `imagenes/${encodeURIComponent(
+            printerToUpdate.brand.replace(/ /g, '_'),
+          )}/${encodeURIComponent(
+            printerToUpdate.model.replace(/ /g, '_'),
+          )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+          const newUrl = `https://${this.configService.get(
+            'AWS_BUCKET_NAME',
+          )}.s3.amazonaws.com/${newPath}`;
           if (newUrl !== tempFilePath) {
             try {
               // The file has been edited, so rename it
               await this.fileUploadService.renameFile(oldPath, newPath);
             } catch (error) {
-              throw new BadRequestException(`Failed to rename file from ${oldPath} to ${newPath}: ${error.message}`);
+              throw new BadRequestException(
+                `Failed to rename file from ${oldPath} to ${newPath}: ${error.message}`,
+              );
             }
           }
           const decodedNewUrl = decodeURIComponent(newUrl);
@@ -277,35 +305,44 @@ export class PrintersService {
       }
       updatePrinterDto.img_url = newUrls;
     }
-  
+
     if (updatePrinterDto.datasheet_url) {
       const url = new URL(updatePrinterDto.datasheet_url);
       const oldPath = url.pathname.substring(1);
       const fileName = path.basename(oldPath);
       const decodedFileName = decodeURIComponent(fileName);
-      const newPath = `datasheets/${encodeURIComponent(printerToUpdate.brand.replace(/ /g, '_'))}/${encodeURIComponent(printerToUpdate.model.replace(/ /g, '_'))}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
-      const newUrl = `https://${this.configService.get('AWS_BUCKET_NAME')}.s3.amazonaws.com/${newPath}`;
+      const newPath = `datasheets/${encodeURIComponent(
+        printerToUpdate.brand.replace(/ /g, '_'),
+      )}/${encodeURIComponent(
+        printerToUpdate.model.replace(/ /g, '_'),
+      )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+      const newUrl = `https://${this.configService.get(
+        'AWS_BUCKET_NAME',
+      )}.s3.amazonaws.com/${newPath}`;
       if (newUrl !== updatePrinterDto.datasheet_url) {
         // The file has been edited, so rename it
         await this.fileUploadService.renameFile(oldPath, newPath);
       }
       updatePrinterDto.datasheet_url = newUrl;
     }
-  
-    const updateResult = await this.printersRepository.update(id, updatePrinterDto);
-    
+
+    const updateResult = await this.printersRepository.update(
+      id,
+      updatePrinterDto,
+    );
+
     if (!updateResult.affected) {
       throw new NotFoundException('Printer not found');
     }
-  
+
     const updatedPrinter = await this.printersRepository.findOne({
       where: { id },
     });
-    
+
     if (!updatedPrinter) {
       throw new NotFoundException('Printer not found');
     }
-  
+
     return updatedPrinter;
   }
 

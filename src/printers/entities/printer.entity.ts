@@ -4,9 +4,12 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   OneToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Deal } from 'src/deals/entities/deal.entity';
 import { Package } from 'src/packages/entities/package.entity';
+import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity';
 
 @Entity()
 export class Printer {
@@ -92,4 +95,11 @@ export class Printer {
   })
   @JoinColumn()
   packages: Package;
+
+  @ManyToMany(() => Consumible, (consumible) => consumible.printers, {
+    eager: true,
+    nullable: true,
+  })
+  @JoinTable()
+  consumibles: Consumible[];
 }
