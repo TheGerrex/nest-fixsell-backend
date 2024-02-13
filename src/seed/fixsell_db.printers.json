@@ -57,8 +57,8 @@
         "description": "La Konica Minolta AccurioPress C12000 es una impresora de producción de alto volumen diseñada para entornos de impresión comercial. Con sus rápidas velocidades de impresión de hasta 120 páginas por minuto, su avanzada gestión del color y sus capacidades de manejo de soportes, la AccurioPress C12000 puede producir impresiones de alta calidad con una precisión y consistencia excepcionales. Equipada con tecnologías innovadoras como el tóner Simitri V, el optimizador de calidad inteligente IQ-501 y una resolución de 2400 x 2400 ppp, esta impresora de producción ofrece una calidad de imagen excepcional y un texto nítido, por lo que resulta ideal para imprimir materiales de marketing, libros, manuales y otros documentos profesionales. Sus avanzadas funciones de automatización, como el acabado en línea y la calibración automática del color, ayudan a reducir los residuos y a aumentar la productividad, mientras que su interfaz de usuario personalizable y su integración con el software de gestión de flujos de trabajo facilitan su manejo y su integración en los flujos de trabajo existentes. Con su rendimiento superior, fiabilidad y flexibilidad, la AccurioPress C12000 es una excelente opción para las empresas que buscan ampliar sus capacidades de impresión y obtener resultados de alta calidad.",
         "datasheet_url": "https://fixsell-website-images.s3.amazonaws.com/datasheets/Konica_Minolta/AcurrioPress_C12000/AccurioPress_C14000-C12000_Spec_Sheet.pdf",
         "img_url": [
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Konica_Minolta/AcurrioPress_C12000/AccurioPress-C12000-Front1.png",
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Konica_Minolta/AcurrioPress_C12000/AccurioPress-C12000-Side.png"
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Konica_Minolta/AccurioPress_C12000/AccurioPress-C12000-Front1.png",
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Konica_Minolta/AccurioPress_C12000/AccurioPress-C12000-Side.png"
         ],
         "price": 100.15,
         "category": "Artes Graficas",
@@ -1436,7 +1436,7 @@
         "description": "La WorkForce WF-M5799, con tecnología de PrecisionCore, ofrece una impresora multifuncional compacta con hasta un 60 por ciento menos de costos de impresión que las impresoras láser monocromáticas. La WF-M5799 incluye un innovador sistema de bolsa de tinta reemplazable para minimizar las intervenciones. Diseñado para las necesidades de su departamento de trabajo, imprima documentos de calidad profesional.",
         "datasheet_url": "https://fixsell-website-images.s3.amazonaws.com/datasheets/Epson/WorkForce_Pro_WF-M5799/Epson_WorkForce_M5799_Datasheet.pdf",
         "img_url": [
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-M5799/Sin_ti%CC%81tulo-4.png"
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-M5799/Epson-WorkForce-Pro-WF-M5799-front.png"
         ],
         "price": 100.15,
         "category": "Inyeccion de Tinta",
@@ -1677,9 +1677,9 @@
         "description": "La impresora multifuncional WorkForce Pro WF-6590, con tecnología PrecisionCore, es ideal para grupos de trabajo. Ahorra hasta un 50% en costos de impresión en comparación con las impresoras láser de color y reduce al mínimo el tiempo de inactividad gracias a los cartuchos de alta capacidad de Epson, que imprimen hasta 10000/7000 páginas en negro/color. Además, cuenta con una capacidad de papel de hasta 1580 hojas. La multifuncional de oficina WF-6590, imprime documentos de calidad profesional tan rápido como 34 ppm negro/color y es compatible con las principales soluciones de software MPS.",
         "datasheet_url": "https://fixsell-website-images.s3.amazonaws.com/datasheets/Epson/WorkForce_Pro_WF-6590/Epson_WorkForce_6590_Datasheet.pdf",
         "img_url": [
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-6590/WorkForce-Pro-WF-6590-front.png",
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-6590/WorkForce-Pro-WF-6590-side.png",
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-6590/WorkForce-Pro-WF-6590-panel.png"
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-6590/Epson-WorkForce-Pro-WF-6590-front.png",
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-6590/Epson-WorkForce-Pro-WF-6590-side.png",
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/WorkForce_Pro_WF-6590/Epson-WorkForce-Pro-WF-6590-panel.png"
         ],
         "price": 100.15,
         "category": "Oficina",
@@ -1704,10 +1704,10 @@
         "description": "La impresora multifuncional WorkForce Pro WF-C869R, ideal para grupos de trabajo que desean aumentar su productividad, ofrece impresión a color a muy bajo costo. Su sistema de bolsas de tinta reemplazables rinde hasta 86000 páginas sin cambiar la tinta, lo que significa menos intervenciones y menos molestias. Acelera las impresiónes de calidad profesional hasta 35ppm negro/color  y escanea documentos hasta 25 paginas por minuto. Con impresiónes de 33 x 48 cm (13 \"x 19\"), una capacidad de papel total de 1835 hojas e impresión dúplex automática, la WF-C869R tiene la versatilidad que los grupos de trabajo necesitan. Además, la plataforma abierta de Epson, permite la integración perfecta con aplicaciones empresariales basadas en la Web, como PaperCut MF entre otras.",
         "datasheet_url": "https://fixsell-website-images.s3.amazonaws.com/datasheets/Epson/Red_WorkForce_Pro_WF-C869R/Epson_WorkForce_C869R_Datasheet.pdf",
         "img_url": [
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/editada_Epson-Red-WorkForce-Pro-WF-C869R-front.png",
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/edit_Epson-Red-WorkForce-Pro-WF-C869R-full-front.png",
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/editEpson-Red-WorkForce-Pro-WF-C869R-full-side.png",
-            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/editEpson-Red-WorkForce-Pro-WF-C869R-side.png",
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/Epson-Red-WorkForce-Pro-WF-C869R-front.png",
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/Epson-Red-WorkForce-Pro-WF-C869R-full-front.png",
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/Epson-Red-WorkForce-Pro-WF-C869R-full-side.png",
+            "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/Epson-Red-WorkForce-Pro-WF-C869R-side.png",
             "https://fixsell-website-images.s3.amazonaws.com/imagenes/Epson/Red_WorkForce_Pro_WF-C869R/Epson-Red-WorkForce-Pro-WF-C869R-front.png"
         ],
         "price": 100.15,
