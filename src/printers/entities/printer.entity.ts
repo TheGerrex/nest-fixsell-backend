@@ -35,6 +35,9 @@ export class Printer {
   price: number;
 
   @Column({ nullable: true })
+  currency: string;
+
+  @Column({ nullable: true })
   category: string;
 
   @Column({ nullable: true })
