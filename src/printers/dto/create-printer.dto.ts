@@ -44,6 +44,10 @@ export class CreatePrinterDto {
   price?: number;
 
   @IsOptional()
+  @IsString()
+  currency?: string;
+
+  @IsOptional()
   @IsIn(categories)
   @IsString()
   category?: string;
