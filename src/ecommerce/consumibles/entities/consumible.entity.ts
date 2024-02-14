@@ -58,7 +58,7 @@ export class Consumible {
   // @Column()
   // thumbnailImage: string;
 
-  @Column('simple-array')
+  @Column('text', { array: true, nullable: true })
   img_url: string[];
 
   @Column()
