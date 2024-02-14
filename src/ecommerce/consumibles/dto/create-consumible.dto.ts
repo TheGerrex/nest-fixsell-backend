@@ -1,14 +1,31 @@
-import { IsString, IsNumber, IsArray, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsArray,
+  IsOptional,
+  IsEnum,
+  IsUUID,
+} from 'class-validator';
+import { Color } from '../../consumibles/color.enum';
 
 export class CreateConsumibleDto {
   @IsString()
   name: string;
 
+  @IsString()
+  brand: string;
+
   @IsNumber()
   price: number;
 
-  @IsNumber()
-  weight: number;
+  @IsString()
+  currency: string;
+
+  @IsString()
+  sku: string;
+
+  // @IsNumber()
+  // weight: number;
 
   @IsString()
   longDescription: string;
@@ -16,25 +33,40 @@ export class CreateConsumibleDto {
   @IsString()
   shortDescription: string;
 
-  @IsString()
-  thumbnailImage: string;
+  @IsArray()
+  @IsString({ each: true })
+  compatibleModels: string[];
+
+  @IsOptional()
+  @IsEnum(Color)
+  color?: Color;
+
+  @IsNumber()
+  yield: number;
+
+  // @IsString()
+  // thumbnailImage: string;
 
   @IsArray()
   @IsString({ each: true })
-  images: string[];
+  img_url: string[];
 
   @IsString()
   category: string;
 
-  @IsNumber()
-  stock: number;
+  // @IsNumber()
+  // stock: number;
 
-  @IsString()
-  location: string;
+  // @IsString()
+  // location: string;
 
   // printers
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   printersIds?: string[];
+
+  @IsOptional()
+  @IsUUID()
+  counterpartId?: string;
 }

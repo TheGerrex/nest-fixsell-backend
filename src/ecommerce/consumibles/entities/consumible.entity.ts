@@ -7,8 +7,11 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
+import { Color } from '../color.enum';
 @Entity()
 export class Consumible {
   @PrimaryGeneratedColumn('uuid')
@@ -17,11 +20,21 @@ export class Consumible {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  brand?: string;
+
   @Column('decimal')
   price: number;
 
-  @Column('decimal')
-  weight: number;
+  // currency: string;
+  @Column({ nullable: true })
+  currency: string;
+
+  @Column({ nullable: true })
+  sku: string;
+
+  // @Column('decimal')
+  // weight: number;
 
   @Column('text')
   longDescription: string;
@@ -29,20 +42,33 @@ export class Consumible {
   @Column()
   shortDescription: string;
 
-  @Column()
-  thumbnailImage: string;
+  @Column('text', { nullable: true, array: true })
+  compatibleModels: string[];
+
+  @Column({
+    type: 'enum',
+    enum: Color,
+    nullable: true,
+  })
+  color: Color;
+
+  @Column('int', { nullable: true })
+  yield: number;
+
+  // @Column()
+  // thumbnailImage: string;
 
   @Column('simple-array')
-  images: string[];
+  img_url: string[];
 
   @Column()
   category: string;
 
-  @Column('int')
-  stock: number;
+  // @Column('int')
+  // stock: number;
 
-  @Column()
-  location: string;
+  // @Column()
+  // location: string;
 
   // Relations
 
@@ -53,4 +79,8 @@ export class Consumible {
   //orderdetail
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.consumible)
   orderDetails: OrderDetail[];
+
+  @OneToOne(() => Consumible)
+  @JoinColumn()
+  counterpart: Consumible;
 }
