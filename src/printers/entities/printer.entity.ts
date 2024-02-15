@@ -34,7 +34,7 @@ export class Printer {
   @Column('float', { default: 100, nullable: true })
   price: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 'usd' })
   currency: string;
 
   @Column({ nullable: true })
