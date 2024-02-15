@@ -7,7 +7,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { Color } from '../../consumibles/color.enum';
-
+import { Origen } from '../../consumibles/origen.enum';
 export class CreateConsumibleDto {
   @IsString()
   name: string;
@@ -26,6 +26,13 @@ export class CreateConsumibleDto {
 
   // @IsNumber()
   // weight: number;
+
+  @IsNumber()
+  volume: number;
+
+  // origen: string;
+  @IsEnum(Origen)
+  origen: Origen;
 
   @IsString()
   longDescription: string;

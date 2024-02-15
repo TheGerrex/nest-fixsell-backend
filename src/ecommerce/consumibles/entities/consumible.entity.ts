@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { Color } from '../color.enum';
+import { Origen } from '../origen.enum';
 @Entity()
 export class Consumible {
   @PrimaryGeneratedColumn('uuid')
@@ -35,6 +36,12 @@ export class Consumible {
 
   // @Column('decimal')
   // weight: number;
+
+  @Column({ type: 'enum', enum: Origen, nullable: true })
+  origen: Origen;
+
+  @Column('decimal', { nullable: true })
+  volume: number;
 
   @Column('text')
   longDescription: string;
