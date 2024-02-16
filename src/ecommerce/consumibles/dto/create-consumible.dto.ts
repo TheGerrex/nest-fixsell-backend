@@ -21,43 +21,53 @@ export class CreateConsumibleDto {
   @IsString()
   currency: string;
 
+  @IsOptional()
   @IsString()
   sku: string;
 
   // @IsNumber()
   // weight: number;
 
+  @IsOptional()
   @IsNumber()
   volume: number;
 
   // origen: string;
+  @IsOptional()
   @IsEnum(Origen)
   origen: Origen;
 
+  @IsOptional()
   @IsString()
   longDescription: string;
 
+  @IsOptional()
   @IsString()
   shortDescription: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   compatibleModels: string[];
 
   @IsOptional()
+  @IsOptional()
   @IsEnum(Color)
   color?: Color;
 
+  @IsOptional()
   @IsNumber()
   yield: number;
 
   // @IsString()
   // thumbnailImage: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   img_url: string[];
 
+  @IsOptional()
   @IsString()
   category: string;
 

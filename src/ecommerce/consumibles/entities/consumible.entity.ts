@@ -43,10 +43,10 @@ export class Consumible {
   @Column('decimal', { nullable: true })
   volume: number;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   longDescription: string;
 
-  @Column()
+  @Column('text', { nullable: true })
   shortDescription: string;
 
   @Column('text', { nullable: true, array: true })
@@ -68,7 +68,7 @@ export class Consumible {
   @Column('text', { array: true, nullable: true })
   img_url: string[];
 
-  @Column()
+  @Column({ nullable: true })
   category: string;
 
   // @Column('int')
