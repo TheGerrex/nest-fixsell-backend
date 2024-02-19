@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Consumible } from './entities/consumible.entity';
@@ -9,6 +9,7 @@ import * as path from 'path';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { ConfigService } from '@nestjs/config';
 import { NotFoundException } from '@nestjs/common';
+import { URL } from 'url';
 @Injectable()
 export class ConsumiblesService {
   constructor(
@@ -63,6 +64,54 @@ export class ConsumiblesService {
   }
 
   async update(id: string, updateConsumibleDto: UpdateConsumibleDto) {
+    const consumibleToUpdate = await this.consumibleRepository.findOne({
+      where: { id },
+    });
+
+    if (!consumibleToUpdate) {
+      throw new NotFoundException(`Consumible with ID ${id} not found`);
+    }
+
+    if (updateConsumibleDto.img_url) {
+      const newUrls = [];
+      for (const tempFilePath of updateConsumibleDto.img_url) {
+        if (tempFilePath.includes('temp')) {
+          // This is a new image
+          const url = new URL(tempFilePath);
+          const oldPath = url.pathname.substring(1);
+          const fileName = path.basename(oldPath);
+          const decodedFileName = decodeURIComponent(fileName).replace(
+            /â¯/g,
+            '_',
+          );
+          const newPath = `imagenes/${encodeURIComponent(
+            consumibleToUpdate.brand.replace(/ /g, '_'),
+          )}/${encodeURIComponent(
+            (consumibleToUpdate as any).name.replace(/ /g, '_'),
+          )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+          const newUrl = `https://${this.configService.get(
+            'AWS_BUCKET_NAME',
+          )}.s3.amazonaws.com/${newPath}`;
+          if (newUrl !== tempFilePath) {
+            try {
+              // The file has been edited, so rename it
+              await this.fileUploadService.renameFile(oldPath, newPath);
+            } catch (error) {
+              throw new BadRequestException(
+                `Failed to rename file from ${oldPath} to ${newPath}: ${error.message}`,
+              );
+            }
+          }
+          const decodedNewUrl = decodeURIComponent(newUrl);
+          newUrls.push(decodedNewUrl);
+        } else {
+          // This is an existing image
+          newUrls.push(tempFilePath);
+        }
+      }
+      updateConsumibleDto.img_url = newUrls;
+    }
+
     await this.consumibleRepository.update({ id: id }, updateConsumibleDto);
     return this.consumibleRepository.findOne({
       where: { id },
