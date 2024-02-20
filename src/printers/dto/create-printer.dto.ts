@@ -20,7 +20,6 @@ const categories = [
 ];
 
 export class CreatePrinterDto {
-  @IsIn(brands)
   @IsString()
   brand: string;
 

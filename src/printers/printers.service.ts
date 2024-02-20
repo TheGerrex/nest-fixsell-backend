@@ -15,6 +15,7 @@ import { Brackets, Repository } from 'typeorm';
 import * as path from 'path';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { ConfigService } from '@nestjs/config';
+import { BrandsService } from './brands/brands.service';
 
 @Injectable()
 export class PrintersService {
@@ -23,6 +24,7 @@ export class PrintersService {
     private printersRepository: Repository<Printer>,
     private fileUploadService: FileUploadService,
     private configService: ConfigService,
+    private brandsService: BrandsService,
   ) {}
 
   async findAll(filtersPrinterDto: FilterPrinterDto = {}): Promise<Printer[]> {
@@ -198,6 +200,16 @@ export class PrintersService {
   }
 
   async create(createPrinterDto: CreatePrinterDto): Promise<Printer> {
+    // Check if brand exists
+    if (createPrinterDto.brand) {
+      const brand = await this.brandsService.findByName(createPrinterDto.brand);
+      if (!brand) {
+        throw new NotFoundException(
+          `Brand ${createPrinterDto.brand} not found`,
+        );
+      }
+    }
+
     try {
       const newPrinter = this.printersRepository.create(createPrinterDto);
       let savedPrinter = await this.printersRepository.save(newPrinter);
