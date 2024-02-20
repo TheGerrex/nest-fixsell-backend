@@ -16,6 +16,7 @@ import * as path from 'path';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { ConfigService } from '@nestjs/config';
 import { BrandsService } from './brands/brands.service';
+import { CategoriesService } from './categories/categories.service';
 
 @Injectable()
 export class PrintersService {
@@ -25,6 +26,7 @@ export class PrintersService {
     private fileUploadService: FileUploadService,
     private configService: ConfigService,
     private brandsService: BrandsService,
+    private categoriesService: CategoriesService,
   ) {}
 
   async findAll(filtersPrinterDto: FilterPrinterDto = {}): Promise<Printer[]> {
@@ -209,7 +211,17 @@ export class PrintersService {
         );
       }
     }
-
+    // check if catergory exists
+    if (createPrinterDto.category) {
+      const category = await this.categoriesService.findByName(
+        createPrinterDto.category,
+      );
+      if (!category) {
+        throw new NotFoundException(
+          `Category ${createPrinterDto.category} not found`,
+        );
+      }
+    }
     try {
       const newPrinter = this.printersRepository.create(createPrinterDto);
       let savedPrinter = await this.printersRepository.save(newPrinter);
@@ -276,6 +288,28 @@ export class PrintersService {
 
     if (!printerToUpdate) {
       throw new NotFoundException(`Printer with ID ${id} not found`);
+    }
+
+    // Check if brand exists
+    if (updatePrinterDto.brand) {
+      const brand = await this.brandsService.findByName(updatePrinterDto.brand);
+      if (!brand) {
+        throw new NotFoundException(
+          `Brand ${updatePrinterDto.brand} not found`,
+        );
+      }
+    }
+
+    // check if catergory exists
+    if (updatePrinterDto.category) {
+      const category = await this.categoriesService.findByName(
+        updatePrinterDto.category,
+      );
+      if (!category) {
+        throw new NotFoundException(
+          `Category ${updatePrinterDto.category} not found`,
+        );
+      }
     }
 
     if (updatePrinterDto.img_url) {

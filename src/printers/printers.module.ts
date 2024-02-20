@@ -7,11 +7,12 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { BrandsController } from './brands/brands.controller';
 import { BrandsService } from './brands/brands.service';
 import { BrandsModule } from './brands/brands.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   controllers: [PrintersController, BrandsController],
   providers: [PrintersService, FileUploadService, BrandsService],
-  imports: [TypeOrmModule.forFeature([Printer]), BrandsModule],
+  imports: [TypeOrmModule.forFeature([Printer]), BrandsModule, CategoriesModule],
   exports: [PrintersService, TypeOrmModule],
 })
 export class PrintersModule {}

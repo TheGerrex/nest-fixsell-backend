@@ -47,7 +47,6 @@ export class CreatePrinterDto {
   currency?: string;
 
   @IsOptional()
-  @IsIn(categories)
   @IsString()
   category?: string;
 
