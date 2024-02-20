@@ -64,14 +64,45 @@ export class ConsumiblesService {
   }
 
   async update(id: string, updateConsumibleDto: UpdateConsumibleDto) {
+    console.log('Updating consumible with ID:', id);
+
     const consumibleToUpdate = await this.consumibleRepository.findOne({
       where: { id },
+      relations: ['printers'],
     });
 
     if (!consumibleToUpdate) {
       throw new NotFoundException(`Consumible with ID ${id} not found`);
     }
 
+    console.log('Found consumible to update:', consumibleToUpdate);
+
+    // Handle printersIds separately
+    if (updateConsumibleDto.printerIds) {
+      console.log(
+        'Updating printers with IDs:',
+        updateConsumibleDto.printerIds,
+      );
+
+      const printers = await this.printerRepository.findByIds(
+        updateConsumibleDto.printerIds,
+      );
+
+      console.log('Found printers to update:', printers);
+
+      consumibleToUpdate.printers = printers;
+      await this.consumibleRepository.save(consumibleToUpdate);
+
+      console.log('Updated printers in consumible:', consumibleToUpdate);
+
+      // Create a new object without printerIds
+      const { printerIds, ...updateDtoWithoutPrinterIds } = updateConsumibleDto;
+      updateConsumibleDto = {
+        ...updateDtoWithoutPrinterIds,
+        printerIds: updateConsumibleDto.printerIds,
+      };
+      delete updateConsumibleDto.printerIds;
+    }
     if (updateConsumibleDto.img_url) {
       const newUrls = [];
       for (const tempFilePath of updateConsumibleDto.img_url) {
@@ -112,7 +143,10 @@ export class ConsumiblesService {
       updateConsumibleDto.img_url = newUrls;
     }
 
-    await this.consumibleRepository.update({ id: id }, updateConsumibleDto);
+    await this.consumibleRepository.update(id, updateConsumibleDto);
+
+    console.log('Updated consumible:', updateConsumibleDto);
+
     return this.consumibleRepository.findOne({
       where: { id },
       relations: ['printers'],
