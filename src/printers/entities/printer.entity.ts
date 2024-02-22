@@ -5,6 +5,7 @@ import {
   JoinColumn,
   OneToOne,
   ManyToMany,
+  OneToMany,
   JoinTable,
 } from 'typeorm';
 import { Deal } from 'src/deals/entities/deal.entity';
@@ -92,12 +93,12 @@ export class Printer {
   @JoinColumn()
   deal: Deal;
 
-  @OneToOne(() => Package, (package_) => package_.printer, {
+  @OneToMany(() => Package, (package_) => package_.printer, {
     nullable: true,
     eager: true,
   })
   @JoinColumn()
-  packages: Package;
+  packages: Package[];
 
   @ManyToMany(() => Consumible, (consumible) => consumible.printers, {
     eager: true,

@@ -33,7 +33,10 @@ export class PackagesService {
   }
 
   async findAll() {
-    return await this.packageRepository.find();
+    return await this.packageRepository
+      .createQueryBuilder('package')
+      .leftJoinAndSelect('package.printer', 'printer')
+      .getMany();
   }
 
   async findOne(id: number) {
@@ -60,7 +63,7 @@ export class PackagesService {
       throw new Error('Printer not found');
     }
 
-    if (printer.deal && printer.packages.id !== id) {
+    if (printer.deal && printer.packages.some((pkg) => pkg.id === id)) {
       throw new Error('Printer already has a package');
     }
 
@@ -77,27 +80,32 @@ export class PackagesService {
   }
 
   async remove(id: number) {
-    const packages = await this.packageRepository.findOne({ where: { id } });
+    const packageEntity = await this.packageRepository.findOne({
+      where: { id },
+      relations: ['printer'],
+    });
 
-    if (!packages) {
-      throw new Error(`packages with ID ${id} not found`);
+    if (!packageEntity) {
+      throw new Error(`Package with ID ${id} not found`);
     }
 
-    // Remove the reference from the printer to the packages
-    const printer = await this.printerRepository
-      .createQueryBuilder('printer')
-      .leftJoinAndSelect('printer.packages', 'packages')
-      .where('packages.id = :id', { id })
-      .getOne();
+    // Get the printer that has the package
+    const printer = await this.printerRepository.findOne({
+      where: { id: packageEntity.printer.id },
+      relations: ['packages'],
+    });
 
     if (printer) {
-      printer.packages = null;
+      // Remove the specific package from the printer's packages array
+      printer.packages = printer.packages.filter(
+        (pkg: Package) => pkg.id !== id,
+      );
       await this.printerRepository.save(printer);
     }
 
-    // Now you can delete the packages
-    const result = await this.packageRepository.delete({ id });
+    // Now you can delete the package
+    await this.packageRepository.remove(packageEntity);
 
-    return `packages with ID ${id} has been removed` + result;
+    return `Package with ID ${id} has been successfully removed.`;
   }
 }

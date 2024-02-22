@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Printer } from 'src/printers/entities/printer.entity';
 
 @Entity()
@@ -7,7 +7,7 @@ export class Package {
   @PrimaryGeneratedColumn()
   id: number;
   // printer id relation
-  @OneToOne(() => Printer, (printer) => printer.packages)
+  @ManyToOne(() => Printer, (printer) => printer.packages)
   printer: Printer;
 
   // number of months
@@ -17,6 +17,10 @@ export class Package {
   // price per year
   @Column({ type: 'decimal', nullable: true })
   packagePrice: number;
+
+  // currency
+  @Column({ nullable: true })
+  packageCurrency: string;
 
   // package End Date
   @Column({ type: 'timestamp', nullable: true })
@@ -45,4 +49,8 @@ export class Package {
   //precio deposito
   @Column({ type: 'decimal', nullable: true })
   packageDepositPrice: number;
+
+  // includes array
+  @Column({ type: 'text', array: true, nullable: true })
+  packageIncludes: string[];
 }

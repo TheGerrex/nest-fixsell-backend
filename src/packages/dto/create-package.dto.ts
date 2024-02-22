@@ -19,17 +19,21 @@ export class CreatePackageDto {
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @IsDate()
-  @IsNotEmpty()
+  @IsOptional()
   packageStartDate: Date;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @IsDate()
-  @IsNotEmpty()
+  @IsOptional()
   packageEndDate: Date;
 
   @IsOptional()
   @IsNumber()
   packagePrice?: number;
+
+  @IsOptional()
+  @IsString()
+  packageCurrency?: string;
 
   @IsOptional()
   @IsNumber()
@@ -50,4 +54,8 @@ export class CreatePackageDto {
   @IsOptional()
   @IsNumber()
   packageDepositPrice?: number;
+
+  @IsOptional()
+  @IsString({ each: true })
+  packageIncludes?: string[];
 }
