@@ -33,9 +33,10 @@ export class FileUploadController {
   )
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Body('rootFolder') rootFolder: string,
-    @Body('parentFolder') parentFolder: string,
-    @Body('childFolder') childFolder: string,
+    @Body('productFolder') productFolder: string,
+    @Body('typeFolder') typeFolder: string,
+    @Body('brandFolder') brandFolder: string,
+    @Body('modelFolder') modelFolder: string,
   ) {
 
     if (!file) {
@@ -44,9 +45,10 @@ export class FileUploadController {
 
     const url = await this.fileUploadService.uploadFile(
       file,
-      rootFolder,
-      parentFolder,
-      childFolder,
+      productFolder,
+      typeFolder,
+      brandFolder,
+      modelFolder,
     );
     return { url };
   }
@@ -61,9 +63,11 @@ export class FileUploadController {
   )
   async uploadMultipleFiles(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body('rootFolder') rootFolder: string,
-    @Body('parentFolder') parentFolder: string,
-    @Body('childFolder') childFolder: string,) {
+    @Body('productFolder') productFolder: string,
+    @Body('typeFolder') typeFolder: string,
+    @Body('brandFolder') brandFolder: string,
+    @Body('modelFolder') modelFolder: string,
+  ) {
     
     
     if (!files) {
@@ -72,9 +76,10 @@ export class FileUploadController {
 
     const urls = await this.fileUploadService.uploadMultipleFiles(
       files,
-      rootFolder,
-      parentFolder,
-      childFolder,
+      productFolder,
+      typeFolder,
+      brandFolder,
+      modelFolder,
       );
     return { urls };
   }
@@ -88,15 +93,17 @@ export class FileUploadController {
   )
   async uploadPdf(
     @UploadedFile() file: Express.Multer.File,
-    @Body('rootFolder') rootFolder: string,
-    @Body('parentFolder') parentFolder: string,
-    @Body('childFolder') childFolder: string,
+    @Body('productFolder') productFolder: string,
+    @Body('typeFolder') typeFolder: string,
+    @Body('brandFolder') brandFolder: string,
+    @Body('modelFolder') modelFolder: string,
     ) {
     const url = await this.fileUploadService.uploadFile(
       file,
-      rootFolder,
-      parentFolder,
-      childFolder,
+      productFolder,
+      typeFolder,
+      brandFolder,
+      modelFolder,
     );
     return { url };
   }
@@ -110,14 +117,16 @@ export class FileUploadController {
   )
   async uploadMultiplePdfs(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body('rootFolder') rootFolder: string,
-    @Body('parentFolder') parentFolder: string,
-    @Body('childFolder') childFolder: string,) {
+    @Body('productFolder') productFolder: string,
+    @Body('typeFolder') typeFolder: string,
+    @Body('brandFolder') brandFolder: string,
+    @Body('modelFolder') modelFolder: string,) {
     const urls = await this.fileUploadService.uploadMultipleFiles(
-      files, 
-      rootFolder,
-      parentFolder,
-      childFolder);
+      files,
+      productFolder,
+      typeFolder,
+      brandFolder,
+      modelFolder);
     return { urls };
   }
 

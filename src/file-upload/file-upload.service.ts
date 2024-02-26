@@ -38,15 +38,15 @@ export class FileUploadService {
     }
   }
 
-  async uploadFile(file, rootFolder, subRootFolder, childFolder) {
+  async uploadFile(file, productFolder, typeFolder, brandFolder, modelFolder) {
     let filePath;
     const formattedFileName = this.formatFileName(file.originalname);
-    if (subRootFolder && childFolder) {
+    if (brandFolder && modelFolder) {
       // If the brand and model are provided, use them in the file name
-      filePath = `${rootFolder}/${subRootFolder}/${childFolder}/${Date.now()}-${formattedFileName}`;
+      filePath = `${productFolder}/${typeFolder}/${brandFolder}/${modelFolder}/${Date.now()}-${formattedFileName}`;
     } else {
       // Otherwise, create a temporary file with a unique name
-      filePath = `${rootFolder}/temp/${Date.now()}-${file.originalname}`;
+      filePath = `${productFolder}/temp/${Date.now()}-${file.originalname}`;
     }
 
     const params = {
@@ -61,10 +61,10 @@ export class FileUploadService {
     return uploadResult.Location;
   }
 
-  async uploadMultipleFiles(files, rootFolder, subRootFolder, childFolder) {
+  async uploadMultipleFiles(files, productFolder, typeFolder, brandFolder, modelFolder) {
     const urls = [];
     for (const file of files) {
-      const url = await this.uploadFile(file, rootFolder, subRootFolder, childFolder);
+      const url = await this.uploadFile(file, productFolder, typeFolder, brandFolder, modelFolder);
       urls.push(url);
     }
     return urls;

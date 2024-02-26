@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Consumible } from './entities/consumible.entity';
@@ -10,46 +10,85 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { ConfigService } from '@nestjs/config';
 import { NotFoundException } from '@nestjs/common';
 import { URL } from 'url';
+import { BrandsService } from 'src/printers/brands/brands.service';
+import { CategoriesService } from 'src/printers/categories/categories.service';
 @Injectable()
 export class ConsumiblesService {
   constructor(
     @InjectRepository(Consumible)
     private consumibleRepository: Repository<Consumible>,
+
     @InjectRepository(Printer)
     private printerRepository: Repository<Printer>,
+
     private fileUploadService: FileUploadService,
     private configService: ConfigService,
+    private brandsService: BrandsService,
+    private categoriesService: CategoriesService,
   ) {}
 
   async create(createConsumibleDto: CreateConsumibleDto) {
-    const printers = await this.printerRepository.findByIds(
-      createConsumibleDto.printersIds,
-    );
-    const consumible = this.consumibleRepository.create(createConsumibleDto);
-    consumible.printers = printers;
 
-    if (createConsumibleDto.img_url) {
-      const newUrls = [];
-      for (const tempFilePath of createConsumibleDto.img_url) {
-        const url = new URL(tempFilePath);
-        const oldPath = url.pathname.substring(1);
-        const fileName = path.basename(oldPath);
-        const decodedFileName = decodeURIComponent(fileName);
-        const newPath = `imagenes/${encodeURIComponent(
-          consumible.name.replace(/ /g, '_'),
-        )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+    // // Check if brand exists
+    // if (createConsumibleDto.brand) {
+    //   const brand = await this.brandsService.findByName(createConsumibleDto.brand);
+    //   if (!brand) {
+    //     throw new NotFoundException(
+    //       `Brand ${createConsumibleDto.brand} not found`,
+    //     );
+    //   }
+    // }
+    
+    // // check if catergory exists
+    // if (createConsumibleDto.category) {
+    //   const category = await this.categoriesService.findByName(
+    //     createConsumibleDto.category,
+    //   );
+    //   if (!category) {
+    //     throw new NotFoundException(
+    //       `Category ${createConsumibleDto.category} not found`,
+    //     );
+    //   }
+    // }
 
-        await this.fileUploadService.renameFile(oldPath, newPath);
-        const newUrl = `https://${this.configService.get(
-          'AWS_BUCKET_NAME',
-        )}.s3.amazonaws.com/${newPath}`;
-        newUrls.push(newUrl);
+    try {
+      const printers = await this.printerRepository.findByIds(
+        createConsumibleDto.printersIds,
+      );
+      const newConsumible = this.consumibleRepository.create(createConsumibleDto);
+      newConsumible.printers = printers;
+      let savedConsumible = await this.consumibleRepository.save(newConsumible);
+
+      if (createConsumibleDto.img_url) {
+        const newUrls = [];
+        for (const tempFilePath of createConsumibleDto.img_url) {
+          const url = new URL(tempFilePath);
+          const oldPath = url.pathname.substring(1);
+          const fileName = path.basename(oldPath);
+          const decodedFileName = decodeURIComponent(fileName);
+          const newPath = `Consumibles/imagenes/${encodeURIComponent(
+            savedConsumible.brand.replace(/ /g, '_'),
+          )}/${encodeURIComponent(
+            savedConsumible.name.replace(/ /g, '_'),
+          )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+  
+          await this.fileUploadService.renameFile(oldPath, newPath);
+          const newUrl = `https://${this.configService.get(
+            'AWS_BUCKET_NAME',
+          )}.s3.amazonaws.com/${newPath}`;
+          newUrls.push(newUrl);
+        }
+        savedConsumible.img_url = newUrls;
+        savedConsumible = await this.consumibleRepository.save(savedConsumible);
       }
-      consumible.img_url = newUrls;
+      return savedConsumible;
+    } catch (error) {
+      console.error('Error al crear consumible:', error);
+      if (error.code === '23505') {
+        throw new BadRequestException(`${createConsumibleDto.name} ya existe.`);
+      }
+      throw new InternalServerErrorException('Algo salio muy mal.');
     }
-
-    await this.consumibleRepository.save(consumible);
-    return consumible;
   }
 
   findAll() {
