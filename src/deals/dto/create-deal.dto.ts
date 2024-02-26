@@ -27,6 +27,10 @@ export class CreateDealDto {
   @IsOptional()
   dealPrice: number;
 
+  @IsString()
+  @IsOptional()
+  dealCurrency: string;
+
   @IsNumber()
   @IsOptional()
   dealDiscountPercentage: number;

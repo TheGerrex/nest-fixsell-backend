@@ -19,12 +19,10 @@ export class CreatePackageDto {
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @IsDate()
-  @IsOptional()
   packageStartDate: Date;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @IsDate()
-  @IsOptional()
   packageEndDate: Date;
 
   @IsOptional()
