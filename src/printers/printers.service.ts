@@ -233,7 +233,7 @@ export class PrintersService {
           const oldPath = url.pathname.substring(1);
           const fileName = path.basename(oldPath);
           const decodedFileName = decodeURIComponent(fileName);
-          const newPath = `imagenes/${encodeURIComponent(
+          const newPath = `Multifuncionales/imagenes/${encodeURIComponent(
             savedPrinter.brand.replace(/ /g, '_'),
           )}/${encodeURIComponent(
             savedPrinter.model.replace(/ /g, '_'),
@@ -254,7 +254,7 @@ export class PrintersService {
         const oldPath = url.pathname.substring(1);
         const fileName = path.basename(oldPath);
         const decodedFileName = decodeURIComponent(fileName);
-        const newPath = `datasheets/${encodeURIComponent(
+        const newPath = `Multifuncionales/datasheets/${encodeURIComponent(
           savedPrinter.brand.replace(/ /g, '_'),
         )}/${encodeURIComponent(
           savedPrinter.model.replace(/ /g, '_'),
@@ -324,7 +324,7 @@ export class PrintersService {
             /â¯/g,
             '_',
           );
-          const newPath = `imagenes/${encodeURIComponent(
+          const newPath = `Multufuncionales/imagenes/${encodeURIComponent(
             printerToUpdate.brand.replace(/ /g, '_'),
           )}/${encodeURIComponent(
             printerToUpdate.model.replace(/ /g, '_'),
@@ -357,7 +357,7 @@ export class PrintersService {
       const oldPath = url.pathname.substring(1);
       const fileName = path.basename(oldPath);
       const decodedFileName = decodeURIComponent(fileName);
-      const newPath = `datasheets/${encodeURIComponent(
+      const newPath = `Multufuncionales/datasheets/${encodeURIComponent(
         printerToUpdate.brand.replace(/ /g, '_'),
       )}/${encodeURIComponent(
         printerToUpdate.model.replace(/ /g, '_'),
