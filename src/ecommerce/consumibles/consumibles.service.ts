@@ -154,7 +154,7 @@ export class ConsumiblesService {
             /â¯/g,
             '_',
           );
-          const newPath = `imagenes/${encodeURIComponent(
+          const newPath = `Consumibles/imagenes/${encodeURIComponent(
             consumibleToUpdate.brand.replace(/ /g, '_'),
           )}/${encodeURIComponent(
             (consumibleToUpdate as any).name.replace(/ /g, '_'),
