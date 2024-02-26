@@ -33,11 +33,14 @@ export class DealsService {
   }
 
   async findAll() {
-    return await this.dealRepository.find();
+    return await this.dealRepository.find({ relations: ['printer'] });
   }
 
   async findOne(id: number) {
-    const deal = await this.dealRepository.findOne({ where: { id } });
+    const deal = await this.dealRepository.findOne({
+      where: { id },
+      relations: ['printer'],
+    });
 
     if (!deal) {
       throw new Error(`Deal with ID ${id} not found`);
