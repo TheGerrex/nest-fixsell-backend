@@ -19,6 +19,9 @@ export class Deal {
   dealPrice: number;
 
   @Column({ type: 'decimal', nullable: true })
+  dealCurrency: string;
+
+  @Column({ type: 'decimal', nullable: true })
   dealDiscountPercentage: number;
 
   @Column({ type: 'text', nullable: true })
