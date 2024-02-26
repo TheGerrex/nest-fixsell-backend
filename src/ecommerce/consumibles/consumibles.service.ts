@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Consumible } from './entities/consumible.entity';
@@ -28,7 +32,6 @@ export class ConsumiblesService {
   ) {}
 
   async create(createConsumibleDto: CreateConsumibleDto) {
-
     // // Check if brand exists
     // if (createConsumibleDto.brand) {
     //   const brand = await this.brandsService.findByName(createConsumibleDto.brand);
@@ -38,7 +41,7 @@ export class ConsumiblesService {
     //     );
     //   }
     // }
-    
+
     // // check if catergory exists
     // if (createConsumibleDto.category) {
     //   const category = await this.categoriesService.findByName(
@@ -55,10 +58,23 @@ export class ConsumiblesService {
       const printers = await this.printerRepository.findByIds(
         createConsumibleDto.printersIds,
       );
-      const newConsumible = this.consumibleRepository.create(createConsumibleDto);
+      const newConsumible =
+        this.consumibleRepository.create(createConsumibleDto);
       newConsumible.printers = printers;
       let savedConsumible = await this.consumibleRepository.save(newConsumible);
 
+      // Handle counterpartId
+      if (createConsumibleDto.counterpartId) {
+        const counterpart = await this.consumibleRepository.findOne({
+          where: { id: createConsumibleDto.counterpartId },
+        });
+        if (!counterpart) {
+          throw new NotFoundException(
+            `Counterpart with ID ${createConsumibleDto.counterpartId} not found`,
+          );
+        }
+        newConsumible.counterpart = counterpart;
+      }
       if (createConsumibleDto.img_url) {
         const newUrls = [];
         for (const tempFilePath of createConsumibleDto.img_url) {
@@ -71,7 +87,7 @@ export class ConsumiblesService {
           )}/${encodeURIComponent(
             savedConsumible.name.replace(/ /g, '_'),
           )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
-  
+
           await this.fileUploadService.renameFile(oldPath, newPath);
           const newUrl = `https://${this.configService.get(
             'AWS_BUCKET_NAME',
@@ -92,13 +108,15 @@ export class ConsumiblesService {
   }
 
   findAll() {
-    return this.consumibleRepository.find({ relations: ['printers'] });
+    return this.consumibleRepository.find({
+      relations: ['printers', 'counterpart'],
+    });
   }
 
   findOne(id: string) {
     return this.consumibleRepository.findOne({
       where: { id },
-      relations: ['printers'],
+      relations: ['printers', 'counterpart'],
     });
   }
 
@@ -142,6 +160,37 @@ export class ConsumiblesService {
       };
       delete updateConsumibleDto.printerIds;
     }
+
+    // Handle counterpartId separately
+    if (updateConsumibleDto.counterpartId) {
+      console.log(
+        'Updating counterpart with ID:',
+        updateConsumibleDto.counterpartId,
+      );
+
+      const counterpart = await this.consumibleRepository.findOne({
+        where: { id: updateConsumibleDto.counterpartId },
+      });
+
+      if (!counterpart) {
+        throw new NotFoundException(
+          `Counterpart with ID ${updateConsumibleDto.counterpartId} not found`,
+        );
+      }
+
+      console.log('Found counterpart to update:', counterpart);
+
+      consumibleToUpdate.counterpart = counterpart;
+      await this.consumibleRepository.save(consumibleToUpdate);
+
+      console.log('Updated counterpart in consumible:', consumibleToUpdate);
+
+      // Create a new object without counterpartId
+      const { counterpartId, ...updateDtoWithoutCounterpartId } =
+        updateConsumibleDto;
+      updateConsumibleDto = updateDtoWithoutCounterpartId;
+    }
+
     if (updateConsumibleDto.img_url) {
       const newUrls = [];
       for (const tempFilePath of updateConsumibleDto.img_url) {
