@@ -25,9 +25,6 @@ export class CreateConsumibleDto {
   @IsString()
   sku: string;
 
-  // @IsNumber()
-  // weight: number;
-
   @IsOptional()
   @IsNumber()
   volume: number;
@@ -59,9 +56,6 @@ export class CreateConsumibleDto {
   @IsNumber()
   yield: number;
 
-  // @IsString()
-  // thumbnailImage: string;
-
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -71,12 +65,6 @@ export class CreateConsumibleDto {
   @IsString()
   category: string;
 
-  // @IsNumber()
-  // stock: number;
-
-  // @IsString()
-  // location: string;
-
   // printers
   @IsOptional()
   @IsArray()
@@ -84,6 +72,6 @@ export class CreateConsumibleDto {
   printersIds?: string[];
 
   @IsOptional()
-  @IsUUID()
-  counterpartId?: string;
+  @IsUUID(4, { each: true })
+  counterpartIds?: string[];
 }

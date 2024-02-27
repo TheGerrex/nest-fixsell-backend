@@ -9,6 +9,7 @@ import {
   JoinTable,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import { Color } from '../color.enum';
@@ -88,8 +89,10 @@ export class Consumible {
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.consumible)
   orderDetails: OrderDetail[];
 
-  @OneToOne(() => Consumible)
-  @JoinColumn()
+  @OneToMany(() => Consumible, (consumible) => consumible.counterpart)
+  counterparts: Consumible[];
+
+  @ManyToOne(() => Consumible, (consumible) => consumible.counterparts)
   counterpart: Consumible;
 
   @OneToOne(() => Deal, (deal) => deal.consumible, {

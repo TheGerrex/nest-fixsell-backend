@@ -32,49 +32,40 @@ export class ConsumiblesService {
   ) {}
 
   async create(createConsumibleDto: CreateConsumibleDto) {
-    // // Check if brand exists
-    // if (createConsumibleDto.brand) {
-    //   const brand = await this.brandsService.findByName(createConsumibleDto.brand);
-    //   if (!brand) {
-    //     throw new NotFoundException(
-    //       `Brand ${createConsumibleDto.brand} not found`,
-    //     );
-    //   }
-    // }
-
-    // // check if catergory exists
-    // if (createConsumibleDto.category) {
-    //   const category = await this.categoriesService.findByName(
-    //     createConsumibleDto.category,
-    //   );
-    //   if (!category) {
-    //     throw new NotFoundException(
-    //       `Category ${createConsumibleDto.category} not found`,
-    //     );
-    //   }
-    // }
-
     try {
-      const printers = await this.printerRepository.findByIds(
-        createConsumibleDto.printersIds,
-      );
+      let printers = [];
+      if (
+        createConsumibleDto.printersIds &&
+        Array.isArray(createConsumibleDto.printersIds) &&
+        createConsumibleDto.printersIds.length > 0
+      ) {
+        printers = await this.printerRepository.findByIds(
+          createConsumibleDto.printersIds,
+        );
+      }
       const newConsumible =
         this.consumibleRepository.create(createConsumibleDto);
       newConsumible.printers = printers;
-      let savedConsumible = await this.consumibleRepository.save(newConsumible);
 
-      // Handle counterpartId
-      if (createConsumibleDto.counterpartId) {
-        const counterpart = await this.consumibleRepository.findOne({
-          where: { id: createConsumibleDto.counterpartId },
-        });
-        if (!counterpart) {
+      // Handle counterpartIds
+      if (
+        createConsumibleDto.counterpartIds &&
+        Array.isArray(createConsumibleDto.counterpartIds) &&
+        createConsumibleDto.counterpartIds.length > 0
+      ) {
+        const counterparts = await this.consumibleRepository.findByIds(
+          createConsumibleDto.counterpartIds,
+        );
+        if (counterparts.length !== createConsumibleDto.counterpartIds.length) {
           throw new NotFoundException(
-            `Counterpart with ID ${createConsumibleDto.counterpartId} not found`,
+            `One or more counterparts with provided IDs not found`,
           );
         }
-        newConsumible.counterpart = counterpart;
+        newConsumible.counterparts = counterparts;
       }
+
+      let savedConsumible = await this.consumibleRepository.save(newConsumible);
+
       if (createConsumibleDto.img_url) {
         const newUrls = [];
         for (const tempFilePath of createConsumibleDto.img_url) {
@@ -109,14 +100,14 @@ export class ConsumiblesService {
 
   findAll() {
     return this.consumibleRepository.find({
-      relations: ['printers', 'counterpart'],
+      relations: ['printers', 'counterparts'],
     });
   }
 
   findOne(id: string) {
     return this.consumibleRepository.findOne({
       where: { id },
-      relations: ['printers', 'counterpart'],
+      relations: ['printers', 'counterparts'],
     });
   }
 
@@ -161,34 +152,28 @@ export class ConsumiblesService {
       delete updateConsumibleDto.printerIds;
     }
 
-    // Handle counterpartId separately
-    if (updateConsumibleDto.counterpartId) {
+    // Handle counterpartIds separately
+    if (updateConsumibleDto.counterpartIds) {
       console.log(
-        'Updating counterpart with ID:',
-        updateConsumibleDto.counterpartId,
+        'Updating counterparts with IDs:',
+        updateConsumibleDto.counterpartIds,
       );
 
-      const counterpart = await this.consumibleRepository.findOne({
-        where: { id: updateConsumibleDto.counterpartId },
-      });
+      const counterparts = await this.consumibleRepository.findByIds(
+        updateConsumibleDto.counterpartIds,
+      );
 
-      if (!counterpart) {
-        throw new NotFoundException(
-          `Counterpart with ID ${updateConsumibleDto.counterpartId} not found`,
-        );
-      }
+      console.log('Found counterparts to update:', counterparts);
 
-      console.log('Found counterpart to update:', counterpart);
-
-      consumibleToUpdate.counterpart = counterpart;
+      consumibleToUpdate.counterparts = counterparts;
       await this.consumibleRepository.save(consumibleToUpdate);
 
-      console.log('Updated counterpart in consumible:', consumibleToUpdate);
+      console.log('Updated counterparts in consumible:', consumibleToUpdate);
 
-      // Create a new object without counterpartId
-      const { counterpartId, ...updateDtoWithoutCounterpartId } =
+      // Create a new object without counterpartIds
+      const { counterpartIds, ...updateDtoWithoutCounterpartIds } =
         updateConsumibleDto;
-      updateConsumibleDto = updateDtoWithoutCounterpartId;
+      updateConsumibleDto = updateDtoWithoutCounterpartIds;
     }
 
     if (updateConsumibleDto.img_url) {
