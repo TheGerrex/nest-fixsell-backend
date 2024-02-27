@@ -43,6 +43,8 @@ export class FileUploadService {
     const formattedFileName = this.formatFileName(file.originalname);
     if (brandFolder && modelFolder) {
       // If the brand and model are provided, use them in the file name
+      brandFolder = this.formatFileName(brandFolder);
+      modelFolder = this.formatFileName(modelFolder);
       filePath = `${productFolder}/${typeFolder}/${brandFolder}/${modelFolder}/${Date.now()}-${formattedFileName}`;
     } else {
       // Otherwise, create a temporary file with a unique name

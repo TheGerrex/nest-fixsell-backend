@@ -324,7 +324,7 @@ export class PrintersService {
             /â¯/g,
             '_',
           );
-          const newPath = `Multufuncionales/imagenes/${encodeURIComponent(
+          const newPath = `Multifuncionales/imagenes/${encodeURIComponent(
             printerToUpdate.brand.replace(/ /g, '_'),
           )}/${encodeURIComponent(
             printerToUpdate.model.replace(/ /g, '_'),
@@ -357,7 +357,7 @@ export class PrintersService {
       const oldPath = url.pathname.substring(1);
       const fileName = path.basename(oldPath);
       const decodedFileName = decodeURIComponent(fileName);
-      const newPath = `Multufuncionales/datasheets/${encodeURIComponent(
+      const newPath = `Multifuncionales/datasheets/${encodeURIComponent(
         printerToUpdate.brand.replace(/ /g, '_'),
       )}/${encodeURIComponent(
         printerToUpdate.model.replace(/ /g, '_'),
