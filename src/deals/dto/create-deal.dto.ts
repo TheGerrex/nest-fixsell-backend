@@ -10,8 +10,12 @@ import {
 
 export class CreateDealDto {
   @IsUUID()
-  @IsNotEmpty()
+  @IsOptional()
   printer: string;
+
+  @IsUUID()
+  @IsOptional()
+  consumible: string;
 
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   @IsDate()

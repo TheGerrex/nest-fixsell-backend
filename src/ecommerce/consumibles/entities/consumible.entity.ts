@@ -13,6 +13,7 @@ import {
 
 import { Color } from '../color.enum';
 import { Origen } from '../origen.enum';
+import { Deal } from 'src/deals/entities/deal.entity';
 @Entity()
 export class Consumible {
   @PrimaryGeneratedColumn('uuid')
@@ -90,4 +91,12 @@ export class Consumible {
   @OneToOne(() => Consumible)
   @JoinColumn()
   counterpart: Consumible;
+
+  @OneToOne(() => Deal, (deal) => deal.consumible, {
+    nullable: true,
+    eager: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn()
+  deal: Deal;
 }
