@@ -10,5 +10,6 @@ import { Consumible } from '../consumibles/entities/consumible.entity';
   imports: [TypeOrmModule.forFeature([OrderDetail, Order, Consumible])],
   controllers: [OrderdetailsController],
   providers: [OrderdetailsService],
+  exports: [OrderdetailsService, TypeOrmModule.forFeature([OrderDetail])],
 })
 export class OrderdetailsModule {}

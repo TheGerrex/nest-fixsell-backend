@@ -7,9 +7,10 @@ import { PrintersModule } from '../../printers/printers.module';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { BrandsModule } from 'src/printers/brands/brands.module';
 import { CategoriesModule } from 'src/printers/categories/categories.module';
+import { OrderdetailsModule } from '../orderdetails/orderdetails.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Consumible]), PrintersModule, BrandsModule, CategoriesModule],
+  imports: [TypeOrmModule.forFeature([Consumible]), PrintersModule, OrderdetailsModule, BrandsModule, CategoriesModule],
   controllers: [ConsumiblesController],
   providers: [ConsumiblesService, FileUploadService],
 })
