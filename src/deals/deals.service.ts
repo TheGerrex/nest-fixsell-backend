@@ -5,6 +5,7 @@ import { CreateDealDto } from './dto/create-deal.dto';
 import { UpdateDealDto } from './dto/update-deal.dto';
 import { Deal } from './entities/deal.entity';
 import { Printer } from '../printers/entities/printer.entity';
+import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity';
 
 @Injectable()
 export class DealsService {
@@ -13,33 +14,59 @@ export class DealsService {
     private dealRepository: Repository<Deal>,
     @InjectRepository(Printer)
     private printerRepository: Repository<Printer>,
+    @InjectRepository(Consumible)
+    private consumibleRepository: Repository<Consumible>,
   ) {}
 
   async create(createDealDto: CreateDealDto) {
-    const printer = await this.printerRepository.findOne({
-      where: { id: createDealDto.printer },
-    });
+    let printer;
+    let consumible;
 
-    if (!printer) {
-      throw new Error('Printer not found');
+    if (createDealDto.printer && createDealDto.consumible) {
+      throw new Error(
+        'A deal can have either a printer or a consumible but not both',
+      );
+    }
+
+    if (createDealDto.printer) {
+      printer = await this.printerRepository.findOne({
+        where: { id: createDealDto.printer },
+      });
+
+      if (!printer) {
+        throw new Error('Printer not found');
+      }
+    }
+
+    if (createDealDto.consumible) {
+      consumible = await this.consumibleRepository.findOne({
+        where: { id: createDealDto.consumible },
+      });
+
+      if (!consumible) {
+        throw new Error('Consumible not found');
+      }
     }
 
     const deal = this.dealRepository.create({
       ...createDealDto,
       printer,
+      consumible,
     });
 
     return this.dealRepository.save(deal);
   }
 
   async findAll() {
-    return await this.dealRepository.find({ relations: ['printer'] });
+    return await this.dealRepository.find({
+      relations: ['printer', 'consumible'],
+    });
   }
 
   async findOne(id: number) {
     const deal = await this.dealRepository.findOne({
       where: { id },
-      relations: ['printer'],
+      relations: ['printer', 'consumible'],
     });
 
     if (!deal) {
@@ -50,17 +77,38 @@ export class DealsService {
   }
 
   async update(id: number, updateDealDto: UpdateDealDto) {
-    const printer = await this.printerRepository.findOne({
-      where: { id: updateDealDto.printer },
-      relations: ['deal'],
-    });
+    let printer;
+    let consumible;
 
-    if (!printer) {
-      throw new Error('Printer not found');
+    if (updateDealDto.printer && updateDealDto.consumible) {
+      throw new Error(
+        'A deal can have either a printer or a consumible but not both',
+      );
     }
 
-    if (printer.deal && printer.deal.id !== id) {
-      throw new Error('Printer already has a deal');
+    if (updateDealDto.printer) {
+      printer = await this.printerRepository.findOne({
+        where: { id: updateDealDto.printer },
+        relations: ['deal'],
+      });
+
+      if (!printer) {
+        throw new Error('Printer not found');
+      }
+
+      if (printer.deal && printer.deal.id !== id) {
+        throw new Error('Printer already has a deal');
+      }
+    }
+
+    if (updateDealDto.consumible) {
+      consumible = await this.consumibleRepository.findOne({
+        where: { id: updateDealDto.consumible },
+      });
+
+      if (!consumible) {
+        throw new Error('Consumible not found');
+      }
     }
 
     const deal = await this.dealRepository.findOne({ where: { id } });
@@ -70,7 +118,7 @@ export class DealsService {
     }
 
     // Update the deal
-    Object.assign(deal, updateDealDto);
+    Object.assign(deal, updateDealDto, { printer, consumible });
 
     return await this.dealRepository.save(deal);
   }
@@ -92,6 +140,18 @@ export class DealsService {
     if (printer) {
       printer.deal = null;
       await this.printerRepository.save(printer);
+    }
+
+    // Remove the reference from the consumible to the deal
+    const consumible = await this.consumibleRepository
+      .createQueryBuilder('consumible')
+      .leftJoinAndSelect('consumible.deal', 'deal')
+      .where('deal.id = :id', { id })
+      .getOne();
+
+    if (consumible) {
+      consumible.deal = null;
+      await this.consumibleRepository.save(consumible);
     }
 
     // Now you can delete the deal

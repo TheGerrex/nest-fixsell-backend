@@ -9,7 +9,12 @@ import { BrandsModule } from 'src/printers/brands/brands.module';
 import { CategoriesModule } from 'src/printers/categories/categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Consumible]), PrintersModule, BrandsModule, CategoriesModule],
+  imports: [
+    TypeOrmModule.forFeature([Consumible]),
+    PrintersModule,
+    BrandsModule,
+    CategoriesModule,
+  ],
   controllers: [ConsumiblesController],
   providers: [ConsumiblesService, FileUploadService],
 })
