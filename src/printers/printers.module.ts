@@ -12,7 +12,11 @@ import { CategoriesModule } from './categories/categories.module';
 @Module({
   controllers: [PrintersController, BrandsController],
   providers: [PrintersService, FileUploadService, BrandsService],
-  imports: [TypeOrmModule.forFeature([Printer]), BrandsModule, CategoriesModule],
+  imports: [
+    TypeOrmModule.forFeature([Printer]),
+    BrandsModule,
+    CategoriesModule,
+  ],
   exports: [PrintersService, TypeOrmModule],
 })
 export class PrintersModule {}
