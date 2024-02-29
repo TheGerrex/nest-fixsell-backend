@@ -95,7 +95,7 @@ export class Consumible {
   @ManyToOne(() => Consumible, (consumible) => consumible.counterparts)
   counterpart: Consumible;
 
-  @OneToMany(() => Deal, (deal) => deal.printer, {
+  @OneToMany(() => Deal, (deal) => deal.consumible, {
     nullable: true,
     eager: true,
     onDelete: 'SET NULL',

@@ -98,17 +98,41 @@ export class ConsumiblesService {
     }
   }
 
-  findAll() {
-    return this.consumibleRepository.find({
-      relations: ['printers', 'counterparts'],
-    });
+  async findAll() {
+    const consumibles = await this.consumibleRepository
+      .createQueryBuilder('consumible')
+      .leftJoinAndSelect('consumible.printers', 'printers')
+      .leftJoinAndSelect('consumible.deals', 'deals')
+      .leftJoinAndSelect('consumible.counterparts', 'counterparts')
+      .getMany();
+
+    return consumibles;
   }
 
-  findOne(id: string) {
-    return this.consumibleRepository.findOne({
-      where: { id },
-      relations: ['printers', 'counterparts'],
-    });
+  async findOne(id: string) {
+    let consumible;
+
+    if (id) {
+      consumible = await this.consumibleRepository.findOne({
+        where: { id },
+      });
+    } else {
+      consumible = await this.consumibleRepository
+        .createQueryBuilder('consumible')
+        .leftJoinAndSelect('consumible.printers', 'printers')
+        .leftJoinAndSelect('consumible.deals', 'deals')
+        .leftJoinAndSelect('consumible.counterparts', 'counterparts')
+        .where(`UPPER(consumible.name) = :name`, {
+          name: id.toUpperCase(),
+        })
+        .getOne();
+    }
+
+    if (!consumible) {
+      throw new NotFoundException('Consumible not found');
+    }
+
+    return consumible;
   }
 
   async update(id: string, updateConsumibleDto: UpdateConsumibleDto) {
