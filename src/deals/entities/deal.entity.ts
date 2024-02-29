@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Printer } from 'src/printers/entities/printer.entity';
 import { Consumible } from '../../ecommerce/consumibles/entities/consumible.entity';
 
@@ -7,10 +7,16 @@ export class Deal {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Printer, (printer) => printer.deal)
+  @ManyToOne(() => Printer, (printer) => printer.deals, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   printer: Printer;
 
-  @OneToOne(() => Consumible, (consumible) => consumible.deal)
+  @ManyToOne(() => Consumible, (consumible) => consumible.deals, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   consumible: Consumible;
 
   @Column({ type: 'timestamp', nullable: true })

@@ -63,7 +63,7 @@ export class PackagesService {
       throw new Error('Printer not found');
     }
 
-    if (printer.deal && printer.packages.some((pkg) => pkg.id === id)) {
+    if (printer.packages.some((pkg) => pkg.id === id)) {
       throw new Error('Printer already has a package');
     }
 

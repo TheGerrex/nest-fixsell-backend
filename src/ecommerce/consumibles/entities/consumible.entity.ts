@@ -95,11 +95,10 @@ export class Consumible {
   @ManyToOne(() => Consumible, (consumible) => consumible.counterparts)
   counterpart: Consumible;
 
-  @OneToOne(() => Deal, (deal) => deal.consumible, {
+  @OneToMany(() => Deal, (deal) => deal.printer, {
     nullable: true,
     eager: true,
     onDelete: 'SET NULL',
   })
-  @JoinColumn()
-  deal: Deal;
+  deals: Deal[];
 }

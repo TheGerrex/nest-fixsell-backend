@@ -53,7 +53,7 @@ export class PrintersService {
 
     let query = this.printersRepository
       .createQueryBuilder('printer')
-      .leftJoinAndSelect('printer.deal', 'deal')
+      .leftJoinAndSelect('printer.deals', 'deals')
       .leftJoinAndSelect('printer.packages', 'packages')
       .leftJoinAndSelect('printer.consumibles', 'consumibles');
 
@@ -185,7 +185,7 @@ export class PrintersService {
     } else {
       printer = await this.printersRepository
         .createQueryBuilder('printer')
-        .leftJoinAndSelect('printer.deal', 'deal')
+        .leftJoinAndSelect('printer.deals', 'deals')
         .leftJoinAndSelect('printer.packages', 'packages')
         .leftJoinAndSelect('printer.consumibles', 'consumibles')
         .where(`UPPER(printer.model) = :model`, {

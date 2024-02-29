@@ -89,13 +89,12 @@ export class Printer {
   @Column('text', { array: true, nullable: true })
   barcode: string[];
 
-  @OneToOne(() => Deal, (deal) => deal.printer, {
+  @OneToMany(() => Deal, (deal) => deal.printer, {
     nullable: true,
     eager: true,
     onDelete: 'SET NULL',
   })
-  @JoinColumn()
-  deal: Deal;
+  deals: Deal[];
 
   @OneToMany(() => Package, (package_) => package_.printer, {
     nullable: true,

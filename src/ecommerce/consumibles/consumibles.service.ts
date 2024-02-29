@@ -244,13 +244,19 @@ export class ConsumiblesService {
         await this.printerRepository.save(printer);
       }
     });
-    
+
     // Set counterpart of all Consumibles that reference the Consumible to be deleted to null
-    const counterparts = await this.consumibleRepository.createQueryBuilder('consumible')
-    .where('consumible.counterpartId = :id', { id: consumible.id })
-    .getMany();
+
+    const counterparts = await this.consumibleRepository
+      .createQueryBuilder('consumible')
+
+      .where('consumible.counterpartId = :id', { id: consumible.id })
+
+      .getMany();
+
     for (const counterpart of counterparts) {
       counterpart.counterpart = null;
+
       await this.consumibleRepository.save(counterpart);
     }
 
