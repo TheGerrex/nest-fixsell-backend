@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as bcryptjs from 'bcryptjs';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtPayload } from './interfaces/jwt-payload';
@@ -15,6 +15,7 @@ import { RegisterUserDto, LoginDto, CreateUserDto, UpdateAuthDto } from './dto';
 import { classToPlain } from 'class-transformer';
 import { UserResponse } from './entities/user-response.interface';
 import { ConfigService } from '@nestjs/config';
+import { Role } from './roles/entities/role.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,14 +24,23 @@ export class AuthService {
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
+
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...userData } = createUserDto;
+      const { password, roles, ...userData } = createUserDto;
+
+      // Fetch roles from the database
+      const roleEntities = await this.roleRepository.find({
+        where: roles.map((role) => ({ name: role })),
+      });
 
       const newUser = this.userRepository.create({
         password: bcryptjs.hashSync(password, 10),
+        roles: roleEntities,
         ...userData,
       });
 
@@ -42,7 +52,9 @@ export class AuthService {
       if (error.code === '23505') {
         throw new BadRequestException(`${createUserDto.email} ya existe.`);
       }
-      throw new InternalServerErrorException('Algo salio mal. Intente nuevamente.');
+      throw new InternalServerErrorException(
+        'Algo salio mal. Intente nuevamente.',
+      );
     }
   }
 
@@ -127,7 +139,13 @@ export class AuthService {
     }
 
     if (updateAuthDto.roles) {
-      user.roles = updateAuthDto.roles;
+      // Fetch Role entities from the database
+      const roleEntities = await this.roleRepository.find({
+        where: {
+          id: In(updateAuthDto.roles),
+        },
+      });
+      user.roles = roleEntities;
     }
 
     if (updateAuthDto.isActive !== undefined) {

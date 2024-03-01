@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { JwtPayload } from '../interfaces/jwt-payload';
 import { AuthService } from '../auth.service';
+// import { Role } from '../interfaces/role'; // Import the Role enum
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,7 +22,7 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException('You are not authorized');
+      throw new UnauthorizedException('You are not authorized (no token)');
     }
 
     try {
@@ -38,13 +39,13 @@ export class AuthGuard implements CanActivate {
       }
 
       // Check if the user has the 'admin' role
-      if (!user.roles.includes('admin')) {
+      if (!user.roles.some((role) => role.name === 'admin')) {
         throw new UnauthorizedException('User does not have admin privileges');
       }
 
       request['user'] = user;
     } catch (error) {
-      throw new UnauthorizedException('You are not authorized');
+      throw new UnauthorizedException('You are not authorized(Invalid token)');
     }
 
     console.log({ token });

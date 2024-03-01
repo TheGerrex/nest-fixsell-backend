@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  JoinTable,
+  ManyToMany,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Role } from '../roles/entities/role.entity';
 
 @Entity()
 export class User {
@@ -19,6 +26,7 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column('text', { array: true, default: () => "ARRAY['user']" }) // user, admin, vendor, client
-  roles: string[];
+  @ManyToMany(() => Role, (role) => role.users, { eager: true })
+  @JoinTable()
+  roles: Role[];
 }
