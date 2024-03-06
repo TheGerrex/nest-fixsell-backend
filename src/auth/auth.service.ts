@@ -100,8 +100,10 @@ export class AuthService {
     return rest;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    const { password, ...rest } = user;
+    return rest;
   }
 
   async update(
@@ -139,11 +141,9 @@ export class AuthService {
     }
 
     if (updateAuthDto.roles) {
-      // Fetch Role entities from the database
+      // Fetch Role entities from the database by their names
       const roleEntities = await this.roleRepository.find({
-        where: {
-          id: In(updateAuthDto.roles),
-        },
+        where: updateAuthDto.roles.map((role) => ({ name: role })),
       });
       user.roles = roleEntities;
     }
