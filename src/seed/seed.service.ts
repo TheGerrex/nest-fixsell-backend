@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Printer } from 'src/printers/entities/printer.entity';
 import { Category } from 'src/printers/categories/entities/category.entity';
 import { Brand } from 'src/printers/brands/entities/brand.entity';
+import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity';
 
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
@@ -16,6 +17,8 @@ export class SeedService {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(Brand)
     private readonly brandRepository: Repository<Brand>,
+    @InjectRepository(Consumible)
+    private readonly consumibleRepository: Repository<Consumible>,
   ) {}
 
   async executeSeed() {
@@ -28,10 +31,15 @@ export class SeedService {
     for (const printer of printers) {
       await this.printerRepository.remove(printer);
     }
+
     // Delete all existing records in the Category table
     await this.categoryRepository.delete({});
+
     // Delete all existing records in the Brand table
     await this.brandRepository.delete({});
+
+    // Delete all existing records in the Consumible table
+    await this.consumibleRepository.delete({});
 
     // Read data from the JSON file and parse it to an array of objects to printers
     const jsonString = fs.readFileSync(
@@ -53,6 +61,19 @@ export class SeedService {
       'utf-8',
     );
     const brandsData = JSON.parse(jsonStringBrands);
+    
+    // Read data from the JSON file and parse it to an array of objects for consumibles
+    const jsonStringConsumibles = fs.readFileSync(
+      'src/seed/fixsell_db.consumibles.json',
+      'utf-8',
+    );
+    const consumiblesData = JSON.parse(jsonStringConsumibles);
+    
+    // Loop through the data and create ConsumibleEntity instances
+    for (const consumibleData of consumiblesData) {
+      const consumible = this.consumibleRepository.create(consumibleData);
+      await this.consumibleRepository.save(consumible);
+    }
 
     // Loop through the data and create PrinterEntity instances
     for (const printerData of printersData) {
