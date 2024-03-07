@@ -7,6 +7,7 @@ import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity
 
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
+import { Package } from 'src/packages/entities/package.entity';
 
 @Injectable()
 export class SeedService {
@@ -19,6 +20,8 @@ export class SeedService {
     private readonly brandRepository: Repository<Brand>,
     @InjectRepository(Consumible)
     private readonly consumibleRepository: Repository<Consumible>,
+    @InjectRepository(Package)
+    private readonly packageRepository: Repository<Package>,
   ) {}
 
   async executeSeed() {
@@ -26,18 +29,27 @@ export class SeedService {
     const printers = await this.printerRepository.find({
       relations: ['consumibles'],
     });
-
-    // Remove each printer, which will also remove related consumibles
+  
+    // For each printer
     for (const printer of printers) {
-      await this.printerRepository.remove(printer);
+    // Find the packages that reference this printer
+    const packages = await this.packageRepository.find({ where: { printer: { id: printer.id } } });
+
+    // Delete each package
+    for (const pack of packages) {
+      await this.packageRepository.delete(pack.id);
     }
 
+    // Now you can safely remove the printer
+    await this.printerRepository.remove(printer);
+    }
+  
     // Delete all existing records in the Category table
     await this.categoryRepository.delete({});
-
+  
     // Delete all existing records in the Brand table
     await this.brandRepository.delete({});
-
+  
     // Delete all existing records in the Consumible table
     await this.consumibleRepository.delete({});
 
