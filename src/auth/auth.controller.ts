@@ -55,10 +55,11 @@ export class AuthController {
     };
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.authService.findOne(+id);
-  // }
+  @UseGuards(AuthGuard)
+  @Get('/finduser/:id')
+  findOne(@Param('id') id: string) {
+    return this.authService.findOne(id);
+  }
 
   // @UseGuards(AuthGuard)
   @Patch(':id')
