@@ -109,12 +109,13 @@ export class ConsumiblesService {
     return consumibles;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, name?: string) {
     let consumible;
 
     if (id) {
       consumible = await this.consumibleRepository.findOne({
         where: { id },
+        relations: ['printers', 'deals', 'counterparts'],
       });
     } else {
       consumible = await this.consumibleRepository
