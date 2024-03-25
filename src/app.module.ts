@@ -20,10 +20,14 @@ import { OrdersModule } from './ecommerce/orders/orders.module';
 import { OrderdetailsModule } from './ecommerce/orderdetails/orderdetails.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { PackagesModule } from './packages/packages.module';
+import { LeadsModule } from './sales/leads/leads.module';
+import { SaleCommunicationModule } from './sales/sale-communication/sale-communication.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/src/config/env/${process.env.NODE_ENV}.env`,
+      envFilePath: `${process.cwd()}/src/config/env/${
+        process.env.NODE_ENV
+      }.env`,
       isGlobal: true,
       load: [EnvConfiguration],
       validationSchema: JoiValidationSchema,
@@ -65,7 +69,6 @@ import { PackagesModule } from './packages/packages.module';
         }
 
         return baseConfig as TypeOrmModuleOptions;
-        
       },
     }),
 
@@ -84,7 +87,8 @@ import { PackagesModule } from './packages/packages.module';
     OrderdetailsModule,
     FileUploadModule,
     PackagesModule,
+    LeadsModule,
+    SaleCommunicationModule,
   ],
 })
-export class AppModule {
-}
+export class AppModule {}
