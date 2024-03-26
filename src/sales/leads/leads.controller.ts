@@ -25,6 +25,13 @@ export class LeadsController {
     return this.leadsService.findAll();
   }
 
+  // async findAllByVendor(vendorId: number) {
+
+  @Get('vendor/:vendorId')
+  findAllByVendor(@Param('vendorId') vendorId: string) {
+    return this.leadsService.findAllByVendor(vendorId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.leadsService.findOne(id);

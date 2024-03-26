@@ -46,8 +46,28 @@ export class LeadsService {
   }
 
   async findAll() {
-    // returns all leads with their communications
-    return this.leadRepository.find({ relations: ['communications'] });
+    //returns all leads with that assigned user
+
+    // returns all leads with their communications and assigned users
+    return this.leadRepository.find({
+      relations: ['communications', 'assigned'],
+    });
+  }
+
+  async findAllByVendor(vendorId: string) {
+    // Find the vendor with the given vendorId
+    const vendor = await this.userRepository.findOne({
+      where: { id: vendorId },
+      relations: ['leads'],
+    });
+
+    // If the vendor does not exist, throw an error
+    if (!vendor) {
+      throw new NotFoundException(`Vendor #${vendorId} not found`);
+    }
+
+    // Return the leads assigned to the vendor
+    return vendor.leads;
   }
 
   async findOne(id: string, name?: string) {
