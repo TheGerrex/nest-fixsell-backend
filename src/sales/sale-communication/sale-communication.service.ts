@@ -37,19 +37,69 @@ export class SaleCommunicationService {
     return this.saleCommunicationRepository.save(saleCommunication);
   }
 
-  findAll() {
-    return `This action returns all saleCommunication`;
+  async findAll() {
+    //returns all saleCommunications
+    return this.saleCommunicationRepository.find({
+      relations: ['lead'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} saleCommunication`;
+  async findOne(id: string) {
+    // Find the saleCommunication with the given id
+    const saleCommunication = await this.saleCommunicationRepository.findOne({
+      where: { id: Number(id) },
+      relations: ['lead'],
+    });
+
+    // If the saleCommunication does not exist, throw an error
+    if (!saleCommunication) {
+      throw new NotFoundException(`SaleCommunication #${id} not found`);
+    }
+
+    return saleCommunication;
   }
 
-  update(id: number, updateSaleCommunicationDto: UpdateSaleCommunicationDto) {
-    return `This action updates a #${id} saleCommunication`;
+  async update(
+    id: string,
+    updateSaleCommunicationDto: UpdateSaleCommunicationDto,
+  ): Promise<SaleCommunication> {
+    // Find the saleCommunication with the given id
+    const saleCommunication = await this.saleCommunicationRepository.findOne({
+      where: { id: Number(id) },
+      relations: ['lead'],
+    });
+
+    // If the saleCommunication does not exist, throw an error
+    if (!saleCommunication) {
+      throw new NotFoundException(`SaleCommunication #${id} not found`);
+    }
+
+    // Merge the updateSaleCommunicationDto into the found saleCommunication
+    Object.assign(saleCommunication, updateSaleCommunicationDto);
+
+    // Save the updated saleCommunication
+    return this.saleCommunicationRepository.save(saleCommunication);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} saleCommunication`;
+  async remove(id: string): Promise<{ message: string }> {
+    // Find the saleCommunication with the given id
+    const saleCommunication = await this.saleCommunicationRepository.findOne({
+      where: { id: Number(id) },
+      relations: ['lead'],
+    });
+
+    // If the saleCommunication does not exist, throw an error
+    if (!saleCommunication) {
+      throw new NotFoundException(`SaleCommunication #${id} not found`);
+    }
+
+    const saleCommunicationId = saleCommunication.id;
+
+    // Remove the saleCommunication
+    await this.saleCommunicationRepository.remove(saleCommunication);
+
+    return {
+      message: `SaleCommunication with id ${saleCommunicationId} removed successfully`,
+    };
   }
 }

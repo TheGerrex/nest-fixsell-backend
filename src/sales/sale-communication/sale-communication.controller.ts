@@ -29,7 +29,7 @@ export class SaleCommunicationController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.saleCommunicationService.findOne(+id);
+    return this.saleCommunicationService.findOne(id);
   }
 
   @Patch(':id')
@@ -37,14 +37,11 @@ export class SaleCommunicationController {
     @Param('id') id: string,
     @Body() updateSaleCommunicationDto: UpdateSaleCommunicationDto,
   ) {
-    return this.saleCommunicationService.update(
-      +id,
-      updateSaleCommunicationDto,
-    );
+    return this.saleCommunicationService.update(id, updateSaleCommunicationDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.saleCommunicationService.remove(+id);
+    return this.saleCommunicationService.remove(id);
   }
 }
