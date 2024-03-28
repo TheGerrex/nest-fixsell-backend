@@ -39,9 +39,9 @@ export class AuthGuard implements CanActivate {
       }
 
       // Check if the user has the 'admin' role
-      if (!user.roles.some((role) => role.name === 'admin')) {
-        throw new UnauthorizedException('User does not have admin privileges');
-      }
+      // if (!user.roles.some((role) => role.name === 'admin')) {
+      //   throw new UnauthorizedException('User does not have admin privileges');
+      // }
 
       request['user'] = user;
     } catch (error) {

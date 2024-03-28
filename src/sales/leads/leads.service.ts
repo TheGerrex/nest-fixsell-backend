@@ -66,8 +66,18 @@ export class LeadsService {
       throw new NotFoundException(`Vendor #${vendorId} not found`);
     }
 
+    // Load the 'assigned' and 'communications' relations for each lead
+    const leads = await Promise.all(
+      vendor.leads.map(async (lead) => {
+        return this.leadRepository.findOne({
+          where: { id: lead.id },
+          relations: ['assigned', 'communications'],
+        });
+      }),
+    );
+
     // Return the leads assigned to the vendor
-    return vendor.leads;
+    return leads;
   }
 
   async findOne(id: string, name?: string) {
