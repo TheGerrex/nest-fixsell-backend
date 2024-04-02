@@ -57,6 +57,10 @@ export class Lead {
   @OneToMany(
     () => SaleCommunication,
     (SaleCommunication) => SaleCommunication.lead,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
   )
   communications: SaleCommunication[];
 }
