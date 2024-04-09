@@ -7,12 +7,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/entities/role.entity';
+import { Lead } from 'src/sales/leads/entities/lead.entity';
 @Module({
   controllers: [AuthController],
   providers: [AuthService],
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([User, Role]),
+    TypeOrmModule.forFeature([User, Role, Lead]),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SEED,
