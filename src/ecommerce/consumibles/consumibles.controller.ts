@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ConsumiblesService } from './consumibles.service';
 import { CreateConsumibleDto } from './dto/create-consumible.dto';
 import { UpdateConsumibleDto } from './dto/update-consumible.dto';
+import { FilterConsumibleDto } from './dto/filter-consumible.dto';
+import { Color } from './color.enum';
 
 @Controller('consumibles')
 export class ConsumiblesController {
@@ -21,8 +24,8 @@ export class ConsumiblesController {
   }
 
   @Get()
-  findAll() {
-    return this.consumiblesService.findAll();
+  findAll(@Query() filterConsumibleDto: FilterConsumibleDto){
+    return this.consumiblesService.findAll(filterConsumibleDto);
   }
 
   @Get(':id')
