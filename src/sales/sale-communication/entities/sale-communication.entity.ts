@@ -3,8 +3,9 @@ import { Lead } from 'src/sales/leads/entities/lead.entity';
 
 export enum Type {
   EMAIL = 'email',
-  CALL = 'call',
-  MEETING = 'meeting',
+  CALL = 'llamada',
+  MEETING = 'reunión',
+  Manual = 'manual',
 }
 
 @Entity()
