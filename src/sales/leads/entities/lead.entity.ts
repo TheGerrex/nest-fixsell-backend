@@ -33,7 +33,10 @@ export class Lead {
   })
   status: Status;
 
-  @ManyToOne(() => User, (user) => user.leads)
+  @ManyToOne(() => User, (user) => user.leads, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   assigned: User;
 
   @Column()
@@ -54,6 +57,10 @@ export class Lead {
   @OneToMany(
     () => SaleCommunication,
     (SaleCommunication) => SaleCommunication.lead,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
   )
   communications: SaleCommunication[];
 }

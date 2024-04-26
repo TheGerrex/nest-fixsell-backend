@@ -3,8 +3,9 @@ import { Lead } from 'src/sales/leads/entities/lead.entity';
 
 export enum Type {
   EMAIL = 'email',
-  CALL = 'call',
-  MEETING = 'meeting',
+  CALL = 'llamada',
+  MEETING = 'reunión',
+  Manual = 'manual',
 }
 
 @Entity()
@@ -24,6 +25,9 @@ export class SaleCommunication {
   @Column({ nullable: true })
   notes: string;
 
-  @ManyToOne(() => Lead, (lead) => lead.communications)
+  @ManyToOne(() => Lead, (lead) => lead.communications, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   lead: Lead;
 }
