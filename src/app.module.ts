@@ -22,6 +22,7 @@ import { FileUploadModule } from './file-upload/file-upload.module';
 import { PackagesModule } from './packages/packages.module';
 import { LeadsModule } from './sales/leads/leads.module';
 import { SaleCommunicationModule } from './sales/sale-communication/sale-communication.module';
+import { TicketsModule } from './tickets/tickets.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -89,6 +90,7 @@ import { SaleCommunicationModule } from './sales/sale-communication/sale-communi
     PackagesModule,
     LeadsModule,
     SaleCommunicationModule,
+    TicketsModule,
   ],
 })
 export class AppModule {}
