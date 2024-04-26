@@ -47,8 +47,8 @@ export class Ticket {
   @Column({ nullable: true })
   issue: string;
 
-  @Column({ nullable: true })
-  activity: string;
+  @Column('text', { array: true, nullable: true })
+  activity: string[];
 
   @Column({
     type: 'enum',

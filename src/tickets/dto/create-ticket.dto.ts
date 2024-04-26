@@ -37,7 +37,8 @@ export class CreateTicketDto {
   issue: string;
 
   @IsOptional()
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   activity: string;
 
   @IsOptional()

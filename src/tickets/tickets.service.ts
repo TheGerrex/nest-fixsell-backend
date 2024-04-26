@@ -36,6 +36,7 @@ export class TicketsService {
       ...createTicketDto,
       assigned: assignedUser,
       assignee: assigneeUser,
+      activity: [createTicketDto.activity], // Change the type of activity to string[]
     });
 
     try {
@@ -81,6 +82,7 @@ export class TicketsService {
       ...updateTicketDto,
       assigned: assignedUser,
       assignee: assigneeUser,
+      activity: [updateTicketDto.activity], // Change the type of activity to string[]
     });
 
     const updatedTicket = await this.ticketRepository.findOne({
@@ -94,10 +96,11 @@ export class TicketsService {
     return updatedTicket;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<string> {
     const result = await this.ticketRepository.delete(id);
     if (result.affected === 0) {
       throw new BadRequestException(`Ticket with ID "${id}" not found`);
     }
+    return `Ticket with ID "${id}" was successfully removed`;
   }
 }

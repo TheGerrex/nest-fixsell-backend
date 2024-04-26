@@ -21,7 +21,12 @@ export class TicketsController {
   }
 
   @Get()
-  findAllAssignedToUser(userId: number) {
+  findAll() {
+    return this.ticketsService.findAll();
+  }
+
+  @Get()
+  findAllAssignedToUser(userId: string) {
     return this.ticketsService.findAllAssignedToUser(userId.toString());
   }
 
