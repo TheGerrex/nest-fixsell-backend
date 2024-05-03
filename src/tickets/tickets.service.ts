@@ -59,7 +59,10 @@ export class TicketsService {
   }
 
   async findOne(id: number): Promise<Ticket> {
-    return await this.ticketRepository.findOne({ where: { id: id } });
+    return await this.ticketRepository.findOne({
+      where: { id: id },
+      relations: ['assigned', 'assignee'],
+    });
   }
 
   async update(id: number, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
