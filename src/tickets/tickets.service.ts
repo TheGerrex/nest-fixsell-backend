@@ -82,7 +82,9 @@ export class TicketsService {
       ...updateTicketDto,
       assigned: assignedUser,
       assignee: assigneeUser,
-      activity: [updateTicketDto.activity], // Change the type of activity to string[]
+      activity: updateTicketDto.activity
+        ? [updateTicketDto.activity]
+        : undefined, // Change the type of activity to string[]
     });
 
     const updatedTicket = await this.ticketRepository.findOne({
