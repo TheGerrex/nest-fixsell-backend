@@ -16,7 +16,7 @@ export class Package {
 
   // price per year
   @Column({ type: 'decimal', nullable: true })
-  packagePrice: number;
+  packageMonthlyPrice: number;
 
   // currency
   @Column({ nullable: true })
@@ -38,13 +38,21 @@ export class Package {
   @Column({ type: 'text', nullable: true })
   packageDescription: string;
 
-  // numero de impresiones
+  // numero de impresiones B/N
   @Column({ type: 'int', nullable: true })
-  packagePrints: number;
+  packagePrintsBw: number;
 
-  // precio por click extra
+  // numero de impresiones Color
+  @Column({ type: 'int', nullable: true })
+  packagePrintsColor: number;
+
+  // precio por click extra B/N
   @Column({ type: 'decimal', nullable: true })
-  packageExtraClickPrice: number;
+  packageExtraClickPriceBw: number;
+
+  // precio por click extra Color
+  @Column({ type: 'decimal', nullable: true })
+  packageExtraClickPriceColor: number;
 
   //precio deposito
   @Column({ type: 'decimal', nullable: true })
