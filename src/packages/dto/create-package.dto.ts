@@ -27,7 +27,7 @@ export class CreatePackageDto {
 
   @IsOptional()
   @IsNumber()
-  packagePrice?: number;
+  packageMonthlyPrice?: number;
 
   @IsOptional()
   @IsString()
@@ -43,11 +43,19 @@ export class CreatePackageDto {
 
   @IsOptional()
   @IsNumber()
-  packagePrints?: number;
+  packagePrintsBw?: number;
 
   @IsOptional()
   @IsNumber()
-  packageExtraClickPrice?: number;
+  packagePrintsColor?: number;
+
+  @IsOptional()
+  @IsNumber()
+  packageExtraClickPriceBw?: number;
+
+  @IsOptional()
+  @IsNumber()
+  packageExtraClickPriceColor?: number;
 
   @IsOptional()
   @IsNumber()

@@ -195,7 +195,7 @@ export class PrintersService {
     }
 
     if (!printer) {
-      throw new NotFoundException('Printer not found');
+      throw new NotFoundException(`Printer not found with term: ${term}`);
     }
 
     return printer;
