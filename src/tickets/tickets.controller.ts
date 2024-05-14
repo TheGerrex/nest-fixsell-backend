@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -25,9 +26,9 @@ export class TicketsController {
     return this.ticketsService.findAll();
   }
 
-  @Get()
-  findAllAssignedToUser(userId: string) {
-    return this.ticketsService.findAllAssignedToUser(userId.toString());
+  @Get('assigned')
+  findAllAssignedToUser(@Query('userId') userId: string) {
+    return this.ticketsService.findAllAssignedToUser(userId);
   }
 
   @Get(':id')

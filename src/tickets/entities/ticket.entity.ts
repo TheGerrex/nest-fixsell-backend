@@ -21,6 +21,11 @@ export enum Status {
   COMPLETED = 'completed',
 }
 
+export enum Type {
+  REMOTE = 'remote',
+  ON_SITE = 'on-site',
+}
+
 @Entity()
 export class Ticket {
   @PrimaryGeneratedColumn()
@@ -28,6 +33,10 @@ export class Ticket {
 
   @Column({ nullable: true })
   title: string;
+
+  // type: remote or on-site
+  @Column({ nullable: true })
+  type: string;
 
   @Column({ nullable: true })
   clientName: string;
@@ -37,6 +46,10 @@ export class Ticket {
 
   @Column({ nullable: true })
   clientPhone: string;
+
+  // client address
+  @Column({ nullable: true })
+  clientAddress: string;
 
   @ManyToOne(() => User)
   assigned: User;
@@ -72,4 +85,10 @@ export class Ticket {
 
   @UpdateDateColumn({ nullable: true })
   updatedDate: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  appointmentStartTime: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  appointmentEndTime: Date;
 }

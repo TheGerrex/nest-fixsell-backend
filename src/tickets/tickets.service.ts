@@ -16,6 +16,21 @@ export class TicketsService {
   ) {}
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
+    console.log('Before conversion:', createTicketDto);
+
+    try {
+      createTicketDto.appointmentStartTime = new Date(
+        createTicketDto.appointmentStartTime,
+      );
+      createTicketDto.appointmentEndTime = new Date(
+        createTicketDto.appointmentEndTime,
+      );
+    } catch (err) {
+      console.error('Error during date conversion:', err);
+    }
+
+    console.log('After conversion:', createTicketDto);
+
     // checks if users exist
     const assignedUser = await this.userRepository.findOne({
       where: { id: createTicketDto.assigned },
@@ -49,13 +64,17 @@ export class TicketsService {
   }
 
   async findAll(): Promise<Ticket[]> {
-    return await this.ticketRepository.find();
+    return await this.ticketRepository.find({
+      relations: ['assigned', 'assignee'],
+    });
   }
 
   async findAllAssignedToUser(userId: string): Promise<Ticket[]> {
-    return await this.ticketRepository.find({
-      where: { assigned: { id: userId } },
-    });
+    return await this.ticketRepository
+      .createQueryBuilder('ticket')
+      .innerJoinAndSelect('ticket.assigned', 'assigned')
+      .where('assigned.id = :userId', { userId })
+      .getMany();
   }
 
   async findOne(id: number): Promise<Ticket> {
@@ -66,6 +85,31 @@ export class TicketsService {
   }
 
   async update(id: number, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
+    // Log the updateTicketDto object
+    console.log('updateTicketDto:', updateTicketDto);
+
+    // Convert appointment start and end times to Date objects if they are not null
+    if (updateTicketDto.appointmentStartTime) {
+      updateTicketDto.appointmentStartTime = new Date(
+        updateTicketDto.appointmentStartTime,
+      );
+    }
+    if (updateTicketDto.appointmentEndTime) {
+      updateTicketDto.appointmentEndTime = new Date(
+        updateTicketDto.appointmentEndTime,
+      );
+    }
+
+    // Log the converted dates
+    console.log(
+      'Converted appointmentStartTime:',
+      updateTicketDto.appointmentStartTime,
+    );
+    console.log(
+      'Converted appointmentEndTime:',
+      updateTicketDto.appointmentEndTime,
+    );
+
     const assignedUser = await this.userRepository.findOne({
       where: { id: updateTicketDto.assigned },
     });

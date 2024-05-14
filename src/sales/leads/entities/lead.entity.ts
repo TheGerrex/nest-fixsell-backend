@@ -17,6 +17,7 @@ export enum ProductType {
   CONSUMABLE = 'consumible',
   PRINTER = 'printer',
   RENT_PACKAGE = 'rent_package',
+  PROMOTION = 'promotion',
   // Add other product types here
 }
 
