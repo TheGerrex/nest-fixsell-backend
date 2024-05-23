@@ -8,6 +8,8 @@ import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
 import { Package } from 'src/packages/entities/package.entity';
+import { User } from 'src/auth/entities/user.entity';
+import { Role } from 'src/auth/roles/entities/role.entity';
 
 @Injectable()
 export class SeedService {
@@ -22,6 +24,10 @@ export class SeedService {
     private readonly consumibleRepository: Repository<Consumible>,
     @InjectRepository(Package)
     private readonly packageRepository: Repository<Package>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async executeSeed() {
@@ -106,5 +112,65 @@ export class SeedService {
     }
 
     return 'Seed executed.';
+  }
+
+async executeUserSeed() {
+  // Delete all existing records in the User table
+  await this.userRepository.delete({});
+
+  // ---------------------------USERS---------------------------
+
+  // Read data from the JSON file and parse it to an array of objects for users
+  // const jsonStringUsers = fs.readFileSync(
+  //   'src/seed/fixsell_db.users.json',
+  //   'utf-8',
+  // );
+  // const usersData: User[] = JSON.parse(jsonStringUsers);
+
+  // // Fetch roles from the database
+  // const userRole = await this.roleRepository.findOne({ where: { name: 'user' } });
+  // const vendorRole = await this.roleRepository.findOne({ where: { name: 'vendor' } });
+  // const adminRole = await this.roleRepository.findOne({ where: { name: 'admin' } });
+
+  // // Loop through the data and create UserEntity instances
+  // for (const userData of usersData) {
+  //   const user = this.userRepository.create(userData);
+
+  //   // Assign roles to the user
+  //   user.roles = [userRole, vendorRole, adminRole];
+
+  //   await this.userRepository.save(user);
+  // }
+
+  // return 'User seed executed.';
+}
+
+  async executeRoleSeed() {
+  
+    // Delete all existing records in the Role table
+    await this.roleRepository.delete({});
+  
+    // ---------------------------ROLES---------------------------
+  
+    // Read data from the JSON file and parse it to an array of objects for roles
+    const jsonStringRoles = fs.readFileSync(
+      'src/seed/fixsell_db.roles.json',
+      'utf-8',
+    );
+    const rolesData = JSON.parse(jsonStringRoles);
+  
+    // Create a map to store the created roles
+    const roles = new Map();
+  
+    // Loop through the data and create RoleEntity instances
+    for (const roleData of rolesData) {
+      const role = this.roleRepository.create(roleData);
+      await this.roleRepository.save(role);
+  
+      // Store the created role in the map
+      roles.set(roleData.name, role);
+    }
+  
+    return 'Role seed executed.';
   }
 }

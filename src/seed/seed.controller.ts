@@ -17,4 +17,14 @@ export class SeedController {
   executeSeed() {
     return this.seedService.executeSeed();
   }
+
+  @Get('users')
+  executeUserSeed() {
+    return this.seedService.executeUserSeed();
+  }
+
+  @Get('roles')
+  executeRoleSeed() {
+    return this.seedService.executeRoleSeed();
+  }
 }

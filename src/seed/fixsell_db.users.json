@@ -1,0 +1,8 @@
+[
+  {
+    "email": "gerrex95@gmail.com",
+    "name": "Gerardo Garcia",
+    "password": "Gerardo123*",
+    "roles": ["user", "admin", "vendor"]
+  }
+]
