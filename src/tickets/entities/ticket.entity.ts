@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 
@@ -51,10 +52,12 @@ export class Ticket {
   @Column({ nullable: true })
   clientAddress: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @JoinColumn()
   assigned: User;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @JoinColumn()
   assignee: User;
 
   @Column({ nullable: true })
