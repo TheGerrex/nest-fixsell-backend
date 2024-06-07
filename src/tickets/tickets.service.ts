@@ -125,8 +125,11 @@ export class TicketsService {
       throw new BadRequestException('Assignee user not found');
     }
 
+    // Exclude assigned and assignee from the updateTicketDto object
+    const { assigned, assignee, ...updateData } = updateTicketDto;
+
     await this.ticketRepository.update(id, {
-      ...updateTicketDto,
+      ...updateData,
       assigned: assignedUser,
       assignee: assigneeUser,
       activity: updateTicketDto.activity
