@@ -89,6 +89,7 @@ export class TicketsService {
     console.log('updateTicketDto:', updateTicketDto);
     console.log('Updating ticket with ID:', id);
     console.log('Update data:', updateTicketDto);
+
     // Convert appointment start and end times to Date objects if they are not null
     if (updateTicketDto.appointmentStartTime) {
       updateTicketDto.appointmentStartTime = new Date(
@@ -111,34 +112,32 @@ export class TicketsService {
       updateTicketDto.appointmentEndTime,
     );
 
-    const assignedUser = await this.userRepository.findOne({
-      where: { id: updateTicketDto.assigned },
-    });
-    const assigneeUser = await this.userRepository.findOne({
-      where: { id: updateTicketDto.assignee },
-    });
+    let updateData = { ...updateTicketDto };
 
-    if (!assignedUser) {
-      throw new BadRequestException('Assigned user not found');
+    if (updateTicketDto.assigned) {
+      const assignedUser = await this.userRepository.findOne({
+        where: { id: updateTicketDto.assigned },
+      });
+
+      if (!assignedUser) {
+        throw new BadRequestException('Assigned user not found');
+      }
+
+      updateData = { ...updateData, assigned: assignedUser.id };
     }
 
-    if (!assigneeUser) {
-      throw new BadRequestException('Assignee user not found');
+    if (updateTicketDto.assignee) {
+      const assigneeUser = await this.userRepository.findOne({
+        where: { id: updateTicketDto.assignee },
+      });
+
+      if (!assigneeUser) {
+        throw new BadRequestException('Assignee user not found');
+      }
+
+      updateData = { ...updateData, assignee: assigneeUser.id };
     }
-
-    // Exclude assigned and assignee from the updateTicketDto object
-    const { assigned, assignee, ...updateData } = updateTicketDto;
-
-    await this.ticketRepository.update(id, {
-      ...updateData,
-      assigned: assignedUser,
-      assignee: assigneeUser,
-      activity: updateTicketDto.activity
-        ? [updateTicketDto.activity]
-        : undefined, // Change the type of activity to string[]
-    });
-
-    console.log('Ticket updated successfully with:0', updateData);
+    console.log('Ticket updated successfully with:', updateData);
 
     const updatedTicket = await this.ticketRepository.findOne({
       where: { id: id },
