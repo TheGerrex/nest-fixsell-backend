@@ -87,7 +87,8 @@ export class TicketsService {
   async update(id: number, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
     // Log the updateTicketDto object
     console.log('updateTicketDto:', updateTicketDto);
-
+    console.log('Updating ticket with ID:', id);
+    console.log('Update data:', updateTicketDto);
     // Convert appointment start and end times to Date objects if they are not null
     if (updateTicketDto.appointmentStartTime) {
       updateTicketDto.appointmentStartTime = new Date(
@@ -136,6 +137,8 @@ export class TicketsService {
         ? [updateTicketDto.activity]
         : undefined, // Change the type of activity to string[]
     });
+
+    console.log('Ticket updated successfully with:0', updateData);
 
     const updatedTicket = await this.ticketRepository.findOne({
       where: { id: id },
