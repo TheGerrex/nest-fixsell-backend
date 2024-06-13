@@ -20,11 +20,11 @@ export class SeedController {
 
   @Get('users')
   executeUserSeed() {
-    return this.seedService.executeUserSeed();
+    return this.seedService.seedUsers();
   }
 
   @Get('roles')
   executeRoleSeed() {
-    return this.seedService.executeRoleSeed();
+    return this.seedService.seedRoles();
   }
 }

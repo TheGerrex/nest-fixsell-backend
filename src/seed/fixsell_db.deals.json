@@ -1,0 +1,116 @@
+[
+  {
+    "dealEndDate": "2024-06-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "2000",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de Toner TN620 en promocion de tiempo limitado en $7,650",
+    "printer": null,
+    "consumible": "TN620K"
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "2000",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de toner TN620 en promocion por tiempo limitado $7,650",
+    "printer": null,
+    "consumible": "TN620Y"
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "2000",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de toner TN620 en promocion por tiempo limitado $7,650",
+    "printer": null,
+    "consumible": "TN620M"
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "2000",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de toner TN620 en promocion por tiempo limitado $7,650",
+    "printer": null,
+    "consumible": "TN620C"
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "1615",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de Toner TN615 en promocion por tiempo limitado",
+    "printer": null,
+    "consumible": "TN615K"
+    
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "1615",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de Toner TN615 en promocion por tiempo limitado",
+    "printer": null,
+    "consumible": "TN615Y"
+    
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "1615",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de Toner TN615 en promocion por tiempo limitado",
+    "printer": null,
+    "consumible": "TN615M"
+    
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-12T00:00:00.000Z",
+    "dealPrice": "1615",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Kit de Toner TN615 en promocion por tiempo limitado",
+    "printer": null,
+    "consumible": "TN615C"
+    
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "31800",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "15",
+    "dealDescription": "Epson Color Works C3500",
+    "printer": "ColorWorks C3500",
+    "consumible": null
+  },
+  {
+    "dealEndDate": "2024-05-09T00:00:00.000Z",
+    "dealStartDate": "2024-05-02T00:00:00.000Z",
+    "dealPrice": "26250",
+    "dealCurrency": "USD",
+    "dealDiscountPercentage": "20",
+    "dealDescription": "El precio es $460000 MXN + IVA, incluye: Controlador IC 607, bandeja manual de entrada, bandeja de salida, filtros 208V/20A y 120V/15A",
+    "printer": "AccurioPrint C4065",
+    "consumible": null
+  },
+  {
+    "dealEndDate": "2024-07-11T00:00:00.000Z",
+    "dealStartDate": "2024-06-11T00:00:00.000Z",
+    "dealPrice": "145000",
+    "dealCurrency": "MXN",
+    "dealDiscountPercentage": "30",
+    "dealDescription": "Promocion: Bizhub C450i hasta agotar existencias",
+    "printer": "Bizhub C450i",
+    "consumible": null
+  }
+]

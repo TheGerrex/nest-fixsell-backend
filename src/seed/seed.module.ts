@@ -9,12 +9,13 @@ import { Package } from 'src/packages/entities/package.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { Role } from 'src/auth/roles/entities/role.entity';
+import { Deal } from 'src/deals/entities/deal.entity';
 
 @Module({
   controllers: [SeedController],
   providers: [SeedService],
   imports: [
-    TypeOrmModule.forFeature([Printer, Category, Consumible, Brand, Package, User, Role]), // Import TypeOrmModule and specify entities
+    TypeOrmModule.forFeature([Printer, Category, Consumible, Brand, Package, User, Role, Deal]), // Import TypeOrmModule and specify entities
   ],
 })
 export class SeedModule {}
