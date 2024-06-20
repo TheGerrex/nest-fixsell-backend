@@ -70,46 +70,46 @@ export class SeedService {
     }
   }
 
-async seedDeals() {
-  const jsonStringDeals = fs.readFileSync('src/seed/fixsell_db.deals.json', 'utf-8');
-  const dealsData = JSON.parse(jsonStringDeals);
-  const dealsToSave = [];
-
-  // Load all printers and create a map of printer names to IDs
-  const printers = await this.printerRepository.find();
-  const printerNameToIdMap = new Map(printers.map(printer => [printer.model, printer.id]));
+  async seedDeals() {
+    const jsonStringDeals = fs.readFileSync('src/seed/fixsell_db.deals.json', 'utf-8');
+    const dealsData = JSON.parse(jsonStringDeals);
+    const dealsToSave = [];
   
-  // Load all printers and create a map of printer names to IDs
-  const consumables = await this.consumibleRepository.find();
-  const consumableNameToIdMap = new Map(consumables.map(consumible => [consumible.name, consumible.id]));
-
-  for (const dealData of dealsData) {
-    // Replace printer name with printer ID
-    const printerId = printerNameToIdMap.get(dealData.printer);
-    const consumibleId = consumableNameToIdMap.get(dealData.consumible);
-    if (printerId) {
-      dealData.printer = printerId; // Assign the printer ID
-      const deal = this.dealRepository.create(dealData);
-      dealsToSave.push(deal);
-    } else {
-      console.error(`Printer not found for name: ${dealData.printer}`);
-      // Handle the case where the printer is not found, e.g., skip or log error
+    // Load all printers and create a map of printer names to IDs
+    const printers = await this.printerRepository.find();
+    const printerNameToIdMap = new Map(printers.map(printer => [printer.model, printer.id]));
+    
+    // Load all printers and create a map of printer names to IDs
+    const consumables = await this.consumibleRepository.find();
+    const consumableNameToIdMap = new Map(consumables.map(consumible => [consumible.name, consumible.id]));
+  
+    for (const dealData of dealsData) {
+      // Replace printer name with printer ID
+      const printerId = printerNameToIdMap.get(dealData.printer);
+      const consumibleId = consumableNameToIdMap.get(dealData.consumible);
+      if (printerId) {
+        dealData.printer = printerId; // Assign the printer ID
+        const deal = this.dealRepository.create(dealData);
+        dealsToSave.push(deal);
+      } else {
+        console.error(`Printer not found for name: ${dealData.printer}`);
+        // Handle the case where the printer is not found, e.g., skip or log error
+      }
+      if (consumibleId) {
+        dealData.consumible = consumibleId; // Assign the printer ID
+        const deal = this.dealRepository.create(dealData);
+        dealsToSave.push(deal);
+      } else {
+        console.error(`Consumable not found for name: ${dealData.consumible}`);
+        // Handle the case where the printer is not found, e.g., skip or log error
+      }
     }
-    if (consumibleId) {
-      dealData.consumible = consumibleId; // Assign the printer ID
-      const deal = this.dealRepository.create(dealData);
-      dealsToSave.push(deal);
-    } else {
-      console.error(`Consumable not found for name: ${dealData.consumible}`);
-      // Handle the case where the printer is not found, e.g., skip or log error
+  
+    // Save all deals in a batch outside the loop for efficiency
+    if (dealsToSave.length > 0) {
+      await this.dealRepository.save(dealsToSave);
     }
   }
-
-  // Save all deals in a batch outside the loop for efficiency
-  if (dealsToSave.length > 0) {
-    await this.dealRepository.save(dealsToSave);
-  }
-}
 
   async seedUsers() {
     try {
