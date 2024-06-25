@@ -23,6 +23,7 @@ import { PackagesModule } from './packages/packages.module';
 import { LeadsModule } from './sales/leads/leads.module';
 import { SaleCommunicationModule } from './sales/sale-communication/sale-communication.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { ChatbotModule } from './chatbot/chatbot.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -91,6 +92,7 @@ import { TicketsModule } from './tickets/tickets.module';
     LeadsModule,
     SaleCommunicationModule,
     TicketsModule,
+    ChatbotModule,
   ],
 })
 export class AppModule {}
