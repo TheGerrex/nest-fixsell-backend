@@ -10,5 +10,6 @@ import { SaleCommunication } from '../sale-communication/entities/sale-communica
   imports: [TypeOrmModule.forFeature([Lead, User, SaleCommunication])],
   controllers: [LeadsController],
   providers: [LeadsService],
+  exports: [LeadsService],
 })
 export class LeadsModule {}
