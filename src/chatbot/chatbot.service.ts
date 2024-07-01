@@ -37,7 +37,16 @@ export class ChatbotService {
     private readonly leadsService: LeadsService,
   ) {}
 
-  async registerClient(client: Socket, userId: string) {
+  async registerClient(client: Socket) {
+    this.connectedClients[client.id] = {
+      socket: client,
+      user: null,
+      conversationState: 'initialGreeting',
+      conversationData: {},
+    };
+  }
+
+  async registerEmployee(client: Socket, userId: string) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error('user not found');
@@ -52,6 +61,27 @@ export class ChatbotService {
       conversationState: 'initialGreeting',
       conversationData: {},
     };
+  }
+
+  async checkIfEmployee(userId: string): Promise<boolean> {
+    console.log('Checking if user is an employee...');
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      return false;
+    }
+    // Check if the user has a role of 'admin' or 'chat'
+    const hasRequiredRole = user.roles.some(
+      (role) => role.name === 'admin' || role.name === 'chat',
+    );
+    return hasRequiredRole;
+  }
+
+  async getUserRoles(userId: string): Promise<string[]> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      return [];
+    }
+    return user.roles.map((role) => role.name);
   }
 
   removeClient(clientId: string) {

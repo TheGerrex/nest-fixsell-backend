@@ -11,11 +11,20 @@ import { NewMessageDto } from './dto/new-message.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload';
 
+interface ClientInfo {
+  roomId: string;
+  employeeInCharge: string | null;
+}
+
 @WebSocketGateway({ cors: true })
 export class ChatbotGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() wss: Server;
+
+  private clients = new Map<string, ClientInfo>();
+  private employees = new Set<string>();
+  server: Server;
 
   constructor(
     private readonly chatbotService: ChatbotService,
@@ -24,25 +33,65 @@ export class ChatbotGateway
 
   async handleConnection(client: Socket) {
     const token = client.handshake.headers.authentication as string;
-    console.log('socket received token:', { token });
-    let payload: JwtPayload;
-    try {
-      payload = this.jwtService.verify(token);
-      await this.chatbotService.registerClient(client, payload.id);
-    } catch (error) {
-      client.disconnect();
-      return;
+    if (token) {
+      let payload: JwtPayload;
+      try {
+        payload = this.jwtService.verify(token);
+        const isEmployee = await this.chatbotService.checkIfEmployee(
+          payload.id,
+        );
+        if (isEmployee) {
+          const userRoles = await this.chatbotService.getUserRoles(payload.id);
+          if (userRoles.includes('admin') || userRoles.includes('chat')) {
+            console.log(`User ${payload.id} is an employee.`);
+            this.handleEmployeeConnect(client, payload.id);
+            return; // Ensure method exits here for employee connections
+          } else {
+            console.log(
+              `User ${payload.id} does not have the required role to connect as an employee.`,
+            );
+            client.disconnect();
+            return; // Ensure method exits here if roles are not valid
+          }
+        } else {
+          console.log(`User ${payload.id} is not an employee.`);
+          client.disconnect();
+          return; // Ensure method exits here if not an employee
+        }
+      } catch (error) {
+        console.error(`Token verification failed: ${error.message}`);
+        client.disconnect();
+        return; // Ensure method exits here if token verification fails
+      }
+    } else {
+      // Handle as user connection if no token is provided
+      const newRoomId = this.createRoomForUser(client);
+      console.log(`User connected to room ${newRoomId}`);
+      // No need for a return here since it's the last action
     }
+  }
+  async checkIfEmployee(userId: string): Promise<boolean> {
+    // Now calling the method from ChatbotService
+    return this.chatbotService.checkIfEmployee(userId);
+  }
 
-    // Emit greeting message
-    this.chatbotService.updateConversationState(client.id, 'initialGreeting');
-    client.emit('message-from-server', {
-      FullName: 'Fixi',
-      Message:
-        '¡Hola! Bienvenido al chat de soporte. ¿Cómo puedo ayudarte hoy?',
-    });
+  async getUserRoles(userId: string): Promise<string[]> {
+    // Implementation to get user roles
+    // This method should be implemented in your ChatbotService or a similar service
+    return this.chatbotService.getUserRoles(userId);
+  }
 
-    this.wss.emit('clients-updated', this.chatbotService.getConnectedClients());
+  createRoomForUser(client: Socket): string {
+    const roomId = this.generateUniqueRoomId();
+    client.join(roomId);
+    this.clients.set(client.id, { roomId, employeeInCharge: null });
+    console.log('Client connected', client.id, 'to room', roomId);
+    return roomId;
+  }
+
+  generateUniqueRoomId(): string {
+    // Implement a method to generate a unique room ID
+    return `room_${Math.random().toString(36).substring(2, 15)}`;
   }
 
   handleDisconnect(client: Socket) {
@@ -127,6 +176,72 @@ export class ChatbotGateway
       client.emit('message-from-server', {
         FullName: 'Fixi',
         Message: responseMessage,
+      });
+    }
+  }
+
+  // handle when a client connects
+  @SubscribeMessage('connect-client')
+  async handleClientConnect(client: Socket) {
+    console.log('Client connected', client.id);
+    // Assuming registerClient and updateConversationState do not require authentication
+    await this.chatbotService.registerClient(client); // Pass null or a default value since there's no token
+
+    // Emit greeting message
+    this.chatbotService.updateConversationState(client.id, 'initialGreeting');
+    client.emit('message-from-server', {
+      FullName: 'Fixi',
+      Message:
+        '¡Hola! Bienvenido al chat de soporte. ¿Cómo puedo ayudarte hoy?',
+    });
+
+    // Notify all connected clients (you might need to adjust this based on your actual implementation)
+    this.wss.emit('clients-updated', this.chatbotService.getConnectedClients());
+  }
+
+  @SubscribeMessage('connect-employee')
+  handleEmployeeConnect(client: Socket, data: any) {
+    console.log(`Received data for employee connect:`, data);
+
+    // Assuming data might be an object containing employeeId and roomId
+    // const employeeId = typeof data === 'object' ? data.employeeId : data;
+    const roomId = typeof data === 'object' ? data.roomId : undefined;
+
+    // if (!employeeId || !roomId) {
+    //   console.log(
+    //     `Employee ${
+    //       employeeId || 'undefined'
+    //     } failed to connect due to missing employeeId or roomId`,
+    //   );
+    //   return;
+    // }
+
+    this.employees.add(client.id);
+    client.join(roomId);
+    console.log(`User with role:  connected to room ${roomId}`);
+  }
+
+  // handle takeover of bot
+  @SubscribeMessage('takeover-conversation')
+  handleTakeover(client: Socket, { clientId }: { clientId: string }) {
+    if (this.employees.has(client.id) && this.clients.has(clientId)) {
+      this.clients.get(clientId).employeeInCharge = client.id;
+      // Notify the employee and the client about the takeover
+      client.emit('takeover-success', { clientId });
+      this.server.to(clientId).emit('conversation-taken-over');
+    }
+  }
+
+  @SubscribeMessage('message-from-employee')
+  handleMessageFromEmployee(
+    client: Socket,
+    { clientId, message }: { clientId: string; message: string },
+  ) {
+    if (this.employees.has(client.id) && this.clients.has(clientId)) {
+      // Send message from employee to client
+      this.server.to(clientId).emit('message-from-server', {
+        FullName: 'Employee',
+        Message: message,
       });
     }
   }
