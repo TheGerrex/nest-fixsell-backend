@@ -34,9 +34,15 @@ export class ChatbotGateway
       return;
     }
 
-    // Emit greeting message
-    this.chatbotService.updateConversationState(client.id, 'initialGreeting');
-    client.emit('message-from-server', {
+    // Create or join a room named after the user's ID
+    const roomName = `room_${payload.id}`; // Using user's ID from payload to create a room
+    client.join(roomName);
+
+    // Notify the client about the room they're in
+    client.emit('room-joined', roomName);
+
+    // Emit greeting message to the room
+    this.wss.to(roomName).emit('message-from-server', {
       FullName: 'Fixi',
       Message:
         '¡Hola! Bienvenido al chat de soporte. ¿Cómo puedo ayudarte hoy?',
@@ -54,23 +60,30 @@ export class ChatbotGateway
   // message-from-client
   @SubscribeMessage('message-from-client')
   async handleMessage(client: Socket, payload: NewMessageDto) {
-    const state = this.chatbotService.getConversationState(client.id);
+    console.log(
+      `[handleMessage] Received message from client ${client.id}:`,
+      payload.message,
+    );
+    const roomName = `room_${this.chatbotService.getClientRoom(client.id)}`;
+    console.log(`[handleMessage] Room name resolved as: ${roomName}`);
 
     let responseMessage = '';
 
-    switch (state) {
+    const currentState = this.chatbotService.getConversationState(client.id);
+    console.log(
+      `[handleMessage] Current state for client ${client.id}: ${currentState}`,
+    );
+
+    switch (currentState) {
       case 'initialGreeting':
-        // Immediately ask for the user's name after the initial greeting.
         responseMessage =
           'Para darte una atención más personalizada ¿Me podrías indicar tu nombre?';
         this.chatbotService.updateConversationState(client.id, 'awaitingName');
-        break;
-      case 'awaitingGreetingResponse':
-        // This case may no longer be necessary if we handle the name prompt in 'initialGreeting'.
-        // Consider removing or adjusting this case based on your specific flow.
+        console.log(
+          `[handleMessage] State updated to awaitingName for client ${client.id}`,
+        );
         break;
       case 'awaitingName':
-        // Assuming any response is valid for the name.
         if (payload.message.trim()) {
           this.chatbotService.saveConversationData(client.id, {
             name: payload.message,
@@ -80,13 +93,18 @@ export class ChatbotGateway
             client.id,
             'awaitingEmail',
           );
+          console.log(
+            `[handleMessage] State updated to awaitingEmail for client ${client.id}`,
+          );
         } else {
           responseMessage =
             'Parece que no recibí un nombre válido. ¿Me podrías decir tu nombre, por favor?';
+          console.log(
+            `[handleMessage] Invalid name received from client ${client.id}`,
+          );
         }
         break;
       case 'awaitingEmail':
-        // Simple validation for email.
         if (payload.message.includes('@')) {
           this.chatbotService.saveConversationData(client.id, {
             email: payload.message,
@@ -96,38 +114,62 @@ export class ChatbotGateway
             client.id,
             'awaitingPhoneNumber',
           );
+          console.log(
+            `[handleMessage] State updated to awaitingPhoneNumber for client ${client.id}`,
+          );
         } else {
           responseMessage =
             'Parece que el email no es válido. ¿Podrías indicarme tu email?';
+          console.log(
+            `[handleMessage] Invalid email received from client ${client.id}`,
+          );
         }
         break;
       case 'awaitingPhoneNumber':
-        // Proceed with the original logic as phone number validation can be complex and is not covered here.
         this.chatbotService.saveConversationData(client.id, {
           phoneNumber: payload.message,
         });
         responseMessage =
           'Gracias, hemos completado el registro. Nos pondremos en contacto contigo pronto.';
         this.chatbotService.updateConversationState(client.id, 'completed');
+        console.log(
+          `[handleMessage] State updated to completed for client ${client.id}`,
+        );
         this.chatbotService.saveConversationToDatabase(client.id);
+        console.log(
+          `[handleMessage] Conversation saved to database for client ${client.id}`,
+        );
         break;
       default:
+        console.log(
+          `[handleMessage] Unhandled state: ${currentState} for client ${client.id}`,
+        );
         // Handle other states or default message.
         break;
     }
 
-    // Emit the user's message back to the user for display
-    client.emit('message-from-server', {
+    // Emit the user's message back to the user for display, but now to the room
+    client.to(roomName).emit('message-from-server', {
       FullName: 'You',
       Message: payload.message,
     });
+    console.log(
+      `[handleMessage] User's message emitted back to room: ${roomName}`,
+    );
 
-    // Emit the bot's response to the user
+    // Emit the bot's response to the user, also to the room
     if (responseMessage) {
-      client.emit('message-from-server', {
+      client.to(roomName).emit('message-from-server', {
         FullName: 'Fixi',
         Message: responseMessage,
       });
+      console.log(
+        `[handleMessage] Bot's response emitted to room: ${roomName}`,
+      );
+    } else {
+      console.log(
+        `[handleMessage] No response message generated for client ${client.id}`,
+      );
     }
   }
 }

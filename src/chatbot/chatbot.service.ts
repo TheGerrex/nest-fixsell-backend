@@ -11,6 +11,7 @@ interface ConnectedClients {
   [id: string]: {
     socket: Socket;
     user: User;
+    roomName: string;
     conversationState:
       | 'initialGreeting'
       | 'awaitingGreetingResponse'
@@ -30,14 +31,17 @@ interface ConnectedClients {
 @Injectable()
 export class ChatbotService {
   private connectedClients: ConnectedClients = {};
-
+  private clientRooms: Map<string, string>;
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly leadsService: LeadsService,
-  ) {}
+  ) {
+    this.clientRooms = new Map();
+  }
 
   async registerClient(client: Socket, userId: string) {
+    const roomName = `room_${userId}`;
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error('user not found');
@@ -51,9 +55,13 @@ export class ChatbotService {
       user: user,
       conversationState: 'initialGreeting',
       conversationData: {},
+      roomName: roomName, // Store room name here
     };
   }
 
+  getClientRoom(clientId: string): string | undefined {
+    return this.connectedClients[clientId]?.roomName;
+  }
   removeClient(clientId: string) {
     delete this.connectedClients[clientId];
   }
