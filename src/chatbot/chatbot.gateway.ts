@@ -10,6 +10,7 @@ import { Socket, Server } from 'socket.io';
 import { NewMessageDto } from './dto/new-message.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload';
+import { get } from 'http';
 
 @WebSocketGateway({ cors: true })
 export class ChatbotGateway
@@ -23,31 +24,67 @@ export class ChatbotGateway
   ) {}
 
   async handleConnection(client: Socket) {
-    const token = client.handshake.headers.authentication as string;
-    console.log('socket received token:', { token });
-    let payload: JwtPayload;
-    try {
-      payload = this.jwtService.verify(token);
-      await this.chatbotService.registerClient(client, payload.id);
-    } catch (error) {
+    const token = client.handshake.auth.token;
+    const role = client.handshake.auth.role;
+
+    if (!token || !role) {
+      console.error('Missing authentication or role information');
       client.disconnect();
       return;
     }
 
-    // Create or join a room named after the user's ID
-    const roomName = `room_${payload.id}`; // Using user's ID from payload to create a room
+    try {
+      const payload = this.jwtService.verify(token);
+
+      if (role === 'admin') {
+        await this.handleAdminConnection(client, payload);
+      } else if (role === 'user') {
+        await this.handleUserConnection(client, payload);
+      } else {
+        console.error('Unknown role:', role);
+        client.disconnect();
+      }
+    } catch (error) {
+      console.error('Failed to verify token:', error);
+      client.disconnect();
+    }
+  }
+
+  async handleAdminConnection(client: Socket, payload: any) {
+    console.log('connecting as admin...');
+    const roomName = client.handshake.auth.roomName;
+    await this.chatbotService.registerAdmin(client, payload.id, roomName);
     client.join(roomName);
-
-    // Notify the client about the room they're in
+    console.log('Admin emitting room-joined with name:', roomName);
     client.emit('room-joined', roomName);
+    this.wss.to(roomName).emit('admin-joined', {
+      FullName: 'Admin',
+      Message: 'An admin has joined the room.',
+      RoomName: roomName,
+    });
+  }
 
-    // Emit greeting message to the room
+  async handleUserConnection(client: Socket, payload: any) {
+    console.log('connecting as user...');
+    const roomName = `room_${payload.id}`;
+    await this.chatbotService.registerUser(client, payload.id);
+    client.join(roomName);
+    console.log('User emitting room-joined with name:', roomName);
+    client.emit('room-joined', roomName);
+    this.wss.to(roomName).emit('user-joined', {
+      FullName: 'User',
+      Message: 'A user has joined the room.',
+      RoomName: roomName,
+    });
+    // Emit greeting message to the correctly named room
     this.wss.to(roomName).emit('message-from-server', {
       FullName: 'Fixi',
       Message:
         '¡Hola! Bienvenido al chat de soporte. ¿Cómo puedo ayudarte hoy?',
+      RoomName: roomName,
     });
-
+    console.log(`Emitting from server the initial greeting to ${roomName}`);
+    // Update clients list (if necessary)
     this.wss.emit('clients-updated', this.chatbotService.getConnectedClients());
   }
 
@@ -64,7 +101,7 @@ export class ChatbotGateway
       `[handleMessage] Received message from client ${client.id}:`,
       payload.message,
     );
-    const roomName = `room_${this.chatbotService.getClientRoom(client.id)}`;
+    const roomName = `${this.chatbotService.getClientRoom(client.id)}`;
     console.log(`[handleMessage] Room name resolved as: ${roomName}`);
 
     let responseMessage = '';
@@ -148,27 +185,33 @@ export class ChatbotGateway
         break;
     }
 
-    // Emit the user's message back to the user for display, but now to the room
-    client.to(roomName).emit('message-from-server', {
+    // Correct way to emit to the room
+    this.wss.to(roomName).emit('message-from-server', {
       FullName: 'You',
       Message: payload.message,
+      RoomName: roomName, // Include the room name in the payload
     });
+
+    // Log the emission
     console.log(
-      `[handleMessage] User's message emitted back to room: ${roomName}`,
+      `[handleMessage] Event 'message-from-server' emitted to room: ${roomName} with payload: `,
+      {
+        FullName: 'You',
+        Message: payload.message,
+        RoomName: roomName,
+      },
     );
 
-    // Emit the bot's response to the user, also to the room
+    // Emit the bot's response to the room
     if (responseMessage) {
-      client.to(roomName).emit('message-from-server', {
+      this.wss.to(roomName).emit('message-from-server', {
         FullName: 'Fixi',
         Message: responseMessage,
+        RoomName: roomName, // Include the room name in the payload
       });
+
       console.log(
-        `[handleMessage] Bot's response emitted to room: ${roomName}`,
-      );
-    } else {
-      console.log(
-        `[handleMessage] No response message generated for client ${client.id}`,
+        `[handleMessage] Bot's response emitted to room: ${roomName} with message: ${responseMessage}`,
       );
     }
   }

@@ -18,7 +18,8 @@ interface ConnectedClients {
       | 'awaitingName'
       | 'awaitingEmail'
       | 'awaitingPhoneNumber'
-      | 'completed';
+      | 'completed'
+      | 'adminConnected';
     conversationData: {
       name?: string;
       email?: string;
@@ -40,7 +41,8 @@ export class ChatbotService {
     this.clientRooms = new Map();
   }
 
-  async registerClient(client: Socket, userId: string) {
+  async registerUser(client: Socket, userId: string) {
+    console.log('registering client...');
     const roomName = `room_${userId}`;
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
@@ -57,6 +59,25 @@ export class ChatbotService {
       conversationData: {},
       roomName: roomName, // Store room name here
     };
+  }
+
+  async registerAdmin(client: Socket, userId: string, roomName: string) {
+    console.log('registering admin...');
+    const admin = await this.userRepository.findOneBy({ id: userId });
+    if (!admin) {
+      throw new Error('admin not found');
+    }
+    if (!admin.isActive) {
+      throw new Error('admin is not active');
+    }
+    this.connectedClients[client.id] = {
+      socket: client,
+      user: admin,
+      conversationState: 'adminConnected',
+      conversationData: {},
+      roomName: roomName, // Ensure the correct room name is used
+    };
+    console.log('Registering admin to room:', roomName); // Debugging log
   }
 
   getClientRoom(clientId: string): string | undefined {
