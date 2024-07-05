@@ -9,14 +9,14 @@ import { ChatbotService } from './chatbot.service';
 import { Socket, Server } from 'socket.io';
 import { NewMessageDto } from './dto/new-message.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from 'src/auth/interfaces/jwt-payload';
-import { get } from 'http';
 
 @WebSocketGateway({ cors: true })
 export class ChatbotGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() wss: Server;
+  // bot boolean
+  private isBotActive = true;
 
   constructor(
     private readonly chatbotService: ChatbotService,
@@ -52,14 +52,36 @@ export class ChatbotGateway
 
   async handleAdminConnection(client: Socket, payload: any) {
     console.log('connecting as admin...');
-    const roomName = client.handshake.auth.roomName;
-    await this.chatbotService.registerAdmin(client, payload.id, roomName);
+    console.log('Payload received:', payload);
+    console.log('client handshake:', client.handshake.auth);
+    //set bot to false
+    this.isBotActive = false;
+    const roomName = client.handshake.auth.roomName; // Use the roomName from client.handshake.auth
+
+    // Register admin from token
+    try {
+      await this.chatbotService.registerAdmin(client, payload.id, roomName);
+      console.log('Admin registered with ID:', payload.id);
+    } catch (error) {
+      console.error('Failed to register admin:', error);
+      client.disconnect();
+      return;
+    }
+
+    // Retrieve admin name after successful registration
+    const adminName = this.chatbotService.getUserFullName(client.id);
+    if (!adminName) {
+      console.error('Failed to retrieve admin name');
+      client.disconnect();
+      return;
+    }
+
     client.join(roomName);
     console.log('Admin emitting room-joined with name:', roomName);
     client.emit('room-joined', roomName);
-    this.wss.to(roomName).emit('admin-joined', {
-      FullName: 'Admin',
-      Message: 'An admin has joined the room.',
+    this.wss.to(roomName).emit('message-from-server', {
+      FullName: adminName,
+      Message: `${adminName} se ha unido a la conversación.`,
       RoomName: roomName,
     });
   }
@@ -202,8 +224,8 @@ export class ChatbotGateway
       },
     );
 
-    // Emit the bot's response to the room
-    if (responseMessage) {
+    // Check if the bot is active before sending the bot's response
+    if (this.isBotActive && responseMessage) {
       this.wss.to(roomName).emit('message-from-server', {
         FullName: 'Fixi',
         Message: responseMessage,
