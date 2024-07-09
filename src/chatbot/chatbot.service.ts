@@ -7,6 +7,8 @@ import { LeadsService } from '../sales/leads/leads.service';
 import { Status } from 'src/sales/leads/entities/lead.entity';
 import { ProductType } from 'src/sales/leads/entities/lead.entity';
 import { CreateLeadDto } from 'src/sales/leads/dto/create-lead.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { ChatHistory } from './chat-history/entities/chat-history.entity';
 interface ConnectedClients {
   [id: string]: {
     socket: Socket;
@@ -37,13 +39,16 @@ export class ChatbotService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly leadsService: LeadsService,
+    @InjectRepository(ChatHistory)
+    private readonly chatHistoryRepository: Repository<ChatHistory>, // Add the type annotation for chatHistoryRepository
   ) {
     this.clientRooms = new Map();
   }
 
   async registerUser(client: Socket, userId: string) {
     console.log('registering client...');
-    const roomName = `room_${userId}`;
+    const roomName = `room_${uuidv4()}`;
+    console.log('Room name created as registering user:', roomName); // Debugging log
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error('user not found');
@@ -63,24 +68,29 @@ export class ChatbotService {
 
   async registerAdmin(client: Socket, userId: string, roomName: string) {
     console.log('registering admin...');
-    const admin = await this.userRepository.findOneBy({ id: userId });
-    if (!admin) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
       throw new Error('admin not found');
     }
-    if (!admin.isActive) {
+    if (!user.isActive) {
       throw new Error('admin is not active');
     }
     this.connectedClients[client.id] = {
       socket: client,
-      user: admin,
+      user: user,
       conversationState: 'adminConnected',
       conversationData: {},
       roomName: roomName, // Ensure the correct room name is used
     };
+
+    //get chat history for the room
+    const chatHistory = await this.getChatHistory(roomName);
+    client.emit('chatHistory', chatHistory);
     console.log('Registering admin to room:', roomName); // Debugging log
   }
 
   getClientRoom(clientId: string): string | undefined {
+    console.log('Getting room for client:', clientId); // Debugging log
     return this.connectedClients[clientId]?.roomName;
   }
   removeClient(clientId: string) {
@@ -100,6 +110,13 @@ export class ChatbotService {
     return this.connectedClients[clientId].conversationState;
   }
 
+  async getChatHistory(roomId: string): Promise<ChatHistory[]> {
+    return await this.chatHistoryRepository.find({
+      where: { roomId: roomId },
+      order: { timestamp: 'ASC' },
+    });
+  }
+
   updateConversationState(
     clientId: string,
     newState:
@@ -114,7 +131,7 @@ export class ChatbotService {
       this.connectedClients[clientId].conversationState = newState;
     }
   }
-
+  //for lead
   saveConversationData(
     clientId: string,
     data: {
@@ -131,7 +148,7 @@ export class ChatbotService {
       };
     }
   }
-
+  //create lead
   async saveConversationToDatabase(clientId: string) {
     const clientData = this.connectedClients[clientId];
     if (clientData) {
@@ -148,5 +165,20 @@ export class ChatbotService {
 
       await this.leadsService.create(leadData);
     }
+  }
+
+  async saveChatMessage(
+    roomId: string,
+    senderId: string,
+    message: string,
+  ): Promise<void> {
+    const chatHistory = new ChatHistory();
+    chatHistory.roomId = roomId;
+    chatHistory.senderId = senderId;
+    chatHistory.message = message;
+    chatHistory.timestamp = new Date(); // Set the current timestamp
+
+    // Assuming you have a chatHistoryRepository injected in ChatbotService
+    await this.chatHistoryRepository.save(chatHistory);
   }
 }
