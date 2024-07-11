@@ -141,7 +141,7 @@ export class ChatbotGateway
     );
     // Emit message to the room that admin has left
     this.wss.to(roomName).emit('message-from-server', {
-      FullName: 'Fixi',
+      FullName: 'Fixy',
       Message: `${adminName} ha abandonado la conversación. El bot ha retomado la conversación.`,
       RoomName: roomName,
     });
@@ -177,14 +177,13 @@ export class ChatbotGateway
     await this.chatbotService.saveChatMessage(
       roomName,
       'Fixi', // Assuming 'Fixi' is the sender name for the bot
-      '¡Hola! Bienvenido al chat de soporte. ¿Cómo puedo ayudarte hoy?',
+      '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
     );
 
     // Emit greeting message to the correctly named room
     this.wss.to(roomName).emit('message-from-server', {
       FullName: 'Fixi',
-      Message:
-        '¡Hola! Bienvenido al chat de soporte. ¿Cómo puedo ayudarte hoy?',
+      Message: '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
       RoomName: roomName,
     });
     console.log(`Emitting from server the initial greeting to ${roomName}`);
@@ -331,12 +330,12 @@ export class ChatbotGateway
       // Save the bot's response to chat history before emitting
       await this.chatbotService.saveChatMessage(
         roomName,
-        'Bot',
+        'fixy',
         responseMessage,
       );
       // Emit the bot's response to the room
       this.wss.to(roomName).emit('message-from-server', {
-        FullName: 'Bot',
+        FullName: 'fixy',
         Message: responseMessage,
         RoomName: roomName,
       });

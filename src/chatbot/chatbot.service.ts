@@ -64,6 +64,7 @@ export class ChatbotService {
       conversationData: {},
       roomName: roomName, // Store room name here
     };
+    console.log(`User registered: ${userId} in room: ${roomName}`);
   }
 
   async registerAdmin(client: Socket, userId: string, roomName: string) {
@@ -85,6 +86,7 @@ export class ChatbotService {
 
     //get chat history for the room
     const chatHistory = await this.getChatHistory(roomName);
+    console.log('Chat history for room:', chatHistory); // Debugging log
     client.emit('chatHistory', chatHistory);
     console.log('Registering admin to room:', roomName); // Debugging log
   }
@@ -94,12 +96,25 @@ export class ChatbotService {
     return this.connectedClients[clientId]?.roomName;
   }
   removeClient(clientId: string) {
+    console.log(`Removing client: ${clientId}`);
     delete this.connectedClients[clientId];
   }
 
-  getConnectedClients(): string[] {
-    console.log(this.connectedClients);
-    return Object.keys(this.connectedClients);
+  getConnectedClients(): { id: string; roomName: string }[] {
+    return Object.entries(this.connectedClients).map(([id, client]) => ({
+      id,
+      roomName: client.roomName,
+    }));
+  }
+
+  getConnectedClientsForAPI(): { id: string; roomName: string }[] {
+    console.log('Current connected clients:', this.connectedClients);
+    return Object.entries(this.connectedClients)
+      .filter(([_, client]) => client.conversationState !== 'completed')
+      .map(([id, client]) => ({
+        id,
+        roomName: client.roomName,
+      }));
   }
 
   getUserFullName(socketId: string) {
