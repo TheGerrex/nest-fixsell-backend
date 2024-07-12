@@ -27,19 +27,20 @@ export class ChatbotGateway
     const token = client.handshake.auth.token;
     const role = client.handshake.auth.role;
     this.clientRoles.set(client.id, role);
-    if (!token || !role) {
-      console.error('Missing authentication or role information');
-      client.disconnect();
-      return;
-    }
+    // if (!token || !role) {
+    //   console.error('Missing authentication or role information');
+    //   client.disconnect();
+    //   return;
+    // }
 
     try {
-      const payload = this.jwtService.verify(token);
-
       if (role === 'admin') {
+        // Verify token only for admin
+        const payload = this.jwtService.verify(token);
         await this.handleAdminConnection(client, payload);
       } else if (role === 'user') {
-        await this.handleUserConnection(client, payload);
+        // Directly handle user connection without token verification
+        await this.handleUserConnection(client, {});
       } else {
         console.error('Unknown role:', role);
         client.disconnect();
@@ -52,6 +53,11 @@ export class ChatbotGateway
 
   handleDisconnect(client: Socket) {
     console.log('Client disconnected', client.id);
+    this.chatbotService.removeClient(client.id);
+    this.wss.emit(
+      'clients-updated',
+      this.chatbotService.getConnectedClientsForAPI(),
+    );
 
     // Check if the client is an admin
     if (this.clientRoles.get(client.id) === 'admin') {
