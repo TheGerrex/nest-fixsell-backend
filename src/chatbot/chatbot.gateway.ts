@@ -105,7 +105,7 @@ export class ChatbotGateway
 
     await this.chatbotService.saveChatMessage(
       roomName,
-      'Fixi', // Assuming 'Fixi' is the sender name for the bot
+      'Fixy', // Assuming 'Fixi' is the sender name for the bot
       `${adminName} se ha unido a la conversación.`,
     );
     client.emit('room-joined', roomName);
@@ -142,7 +142,7 @@ export class ChatbotGateway
 
     this.chatbotService.saveChatMessage(
       roomName,
-      'Fixi', // Assuming 'Fixi' is the sender name for the bot
+      'Fixy', // Assuming 'Fixi' is the sender name for the bot
       `${adminName} ha abandonado la conversación. El bot ha retomado la conversación.`,
     );
     // Emit message to the room that admin has left
@@ -182,13 +182,13 @@ export class ChatbotGateway
     // First, save the greeting message to chat history
     await this.chatbotService.saveChatMessage(
       roomName,
-      'Fixi', // Assuming 'Fixi' is the sender name for the bot
+      'Fixy', // Assuming 'Fixi' is the sender name for the bot
       '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
     );
 
     // Emit greeting message to the correctly named room
     this.wss.to(roomName).emit('message-from-server', {
-      FullName: 'Fixi',
+      FullName: 'Fixy',
       Message: '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
       RoomName: roomName,
     });
