@@ -27,11 +27,6 @@ export class ChatbotGateway
     const token = client.handshake.auth.token;
     const role = client.handshake.auth.role;
     this.clientRoles.set(client.id, role);
-    // if (!token || !role) {
-    //   console.error('Missing authentication or role information');
-    //   client.disconnect();
-    //   return;
-    // }
 
     try {
       if (role === 'admin') {
@@ -39,8 +34,9 @@ export class ChatbotGateway
         const payload = this.jwtService.verify(token);
         await this.handleAdminConnection(client, payload);
       } else if (role === 'user') {
-        // Directly handle user connection without token verification
-        await this.handleUserConnection(client, {});
+        // Pass the entire auth object as payload for user connection
+        console.log('connecting as user...', client.handshake.auth);
+        await this.handleUserConnection(client, client.handshake.auth);
       } else {
         console.error('Unknown role:', role);
         client.disconnect();
@@ -157,17 +153,29 @@ export class ChatbotGateway
 
   async handleUserConnection(client: Socket, payload: any) {
     console.log('connecting as user...');
-    // Register user and automatically generate and assign a room name
-    await this.chatbotService.registerUser(client, payload.id);
 
-    // Retrieve the assigned room name from the connectedClients map
-    const roomName = this.chatbotService.getClientRoom(client.id);
-    if (!roomName) {
-      console.error('Failed to retrieve room name for user connection.');
-      return;
+    let roomName = payload.roomName; // Assume the roomName is sent in the payload
+    const savedState = payload.savedState; // Retrieve saved state from payload
+    console.log('Payload received for user...:', payload);
+
+    if (roomName) {
+      console.log(`Connecting to existing room: ${roomName}`);
+      // Retrieve and send chat history for existing room
+      const chatHistory = await this.chatbotService.getChatHistory(roomName);
+      client.emit('chatHistory', chatHistory);
+    } else {
+      // Register user and automatically generate and assign a room name if not provided
+      roomName = await this.chatbotService.registerUser(client, payload.id);
     }
 
-    // Join the generated room
+    await this.chatbotService.registerUser(
+      client,
+      payload.id,
+      roomName,
+      savedState,
+    );
+
+    // Join the generated or existing room
     client.join(roomName);
     console.log('User emitting room-joined with name:', roomName);
     client.emit('room-joined', roomName);
@@ -179,20 +187,26 @@ export class ChatbotGateway
       RoomName: roomName,
     });
 
-    // First, save the greeting message to chat history
-    await this.chatbotService.saveChatMessage(
-      roomName,
-      'Fixy', // Assuming 'Fixi' is the sender name for the bot
-      '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
-    );
+    // Emit initial chat state if available
+    if (savedState) {
+      client.emit('chatState', savedState);
+    } else {
+      // Emit initial greeting if no saved state
+      const initialState = 'initialGreeting';
+      await this.chatbotService.saveChatMessage(
+        roomName,
+        'Fixy',
+        '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
+      );
 
-    // Emit greeting message to the correctly named room
-    this.wss.to(roomName).emit('message-from-server', {
-      FullName: 'Fixy',
-      Message: '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
-      RoomName: roomName,
-    });
-    console.log(`Emitting from server the initial greeting to ${roomName}`);
+      this.wss.to(roomName).emit('message-from-server', {
+        FullName: 'Fixy',
+        Message: '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
+        RoomName: roomName,
+      });
+
+      client.emit('chatState', initialState);
+    }
 
     // Update clients list (if necessary)
     this.wss.emit('clients-updated', this.chatbotService.getConnectedClients());
@@ -213,6 +227,11 @@ export class ChatbotGateway
     );
     const roomName = `${this.chatbotService.getClientRoom(client.id)}`;
     console.log(`[handleMessage] Room name resolved as: ${roomName}`);
+
+    if (!roomName) {
+      console.error(`No room found for client ${client.id}`);
+      return;
+    }
 
     // Save the client's message to chat history
     await this.chatbotService.saveChatMessage(
@@ -319,6 +338,13 @@ export class ChatbotGateway
       });
     }
 
+    // // Make sure to emit the message back to the client
+    // this.wss.to(roomName).emit('message-from-server', {
+    //   FullName: this.chatbotService.getUserFullName(client.id) || 'User',
+    //   Message: payload.message,
+    //   RoomName: roomName,
+    // });
+
     // Log the emission
     console.log(
       `[handleMessage] Event 'message-from-server' emitted to room: ${roomName} with payload: `,
@@ -336,12 +362,12 @@ export class ChatbotGateway
       // Save the bot's response to chat history before emitting
       await this.chatbotService.saveChatMessage(
         roomName,
-        'fixy',
+        'Fixy',
         responseMessage,
       );
       // Emit the bot's response to the room
       this.wss.to(roomName).emit('message-from-server', {
-        FullName: 'fixy',
+        FullName: 'Fixy',
         Message: responseMessage,
         RoomName: roomName,
       });

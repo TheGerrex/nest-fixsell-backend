@@ -9,23 +9,25 @@ import { ProductType } from 'src/sales/leads/entities/lead.entity';
 import { CreateLeadDto } from 'src/sales/leads/dto/create-lead.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { ChatHistory } from './chat-history/entities/chat-history.entity';
+type ConversationState =
+  | 'initialGreeting'
+  | 'awaitingGreetingResponse'
+  | 'awaitingName'
+  | 'awaitingEmail'
+  | 'awaitingPhoneNumber'
+  | 'completed'
+  | 'adminConnected';
+
 interface ConnectedClients {
   [id: string]: {
     socket: Socket;
     user: User;
     roomName: string;
-    conversationState:
-      | 'initialGreeting'
-      | 'awaitingGreetingResponse'
-      | 'awaitingName'
-      | 'awaitingEmail'
-      | 'awaitingPhoneNumber'
-      | 'completed'
-      | 'adminConnected';
+    conversationState: ConversationState;
     conversationData: {
       name?: string;
       email?: string;
-      phoneNumber?: string; // Added phoneNumber property
+      phoneNumber?: string;
       message?: string;
     };
   };
@@ -45,10 +47,17 @@ export class ChatbotService {
     this.clientRooms = new Map();
   }
 
-  async registerUser(client: Socket, userId: string) {
+  async registerUser(
+    client: Socket,
+    userId: string,
+    roomName?: string,
+    savedState?: string,
+  ): Promise<string> {
     console.log('registering client...');
-    const roomName = `room_${uuidv4()}`;
-    console.log('Room name created as registering user:', roomName); // Debugging log
+    if (!roomName) {
+      roomName = `room_${uuidv4()}`;
+    }
+    console.log('Room name for registering user:', roomName);
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error('user not found');
@@ -57,14 +66,58 @@ export class ChatbotService {
       throw new Error('user is not active');
     }
 
-    this.connectedClients[client.id] = {
-      socket: client,
-      user: user,
-      conversationState: 'initialGreeting',
-      conversationData: {},
-      roomName: roomName, // Store room name here
-    };
-    console.log(`User registered: ${userId} in room: ${roomName}`);
+    const initialState = this.validateConversationState(savedState);
+
+    // Check if the client is already registered
+    if (this.connectedClients[client.id]) {
+      console.log(
+        `Client ${client.id} already registered, updating room name and state.`,
+      );
+      this.connectedClients[client.id].roomName = roomName;
+      this.connectedClients[client.id].conversationState = initialState;
+    } else {
+      this.connectedClients[client.id] = {
+        socket: client,
+        user: user,
+        conversationState: initialState,
+        conversationData: {},
+        roomName: roomName,
+      };
+      console.log(`User registered: ${userId} in room: ${roomName}`);
+    }
+
+    // Skip the initial message if the state is not initialGreeting
+    if (initialState === 'initialGreeting') {
+      // await this.saveChatMessage(
+      //   roomName,
+      //   'Fixy',
+      //   '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
+      // );
+      client.emit('message-from-server', {
+        FullName: 'Fixy',
+        Message: '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
+        RoomName: roomName,
+      });
+    }
+
+    return roomName;
+  }
+  private validateConversationState(state?: string): ConversationState {
+    const validStates: ConversationState[] = [
+      'initialGreeting',
+      'awaitingGreetingResponse',
+      'awaitingName',
+      'awaitingEmail',
+      'awaitingPhoneNumber',
+      'completed',
+      'adminConnected',
+    ];
+
+    if (state && validStates.includes(state as ConversationState)) {
+      return state as ConversationState;
+    }
+
+    return 'initialGreeting';
   }
 
   async registerAdmin(client: Socket, userId: string, roomName: string) {
@@ -92,7 +145,7 @@ export class ChatbotService {
   }
 
   getClientRoom(clientId: string): string | undefined {
-    console.log('Getting room for client:', clientId); // Debugging log
+    console.log('Getting room for client:', clientId);
     return this.connectedClients[clientId]?.roomName;
   }
   removeClient(clientId: string) {
@@ -121,8 +174,10 @@ export class ChatbotService {
     return this.connectedClients[socketId].user.name;
   }
 
-  getConversationState(clientId: string) {
-    return this.connectedClients[clientId].conversationState;
+  getConversationState(clientId: string): string {
+    return (
+      this.connectedClients[clientId]?.conversationState || 'initialGreeting'
+    );
   }
 
   async getChatHistory(roomId: string): Promise<ChatHistory[]> {
@@ -132,18 +187,13 @@ export class ChatbotService {
     });
   }
 
-  updateConversationState(
-    clientId: string,
-    newState:
-      | 'initialGreeting'
-      | 'awaitingGreetingResponse'
-      | 'awaitingName'
-      | 'awaitingEmail'
-      | 'awaitingPhoneNumber'
-      | 'completed',
-  ) {
+  updateConversationState(clientId: string, newState: ConversationState) {
     if (this.connectedClients[clientId]) {
       this.connectedClients[clientId].conversationState = newState;
+      console.log(`Updated state for client ${clientId} to ${newState}`);
+
+      // Emit the new state to the client
+      this.connectedClients[clientId].socket.emit('chatState', newState);
     }
   }
   //for lead
