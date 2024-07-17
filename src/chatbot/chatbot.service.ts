@@ -53,54 +53,95 @@ export class ChatbotService {
     roomName?: string,
     savedState?: string,
   ): Promise<string> {
-    console.log('registering client...');
+    console.log('Registering client...', { userId, roomName, savedState });
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user || !user.isActive) {
+      throw new Error('User not found or inactive');
+    }
+
     if (!roomName) {
       roomName = `room_${uuidv4()}`;
     }
-    console.log('Room name for registering user:', roomName);
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) {
-      throw new Error('user not found');
-    }
-    if (!user.isActive) {
-      throw new Error('user is not active');
-    }
 
-    const initialState = this.validateConversationState(savedState);
+    let initialState: ConversationState = 'initialGreeting';
+    let conversationData = {};
 
-    // Check if the client is already registered
-    if (this.connectedClients[client.id]) {
-      console.log(
-        `Client ${client.id} already registered, updating room name and state.`,
+    // If we have a room name, try to retrieve the existing state and data
+    if (roomName) {
+      const existingClientData = Object.values(this.connectedClients).find(
+        (client) => client.roomName === roomName,
       );
-      this.connectedClients[client.id].roomName = roomName;
-      this.connectedClients[client.id].conversationState = initialState;
-    } else {
-      this.connectedClients[client.id] = {
-        socket: client,
-        user: user,
-        conversationState: initialState,
-        conversationData: {},
-        roomName: roomName,
-      };
-      console.log(`User registered: ${userId} in room: ${roomName}`);
+
+      if (existingClientData) {
+        initialState = existingClientData.conversationState;
+        conversationData = existingClientData.conversationData;
+      } else {
+        // If no existing client data, try to reconstruct from chat history
+        const chatHistory = await this.getChatHistory(roomName);
+        const reconstructedData = this.reconstructConversationData(chatHistory);
+        initialState = reconstructedData.state;
+        conversationData = reconstructedData.data;
+      }
     }
 
-    // Skip the initial message if the state is not initialGreeting
-    if (initialState === 'initialGreeting') {
-      // await this.saveChatMessage(
-      //   roomName,
-      //   'Fixy',
-      //   '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
-      // );
-      client.emit('message-from-server', {
-        FullName: 'Fixy',
-        Message: '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.',
-        RoomName: roomName,
-      });
+    // Use savedState if it's provided and valid, otherwise use the reconstructed state
+    if (savedState) {
+      const validatedState = this.validateConversationState(savedState);
+      if (validatedState !== 'initialGreeting') {
+        initialState = validatedState;
+      }
     }
+
+    this.connectedClients[client.id] = {
+      socket: client,
+      user: user,
+      conversationState: initialState,
+      conversationData: conversationData,
+      roomName: roomName,
+    };
+
+    console.log(
+      `User registered: ${userId} in room: ${roomName} with state: ${initialState}`,
+    );
 
     return roomName;
+  }
+
+  private reconstructConversationData(chatHistory: ChatHistory[]): {
+    state: ConversationState;
+    data: any;
+  } {
+    let state: ConversationState = 'initialGreeting';
+    let data: any = {};
+
+    for (const chat of chatHistory) {
+      if (chat.senderId === 'Fixy') {
+        if (chat.message.includes('nombre')) {
+          state = 'awaitingName';
+        } else if (chat.message.includes('email')) {
+          state = 'awaitingEmail';
+        } else if (chat.message.includes('teléfono')) {
+          state = 'awaitingPhoneNumber';
+        } else if (chat.message.includes('completado el registro')) {
+          state = 'completed';
+        }
+      } else {
+        switch (state) {
+          case 'awaitingName':
+            data.name = chat.message;
+            break;
+          case 'awaitingEmail':
+            data.email = chat.message;
+            break;
+          case 'awaitingPhoneNumber':
+            data.phoneNumber = chat.message;
+            break;
+        }
+      }
+    }
+
+    return { state, data };
   }
   private validateConversationState(state?: string): ConversationState {
     const validStates: ConversationState[] = [
@@ -214,22 +255,68 @@ export class ChatbotService {
     }
   }
   //create lead
-  async saveConversationToDatabase(clientId: string) {
-    const clientData = this.connectedClients[clientId];
-    if (clientData) {
-      const leadData: CreateLeadDto = {
-        client: clientData.conversationData.name,
-        email: clientData.conversationData.email,
-        phone: clientData.conversationData.phoneNumber,
-        product_interested:
-          clientData.conversationData.message || 'Default Product', // Provide a default value if null
+  async saveConversationToDatabase(roomName: string) {
+    const chatHistory = await this.getChatHistory(roomName);
+    const leadData = this.extractLeadDataFromChatHistory(chatHistory);
+
+    if (leadData) {
+      const createLeadDto: CreateLeadDto = {
+        client: leadData.name,
+        email: leadData.email,
+        phone: leadData.phoneNumber,
+        product_interested: leadData.message || 'Default Product',
         status: Status.PROSPECT,
         type_of_product: ProductType.CONSUMABLE,
         assigned: null,
       };
 
-      await this.leadsService.create(leadData);
+      await this.leadsService.create(createLeadDto);
     }
+  }
+
+  private extractLeadDataFromChatHistory(chatHistory: ChatHistory[]): {
+    name?: string;
+    email?: string;
+    phoneNumber?: string;
+    message?: string;
+  } | null {
+    let name, email, phoneNumber, message;
+    let expectingName = false,
+      expectingEmail = false,
+      expectingPhone = false;
+
+    for (let i = 0; i < chatHistory.length; i++) {
+      const currentMessage = chatHistory[i];
+      const nextMessage = chatHistory[i + 1];
+
+      if (currentMessage.senderId === 'Fixy') {
+        // Assuming 'Fixy' is the bot's ID
+        if (currentMessage.message.includes('nombre')) {
+          expectingName = true;
+        } else if (currentMessage.message.includes('email')) {
+          expectingEmail = true;
+        } else if (currentMessage.message.includes('teléfono')) {
+          expectingPhone = true;
+        }
+      } else if (nextMessage && nextMessage.senderId !== 'Fixy') {
+        if (expectingName && !name) {
+          name = nextMessage.message.trim();
+          expectingName = false;
+        } else if (expectingEmail && !email) {
+          email = nextMessage.message.trim();
+          expectingEmail = false;
+        } else if (expectingPhone && !phoneNumber) {
+          phoneNumber = nextMessage.message.trim();
+          expectingPhone = false;
+        } else if (!message) {
+          message = nextMessage.message.trim();
+        }
+      }
+    }
+
+    return name || email || phoneNumber
+      ? { name, email, phoneNumber, message }
+      : null;
   }
 
   async saveChatMessage(
