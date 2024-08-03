@@ -1,6 +1,6 @@
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
@@ -33,31 +33,31 @@ export class TicketsService {
 
     // checks if users exist
     const assignedUser = await this.userRepository.findOne({
-      where: { id: createTicketDto.assigned },
+      where: { id: createTicketDto.assigned.id },
     });
     const assigneeUser = await this.userRepository.findOne({
-      where: { id: createTicketDto.assignee },
+      where: { id: createTicketDto.assignee.id },
     });
 
     if (!assignedUser) {
-      throw new BadRequestException('Assigned user not found');
+      throw new NotFoundException('Usuario asignado no encontrado');
     }
 
     if (!assigneeUser) {
-      throw new BadRequestException('Assignee user not found');
+      throw new NotFoundException('Usuario asignatario no encontrado');
     }
 
     const newTicket = this.ticketRepository.create({
       ...createTicketDto,
       assigned: assignedUser,
       assignee: assigneeUser,
-      activity: [createTicketDto.activity], // Change the type of activity to string[]
+      activity: createTicketDto.activity, // Change the type of activity to string[]
     });
 
     try {
       await this.ticketRepository.save(newTicket);
     } catch (err) {
-      throw new BadRequestException('Error while saving ticket');
+      throw new BadRequestException('Error al tratar de guardar el ticket');
     }
 
     return newTicket;
@@ -88,7 +88,6 @@ export class TicketsService {
     // Log the updateTicketDto object
     console.log('updateTicketDto:', updateTicketDto);
     console.log('Updating ticket with ID:', id);
-    console.log('Update data:', updateTicketDto);
 
     // Convert appointment start and end times to Date objects if they are not null
     if (updateTicketDto.appointmentStartTime) {
@@ -114,37 +113,50 @@ export class TicketsService {
 
     let updateData = { ...updateTicketDto };
 
+    // Assigned user update
     if (updateTicketDto.assigned) {
       const assignedUser = await this.userRepository.findOne({
-        where: { id: updateTicketDto.assigned },
+        where: { id: updateTicketDto.assigned.id },
       });
-
       if (!assignedUser) {
-        throw new BadRequestException('Assigned user not found');
+        throw new NotFoundException(`Usuario asignado no encontrado con el id: ${assignedUser.id}`);
       }
-
-      updateData = { ...updateData, assigned: assignedUser.id };
+      updateData = { ...updateData, assigned: assignedUser };
     }
 
+    // Assignee user update
     if (updateTicketDto.assignee) {
       const assigneeUser = await this.userRepository.findOne({
-        where: { id: updateTicketDto.assignee },
+        where: { id: updateTicketDto.assignee.id },
       });
 
       if (!assigneeUser) {
-        throw new BadRequestException('Assignee user not found');
+        throw new NotFoundException(`Usuario asignatario no encontrado con el id: ${assigneeUser.id}`);
       }
 
-      updateData = { ...updateData, assignee: assigneeUser.id };
+      updateData = { ...updateData, assignee: assigneeUser };
     }
-    console.log('Ticket updated successfully with:', updateData);
 
-    const updatedTicket = await this.ticketRepository.findOne({
-      where: { id: id },
-    });
+    // Ticket activity update
+    if (updateTicketDto.activity) {
+      updateData = { ...updateData, activity: updateTicketDto.activity };
+    }
+
+    // Ticket priority update
+    if (updateTicketDto.priority) {
+      updateData = { ...updateData, priority: updateTicketDto.priority };
+    }
+
+    // Update the ticket
+    await this.ticketRepository.update(id, updateData);
+
+    console.log('Ticket actualizado correctamente con:', updateData);
+
+
+    const updatedTicket = await this.ticketRepository.findOne({ where: { id } });
 
     if (!updatedTicket) {
-      throw new BadRequestException('Ticket not found');
+      throw new NotFoundException('Ticket no encontrado');
     }
 
     return updatedTicket;
@@ -153,8 +165,8 @@ export class TicketsService {
   async remove(id: number): Promise<string> {
     const result = await this.ticketRepository.delete(id);
     if (result.affected === 0) {
-      throw new BadRequestException(`Ticket with ID "${id}" not found`);
+      throw new NotFoundException(`Ticket con ID "${id}" no encontrado`);
     }
-    return `Ticket with ID "${id}" was successfully removed`;
+    return `Ticket con ID "${id}" eliminado correctamente`;
   }
 }

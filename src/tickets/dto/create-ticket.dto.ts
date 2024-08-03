@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Priority, Status } from '../entities/ticket.entity';
 import { Transform } from 'class-transformer';
+import { User } from 'src/auth/entities/user.entity';
 
 export class CreateTicketDto {
   @IsOptional()
@@ -36,11 +37,11 @@ export class CreateTicketDto {
 
   @IsOptional()
   @IsString()
-  assigned: string;
+  assigned: User;
 
   @IsOptional()
   @IsString()
-  assignee: string;
+  assignee: User;
 
   @IsOptional()
   @IsString()
@@ -49,7 +50,7 @@ export class CreateTicketDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  activity: string;
+  activity: string[];
 
   @IsOptional()
   @IsEnum(Priority)
