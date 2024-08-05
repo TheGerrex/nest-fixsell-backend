@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { Activity } from 'src/activity/entities/activity.entity';
@@ -67,8 +68,9 @@ export class Ticket {
   // @Column('text', { array: true, nullable: true })
   // activity: string[];
 
-  @ManyToOne(() => Activity, { onDelete: 'SET NULL' })
-  @JoinColumn()
+  @OneToMany(() => Activity, (activity) => activity.ticket, {
+    onDelete: 'SET NULL',
+  })
   activities: Activity[];
 
   @Column({

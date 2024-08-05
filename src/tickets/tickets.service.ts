@@ -1,10 +1,15 @@
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { User } from '../auth/entities/user.entity';
+import { Activity } from 'src/activity/entities/activity.entity';
 
 @Injectable()
 export class TicketsService {
@@ -13,6 +18,8 @@ export class TicketsService {
     private ticketRepository: Repository<Ticket>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Activity)
+    private activityRepository: Repository<Activity>,
   ) {}
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
@@ -119,7 +126,9 @@ export class TicketsService {
         where: { id: updateTicketDto.assigned.id },
       });
       if (!assignedUser) {
-        throw new NotFoundException(`Usuario asignado no encontrado con el id: ${assignedUser.id}`);
+        throw new NotFoundException(
+          `Usuario asignado no encontrado con el id: ${assignedUser.id}`,
+        );
       }
       updateData = { ...updateData, assigned: assignedUser };
     }
@@ -131,7 +140,9 @@ export class TicketsService {
       });
 
       if (!assigneeUser) {
-        throw new NotFoundException(`Usuario asignatario no encontrado con el id: ${assigneeUser.id}`);
+        throw new NotFoundException(
+          `Usuario asignatario no encontrado con el id: ${assigneeUser.id}`,
+        );
       }
 
       updateData = { ...updateData, assignee: assigneeUser };
@@ -152,8 +163,9 @@ export class TicketsService {
 
     console.log('Ticket actualizado correctamente con:', updateData);
 
-
-    const updatedTicket = await this.ticketRepository.findOne({ where: { id } });
+    const updatedTicket = await this.ticketRepository.findOne({
+      where: { id },
+    });
 
     if (!updatedTicket) {
       throw new NotFoundException('Ticket no encontrado');

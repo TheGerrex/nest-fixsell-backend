@@ -1,5 +1,12 @@
-import { User } from "src/auth/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from 'src/auth/entities/user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Ticket } from 'src/tickets/entities/ticket.entity';
 
 @Entity()
 export class Activity {
@@ -14,4 +21,10 @@ export class Activity {
 
   @CreateDateColumn()
   addedAt: Date;
+
+  // ticket relation
+  @ManyToOne(() => Ticket, (ticket) => ticket.activities, {
+    onDelete: 'SET NULL',
+  })
+  ticket: Ticket;
 }
