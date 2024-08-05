@@ -9,6 +9,7 @@ import {
 import { Priority, Status } from '../entities/ticket.entity';
 import { Transform } from 'class-transformer';
 import { User } from 'src/auth/entities/user.entity';
+import { Activity } from 'src/activity/entities/activity.entity';
 
 export class CreateTicketDto {
   @IsOptional()
@@ -50,7 +51,7 @@ export class CreateTicketDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  activity: string[];
+  activities: Activity[];
 
   @IsOptional()
   @IsEnum(Priority)

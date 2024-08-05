@@ -51,7 +51,7 @@ export class TicketsService {
       ...createTicketDto,
       assigned: assignedUser,
       assignee: assigneeUser,
-      activity: createTicketDto.activity, // Change the type of activity to string[]
+      activities: createTicketDto.activities, // Change the type of activities to string[]
     });
 
     try {
@@ -65,7 +65,7 @@ export class TicketsService {
 
   async findAll(): Promise<Ticket[]> {
     return await this.ticketRepository.find({
-      relations: ['assigned', 'assignee'],
+      relations: ['assigned', 'assignee', 'activities'],
     });
   }
 
@@ -80,7 +80,7 @@ export class TicketsService {
   async findOne(id: number): Promise<Ticket> {
     return await this.ticketRepository.findOne({
       where: { id: id },
-      relations: ['assigned', 'assignee'],
+      relations: ['assigned', 'assignee', 'activities'],
     });
   }
 
@@ -138,8 +138,8 @@ export class TicketsService {
     }
 
     // Ticket activity update
-    if (updateTicketDto.activity) {
-      updateData = { ...updateData, activity: updateTicketDto.activity };
+    if (updateTicketDto.activities) {
+      updateData = { ...updateData, activities: updateTicketDto.activities };
     }
 
     // Ticket priority update

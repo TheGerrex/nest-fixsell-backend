@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
+import { Activity } from 'src/activity/entities/activity.entity';
 
 export enum Priority {
   LOW = 'low',
@@ -63,8 +64,12 @@ export class Ticket {
   @Column({ nullable: true })
   issue: string;
 
-  @Column('text', { array: true, nullable: true })
-  activity: string[];
+  // @Column('text', { array: true, nullable: true })
+  // activity: string[];
+
+  @ManyToOne(() => Activity, { onDelete: 'SET NULL' })
+  @JoinColumn()
+  activities: Activity[];
 
   @Column({
     type: 'enum',
