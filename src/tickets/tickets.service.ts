@@ -72,7 +72,7 @@ export class TicketsService {
 
   async findAll(): Promise<Ticket[]> {
     return await this.ticketRepository.find({
-      relations: ['assigned', 'assignee', 'activities'],
+      relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],
     });
   }
 
@@ -87,7 +87,7 @@ export class TicketsService {
   async findOne(id: number): Promise<Ticket> {
     return await this.ticketRepository.findOne({
       where: { id: id },
-      relations: ['assigned', 'assignee', 'activities'],
+      relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],
     });
   }
 
