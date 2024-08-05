@@ -21,5 +21,6 @@ import { Lead } from 'src/sales/leads/entities/lead.entity';
     }),
     RolesModule,
   ],
+  exports: [TypeOrmModule, JwtModule],
 })
 export class AuthModule {}
