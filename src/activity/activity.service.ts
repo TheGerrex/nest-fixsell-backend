@@ -28,7 +28,7 @@ export class ActivityService {
     activity.addedAt = createActivityDto.addedAt;
 
     // Validate the UUID
-    if (!isUUID(createActivityDto.addedBy)) {
+    if (!isUUID(createActivityDto.addedBy.id)) {
       throw new BadRequestException(
         `Formato UUID inválido: ${createActivityDto.addedBy}`,
       );
@@ -51,7 +51,7 @@ export class ActivityService {
     }
     // Find the user who added the activity
     const user = await this.usersRepository.findOne({
-      where: { id: createActivityDto.addedBy },
+      where: { id: createActivityDto.addedBy.id },
     });
 
     if (!user) {
@@ -70,7 +70,7 @@ export class ActivityService {
   }
 
   async findAll(): Promise<Activity[]> {
-    return this.activitiesRepository.find({ relations: ['addedBy'] });
+    return this.activitiesRepository.find({ relations: ['addedBy', 'ticket'] });
   }
 
   async findOne(id: number): Promise<Activity> {
@@ -90,21 +90,22 @@ export class ActivityService {
     id: number,
     updateActivityDto: UpdateActivityDto,
   ): Promise<Activity> {
+
     // Validate the UUID
-    if (!isUUID(updateActivityDto.addedBy)) {
+    if (!isUUID(updateActivityDto.addedBy.id)) {
       throw new BadRequestException(
-        `Formato UUID inválido: ${updateActivityDto.addedBy}`,
+        `Formato UUID inválido: ${updateActivityDto.addedBy.id}`,
       );
     }
 
     // Find the user who added the activity
     const user = await this.usersRepository.findOne({
-      where: { id: updateActivityDto.addedBy },
+      where: { id: updateActivityDto.addedBy.id },
     });
 
     if (!user) {
       throw new NotFoundException(
-        `Usuario no encontrado con el id: ${updateActivityDto.addedBy}`,
+        `Usuario no encontrado con el id: ${updateActivityDto.addedBy.id}`,
       );
     }
 
@@ -132,6 +133,7 @@ export class ActivityService {
 
     const updatedActivity = await this.activitiesRepository.findOne({
       where: { id },
+      relations: ['addedBy']
     });
 
     if (!updatedActivity) {

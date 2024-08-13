@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { User } from 'src/auth/entities/user.entity';
 
 export class CreateActivityDto {
   @IsOptional()
@@ -7,8 +8,7 @@ export class CreateActivityDto {
   text: string;
 
   @IsOptional()
-  @IsString()
-  addedBy: string; // the user's ID
+  addedBy: User; // the user's ID
 
   @IsOptional()
   @IsDate()
