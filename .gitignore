@@ -2,7 +2,6 @@
 /dist
 /node_modules
 
-mongo/
 postgres/
 **/*.env
 src/config/env

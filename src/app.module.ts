@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-
 import { PrintersModule } from './printers/printers.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
@@ -35,10 +33,6 @@ import { ChatbotModule } from './chatbot/chatbot.module';
       load: [EnvConfiguration],
       validationSchema: JoiValidationSchema,
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI, {
-      dbName: process.env.MONGO_DB_NAME,
-    }),
-
     // postgresql
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

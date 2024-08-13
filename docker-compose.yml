@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-  mongo_db:
-    container_name: mongo_fixsell_db
-    image: mongo:5.0.16
-    volumes:
-      - ./mongo:/data/db
-    ports:
-      - 27017:27017
-    restart: always
-
   postgres_db:
     container_name: postgres_fixsell_db
     image: postgres:14.3
