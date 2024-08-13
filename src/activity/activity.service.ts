@@ -90,7 +90,6 @@ export class ActivityService {
     id: number,
     updateActivityDto: UpdateActivityDto,
   ): Promise<Activity> {
-
     // Validate the UUID
     if (!isUUID(updateActivityDto.addedBy.id)) {
       throw new BadRequestException(
@@ -133,7 +132,7 @@ export class ActivityService {
 
     const updatedActivity = await this.activitiesRepository.findOne({
       where: { id },
-      relations: ['addedBy']
+      relations: ['addedBy'],
     });
 
     if (!updatedActivity) {
