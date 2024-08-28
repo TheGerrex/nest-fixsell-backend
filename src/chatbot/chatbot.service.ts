@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Socket } from 'socket.io';
 import { User } from 'src/auth/entities/user.entity';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { LeadsService } from '../sales/leads/leads.service';
 import { Status } from 'src/sales/leads/entities/lead.entity';
 import { ProductType } from 'src/sales/leads/entities/lead.entity';
@@ -253,6 +253,11 @@ export class ChatbotService {
         ...data,
       };
     }
+
+    // Call the method to update chat history with the name
+    if (data.name) {
+      this.updateChatHistoryWithName(clientId);
+    }
   }
   //create lead
   async saveConversationToDatabase(roomName: string) {
@@ -330,7 +335,52 @@ export class ChatbotService {
     chatHistory.message = message;
     chatHistory.timestamp = new Date(); // Set the current timestamp
 
-    // Assuming you have a chatHistoryRepository injected in ChatbotService
+    // Save the chat message
     await this.chatHistoryRepository.save(chatHistory);
+
+    // Check if the message contains "User's name is"
+    if (message.startsWith("User's name is ")) {
+      const name = message.replace("User's name is ", '');
+      console.log(`Extracted name: ${name}`);
+
+      // Find the previous message from the same room
+      const previousMessage = await this.chatHistoryRepository.findOne({
+        where: {
+          roomId: roomId,
+        },
+        order: {
+          timestamp: 'DESC',
+        },
+      });
+
+      if (previousMessage) {
+        console.log(`Found previous message with ID: ${previousMessage.id}`);
+        // Update the senderName of the previous message
+        previousMessage.senderName = name;
+        await this.chatHistoryRepository.save(previousMessage);
+        console.log(`Updated senderName to: ${name}`);
+      } else {
+        console.log('No previous message found');
+      }
+    }
+  }
+
+  async updateChatHistoryWithName(clientId: string) {
+    const client = this.connectedClients[clientId];
+    if (!client) {
+      throw new Error('Client not found');
+    }
+
+    const { name } = client.conversationData;
+    if (name) {
+      await this.saveChatMessage(
+        client.roomName,
+        client.user.id,
+        `User's name is ${name}`,
+      );
+      console.log(
+        `Updated chat history for room ${client.roomName} with name: ${name}`,
+      );
+    }
   }
 }

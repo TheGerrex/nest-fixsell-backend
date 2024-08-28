@@ -9,7 +9,6 @@ import { ChatbotService } from './chatbot.service';
 import { Socket, Server } from 'socket.io';
 import { NewMessageDto } from './dto/new-message.dto';
 import { JwtService } from '@nestjs/jwt';
-// import { v4 as uuidv4 } from 'uuid';
 @WebSocketGateway({ cors: true })
 export class ChatbotGateway
   implements OnGatewayConnection, OnGatewayDisconnect
@@ -337,13 +336,6 @@ export class ChatbotGateway
         RoomName: roomName, // Include the room name in the payload
       });
     }
-
-    // // Make sure to emit the message back to the client
-    // this.wss.to(roomName).emit('message-from-server', {
-    //   FullName: this.chatbotService.getUserFullName(client.id) || 'User',
-    //   Message: payload.message,
-    //   RoomName: roomName,
-    // });
 
     // Log the emission
     console.log(

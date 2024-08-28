@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsDate } from 'class-validator';
+import { IsString, IsNotEmpty, IsDate, IsOptional } from 'class-validator';
 
 export class CreateChatHistoryDto {
   @IsString()
@@ -8,6 +8,11 @@ export class CreateChatHistoryDto {
   @IsString()
   @IsNotEmpty()
   senderId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  senderName: string;
 
   @IsString()
   @IsNotEmpty()

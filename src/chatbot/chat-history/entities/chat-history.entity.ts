@@ -11,6 +11,9 @@ export class ChatHistory {
   @Column()
   senderId: string;
 
+  @Column({ nullable: true })
+  senderName: string;
+
   @Column()
   message: string;
 
