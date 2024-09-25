@@ -217,15 +217,9 @@ export class ChatbotGateway
     return this.botActiveStatusPerRoom.get(roomName) !== false;
   }
 
-  // message-from-client
   @SubscribeMessage('message-from-client')
   async handleMessage(client: Socket, payload: NewMessageDto) {
-    console.log(
-      `[handleMessage] Received message from client ${client.id}:`,
-      payload.message,
-    );
-    const roomName = `${this.chatbotService.getClientRoom(client.id)}`;
-    console.log(`[handleMessage] Room name resolved as: ${roomName}`);
+    const roomName = this.chatbotService.getClientRoom(client.id);
 
     if (!roomName) {
       console.error(`No room found for client ${client.id}`);
@@ -240,20 +234,13 @@ export class ChatbotGateway
     );
 
     let responseMessage = '';
-
     const currentState = this.chatbotService.getConversationState(client.id);
-    console.log(
-      `[handleMessage] Current state for client ${client.id}: ${currentState}`,
-    );
 
     switch (currentState) {
       case 'initialGreeting':
         responseMessage =
           'Para darte una atención más personalizada ¿Me podrías indicar tu nombre?';
         this.chatbotService.updateConversationState(client.id, 'awaitingName');
-        console.log(
-          `[handleMessage] State updated to awaitingName for client ${client.id}`,
-        );
         break;
       case 'awaitingName':
         if (payload.message.trim()) {
@@ -265,15 +252,9 @@ export class ChatbotGateway
             client.id,
             'awaitingEmail',
           );
-          console.log(
-            `[handleMessage] State updated to awaitingEmail for client ${client.id}`,
-          );
         } else {
           responseMessage =
             'Parece que no recibí un nombre válido. ¿Me podrías decir tu nombre, por favor?';
-          console.log(
-            `[handleMessage] Invalid name received from client ${client.id}`,
-          );
         }
         break;
       case 'awaitingEmail':
@@ -286,15 +267,9 @@ export class ChatbotGateway
             client.id,
             'awaitingPhoneNumber',
           );
-          console.log(
-            `[handleMessage] State updated to awaitingPhoneNumber for client ${client.id}`,
-          );
         } else {
           responseMessage =
             'Parece que el email no es válido. ¿Podrías indicarme tu email?';
-          console.log(
-            `[handleMessage] Invalid email received from client ${client.id}`,
-          );
         }
         break;
       case 'awaitingPhoneNumber':
@@ -304,69 +279,37 @@ export class ChatbotGateway
         responseMessage =
           'Gracias, hemos completado el registro. Nos pondremos en contacto contigo pronto.';
         this.chatbotService.updateConversationState(client.id, 'completed');
-        console.log(
-          `[handleMessage] State updated to completed for client ${client.id}`,
-        );
-        this.chatbotService.saveConversationToDatabase(client.id);
-        console.log(
-          `[handleMessage] Conversation saved to database for client ${client.id}`,
-        );
+        this.chatbotService.saveConversationToDatabase(roomName);
         break;
       default:
-        console.log(
-          `[handleMessage] Unhandled state: ${currentState} for client ${client.id}`,
-        );
-        // Handle other states or default message.
         break;
     }
 
-    const adminName = this.chatbotService.getUserFullName(client.id);
-    // Determine if the message is from an admin and emit with appropriate user name
-    if (this.clientRoles.get(client.id) === 'admin') {
-      this.wss.to(roomName).emit('message-from-server', {
-        FullName: adminName,
-        Message: payload.message,
-        RoomName: roomName,
-      });
-    } else {
-      // Correct way to emit to the room for non-admin users
-      this.wss.to(roomName).emit('message-from-server', {
-        FullName: 'You',
-        Message: payload.message,
-        RoomName: roomName, // Include the room name in the payload
-      });
-    }
+    const isAdmin = this.clientRoles.get(client.id) === 'admin';
+    const senderName = isAdmin
+      ? this.chatbotService.getUserFullName(client.id)
+      : 'You';
 
-    // Log the emission
-    console.log(
-      `[handleMessage] Event 'message-from-server' emitted to room: ${roomName} with payload: `,
-      {
-        FullName: 'You',
-        Message: payload.message,
-        RoomName: roomName,
-      },
-    );
+    // Emit the message to the room with role information
+    this.wss.to(roomName).emit('message-from-server', {
+      FullName: senderName,
+      Message: payload.message,
+      RoomName: roomName,
+      isAdmin: isAdmin,
+    });
 
-    // Assuming roomName is defined in this context and contains the name of the current room
-
-    // Check if the bot is active for the specific room before sending the bot's response
     if (this.isBotActiveForRoom(roomName) && responseMessage) {
-      // Save the bot's response to chat history before emitting
       await this.chatbotService.saveChatMessage(
         roomName,
         'Fixy',
         responseMessage,
       );
-      // Emit the bot's response to the room
       this.wss.to(roomName).emit('message-from-server', {
         FullName: 'Fixy',
         Message: responseMessage,
         RoomName: roomName,
+        isAdmin: false,
       });
     }
-
-    console.log(
-      `[handleMessage] Bot's response emitted to room: ${roomName} with message: ${responseMessage}`,
-    );
   }
 }
