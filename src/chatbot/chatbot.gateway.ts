@@ -9,14 +9,28 @@ import { ChatbotService } from './chatbot.service';
 import { Socket, Server } from 'socket.io';
 import { NewMessageDto } from './dto/new-message.dto';
 import { JwtService } from '@nestjs/jwt';
+
 @WebSocketGateway({ cors: true })
 export class ChatbotGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() wss: Server;
-  // bot boolean
   private clientRoles = new Map<string, string>();
   private botActiveStatusPerRoom: Map<string, boolean> = new Map();
+  private clientRoomMap = new Map<string, string>();
+  // Define getBotContinuationMessage as a method within the class
+  private getBotContinuationMessage(state: string): string {
+    switch (state) {
+      case 'awaitingName':
+        return 'Continuando... Por favor, indícame tu nombre.';
+      case 'awaitingEmail':
+        return '¿Me podrías indicar tu email?';
+      case 'awaitingPhoneNumber':
+        return 'Por favor, proporciona tu número de teléfono.';
+      default:
+        return 'El bot ha retomado. Estoy aquí para ayudar.';
+    }
+  }
   constructor(
     private readonly chatbotService: ChatbotService,
     private readonly jwtService: JwtService,
@@ -29,11 +43,9 @@ export class ChatbotGateway
 
     try {
       if (role === 'admin') {
-        // Verify token only for admin
         const payload = this.jwtService.verify(token);
         await this.handleAdminConnection(client, payload);
       } else if (role === 'user') {
-        // Pass the entire auth object as payload for user connection
         console.log('connecting as user...', client.handshake.auth);
         await this.handleUserConnection(client, client.handshake.auth);
       } else {
@@ -48,36 +60,35 @@ export class ChatbotGateway
 
   handleDisconnect(client: Socket) {
     console.log('Client disconnected', client.id);
-    this.chatbotService.removeClient(client.id);
-    this.wss.emit(
-      'clients-updated',
-      this.chatbotService.getConnectedClientsForAPI(),
-    );
 
-    // Check if the client is an admin
+    // Get necessary information before removing the client
     if (this.clientRoles.get(client.id) === 'admin') {
-      // If the client is an admin, call the admin-specific disconnect handler
       console.log('calling handleAdminDisconnect');
+      // Pass the necessary client data
       this.handleAdminDisconnect(client);
     } else {
-      // Proceed with the usual disconnect logic for non-admin clients
-      this.chatbotService.removeClient(client.id);
+      // Emit updated clients' list before removal for non-admin
       this.wss.emit(
         'clients-updated',
         this.chatbotService.getConnectedClients(),
       );
+      this.chatbotService.removeClient(client.id);
     }
+    // Emit updated clients’ list for API after any type of client removal
+    this.wss.emit(
+      'clients-updated',
+      this.chatbotService.getConnectedClientsForAPI(),
+    );
   }
 
   async handleAdminConnection(client: Socket, payload: any) {
     console.log('connecting as admin...');
     console.log('Payload received:', payload);
     console.log('client handshake:', client.handshake.auth);
-
-    const roomName = client.handshake.auth.roomName; // Use the roomName from client.handshake.auth
-    // Set bot to inactive for the specific room
+    const roomName = client.handshake.auth.roomName;
     this.botActiveStatusPerRoom.set(roomName, false);
-    // Register admin from token
+    this.clientRoomMap.set(client.id, roomName);
+
     try {
       await this.chatbotService.registerAdmin(client, payload.id, roomName);
       console.log('Admin registered with ID:', payload.id);
@@ -87,7 +98,6 @@ export class ChatbotGateway
       return;
     }
 
-    // Retrieve admin name after successful registration
     const adminName = this.chatbotService.getUserFullName(client.id);
     if (!adminName) {
       console.error('Failed to retrieve admin name');
@@ -100,7 +110,7 @@ export class ChatbotGateway
 
     await this.chatbotService.saveChatMessage(
       roomName,
-      'Fixy', // Assuming 'Fixi' is the sender name for the bot
+      'Fixy',
       `${adminName} se ha unido a la conversación.`,
     );
     client.emit('room-joined', roomName);
@@ -113,57 +123,79 @@ export class ChatbotGateway
 
   handleAdminDisconnect(client: Socket) {
     console.log('Admin disconnected:', client.id);
-    // Sets bot to true to resume bot activities
-
-    const roomName = this.chatbotService.getClientRoom(client.id);
+    const roomName = this.clientRoomMap.get(client.id);
     if (!roomName) {
       console.error('Failed to retrieve room name for admin:', client.id);
       return;
     }
 
-    // Sets bot to true to resume bot activities for the specific room
-    this.botActiveStatusPerRoom.set(roomName, true);
-    // Retrieve admin name after successful registration
     const adminName = this.chatbotService.getUserFullName(client.id);
     if (!adminName) {
       console.error('Failed to retrieve admin name');
-      client.disconnect();
       return;
     }
 
-    // Remove admin from the connected clients list
     this.chatbotService.removeClient(client.id);
-    this.wss.emit('clients-updated', this.chatbotService.getConnectedClients());
+    this.botActiveStatusPerRoom.set(roomName, true);
 
     this.chatbotService.saveChatMessage(
       roomName,
-      'Fixy', // Assuming 'Fixi' is the sender name for the bot
+      'Fixy',
       `${adminName} ha abandonado la conversación. El bot ha retomado la conversación.`,
     );
-    // Emit message to the room that admin has left
+
     this.wss.to(roomName).emit('message-from-server', {
       FullName: 'Fixy',
       Message: `${adminName} ha abandonado la conversación. El bot ha retomado la conversación.`,
       RoomName: roomName,
     });
 
+    if (this.isBotActiveForRoom(roomName)) {
+      // Fetch and transition state correctly
+      const prevClientId = Array.from(
+        this.chatbotService.getConnectedClients(),
+      ).find((client) => client.roomName === roomName)?.id;
+      if (prevClientId) {
+        const conversationState =
+          this.chatbotService.getConversationState(prevClientId);
+        let responseMessage = this.getBotContinuationMessage(conversationState);
+
+        if (responseMessage) {
+          this.chatbotService.saveChatMessage(
+            roomName,
+            'Fixy',
+            responseMessage,
+          );
+          this.wss.to(roomName).emit('message-from-server', {
+            FullName: 'Fixy',
+            Message: responseMessage,
+            RoomName: roomName,
+            isAdmin: false,
+          });
+        }
+        // Consider updating state if needed for continuing conversation
+        this.chatbotService.updateConversationState(
+          prevClientId,
+          conversationState,
+        );
+      }
+    }
+
     console.log(`Bot has resumed operations in room: ${roomName}`);
+    this.clientRoomMap.delete(client.id);
   }
 
   async handleUserConnection(client: Socket, payload: any) {
     console.log('connecting as user...');
-
-    let roomName = payload.roomName; // Assume the roomName is sent in the payload
-    const savedState = payload.savedState; // Retrieve saved state from payload
+    let roomName = payload.roomName;
+    const savedState = payload.savedState;
     console.log('Payload received for user...:', payload);
-
+    this.clientRoomMap.set(client.id, roomName);
     if (roomName) {
       console.log(`Connecting to existing room: ${roomName}`);
-      // Retrieve and send chat history for existing room
       const chatHistory = await this.chatbotService.getChatHistory(roomName);
       client.emit('chatHistory', chatHistory);
     } else {
-      // Register user and automatically generate and assign a room name if not provided
       roomName = await this.chatbotService.registerUser(client, payload.id);
     }
 
@@ -174,23 +206,19 @@ export class ChatbotGateway
       savedState,
     );
 
-    // Join the generated or existing room
     client.join(roomName);
     console.log('User emitting room-joined with name:', roomName);
     client.emit('room-joined', roomName);
 
-    // Emit user joined message to the room
     this.wss.to(roomName).emit('user-joined', {
       FullName: 'User',
       Message: 'A user has joined the room.',
       RoomName: roomName,
     });
 
-    // Emit initial chat state if available
     if (savedState) {
       client.emit('chatState', savedState);
     } else {
-      // Emit initial greeting if no saved state
       const initialState = 'initialGreeting';
       await this.chatbotService.saveChatMessage(
         roomName,
@@ -207,13 +235,10 @@ export class ChatbotGateway
       client.emit('chatState', initialState);
     }
 
-    // Update clients list (if necessary)
     this.wss.emit('clients-updated', this.chatbotService.getConnectedClients());
   }
 
-  // Example of how to check if the bot is active for a specific room before sending a message
   isBotActiveForRoom(roomName: string): boolean {
-    // If there's no specific entry for the room, assume the bot is active
     return this.botActiveStatusPerRoom.get(roomName) !== false;
   }
 
@@ -226,7 +251,6 @@ export class ChatbotGateway
       return;
     }
 
-    // Save the client's message to chat history
     await this.chatbotService.saveChatMessage(
       roomName,
       client.id,
@@ -290,7 +314,6 @@ export class ChatbotGateway
       ? this.chatbotService.getUserFullName(client.id)
       : 'You';
 
-    // Emit the message to the room with role information
     this.wss.to(roomName).emit('message-from-server', {
       FullName: senderName,
       Message: payload.message,

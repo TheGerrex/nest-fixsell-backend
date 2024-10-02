@@ -215,10 +215,9 @@ export class ChatbotService {
     return this.connectedClients[socketId].user.name;
   }
 
-  getConversationState(clientId: string): string {
-    return (
-      this.connectedClients[clientId]?.conversationState || 'initialGreeting'
-    );
+  getConversationState(clientId: string): ConversationState {
+    return (this.connectedClients[clientId]?.conversationState ||
+      'initialGreeting') as ConversationState;
   }
 
   async getChatHistory(roomId: string): Promise<ChatHistory[]> {
