@@ -26,12 +26,13 @@ export class Lead {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   client: string;
 
   @Column({
     type: 'enum',
     enum: Status,
+    nullable: true,
   })
   status: Status;
 
@@ -41,19 +42,20 @@ export class Lead {
   })
   assigned: User;
 
-  @Column()
+  @Column({ nullable: true })
   product_interested: string;
 
   @Column({
     type: 'enum',
     enum: ProductType,
+    nullable: true,
   })
   type_of_product: ProductType;
 
-  @Column()
+  @Column({ nullable: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone: string;
 
   @OneToMany(
