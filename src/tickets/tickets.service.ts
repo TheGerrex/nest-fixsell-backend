@@ -23,7 +23,7 @@ export class TicketsService {
   ) {}
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
-    console.log('Before conversion:', createTicketDto);
+    console.log('Received DTO:', createTicketDto);
 
     try {
       createTicketDto.appointmentStartTime = new Date(
@@ -38,33 +38,44 @@ export class TicketsService {
 
     console.log('After conversion:', createTicketDto);
 
+    // Use the UUIDs directly
+    const assignedUserId = createTicketDto.assigned;
+    console.log('Assigned User ID:', assignedUserId);
+    const assigneeUserId = createTicketDto.assignee;
+    console.log('Assignee User ID:', assigneeUserId);
+
     // checks if users exist
-    const assignedUser = await this.userRepository.findOne({
-      where: { id: createTicketDto.assigned.id },
+    const assignedUser = await this.userRepository.findOneBy({
+      id: assignedUserId.toString(),
     });
-    const assigneeUser = await this.userRepository.findOne({
-      where: { id: createTicketDto.assignee.id },
+    const assigneeUser = await this.userRepository.findOneBy({
+      id: assignedUserId.toString(),
     });
 
+    console.log('Assigned User:', assignedUser);
+    console.log('Assignee User:', assigneeUser);
+
     if (!assignedUser) {
-      throw new NotFoundException('Usuario asignado no encontrado');
+      throw new NotFoundException('Assigned user not found');
     }
 
     if (!assigneeUser) {
-      throw new NotFoundException('Usuario asignatario no encontrado');
+      throw new NotFoundException('Assignee user not found');
     }
 
     const newTicket = this.ticketRepository.create({
       ...createTicketDto,
-      assigned: assignedUser,
-      assignee: assigneeUser,
+      assigned: assignedUser, // Use the entire User object
+      assignee: assigneeUser, // Use the entire User object
       activities: createTicketDto.activities, // Change the type of activities to string[]
     });
+
+    console.log('New Ticket:', newTicket);
 
     try {
       await this.ticketRepository.save(newTicket);
     } catch (err) {
-      throw new BadRequestException('Error al tratar de guardar el ticket');
+      throw new BadRequestException('Error saving the ticket');
     }
 
     return newTicket;
@@ -122,12 +133,13 @@ export class TicketsService {
 
     // Assigned user update
     if (updateTicketDto.assigned) {
-      const assignedUser = await this.userRepository.findOne({
-        where: { id: updateTicketDto.assigned.id },
+      const assignedUserId = updateTicketDto.assigned;
+      const assignedUser = await this.userRepository.findOneBy({
+        id: assignedUserId.toString(),
       });
       if (!assignedUser) {
         throw new NotFoundException(
-          `Usuario asignado no encontrado con el id: ${assignedUser.id}`,
+          `Assigned user not found with id: ${assignedUserId}`,
         );
       }
       updateData = { ...updateData, assigned: assignedUser };
@@ -135,13 +147,14 @@ export class TicketsService {
 
     // Assignee user update
     if (updateTicketDto.assignee) {
-      const assigneeUser = await this.userRepository.findOne({
-        where: { id: updateTicketDto.assignee.id },
+      const assigneeUserId = updateTicketDto.assignee;
+      const assigneeUser = await this.userRepository.findOneBy({
+        id: assigneeUserId.toString(),
       });
 
       if (!assigneeUser) {
         throw new NotFoundException(
-          `Usuario asignatario no encontrado con el id: ${assigneeUser.id}`,
+          `Assignee user not found with id: ${assigneeUserId}`,
         );
       }
 
@@ -161,14 +174,12 @@ export class TicketsService {
     // Update the ticket
     await this.ticketRepository.update(id, updateData);
 
-    console.log('Ticket actualizado correctamente con:', updateData);
+    console.log('Ticket updated successfully with:', updateData);
 
-    const updatedTicket = await this.ticketRepository.findOne({
-      where: { id },
-    });
+    const updatedTicket = await this.ticketRepository.findOneBy({ id });
 
     if (!updatedTicket) {
-      throw new NotFoundException('Ticket no encontrado');
+      throw new NotFoundException('Ticket not found');
     }
 
     return updatedTicket;
