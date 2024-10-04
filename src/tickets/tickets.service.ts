@@ -25,6 +25,7 @@ export class TicketsService {
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
     console.log('Received DTO:', createTicketDto);
 
+    // Ensure correct date conversion
     try {
       createTicketDto.appointmentStartTime = new Date(
         createTicketDto.appointmentStartTime,
@@ -35,7 +36,6 @@ export class TicketsService {
     } catch (err) {
       console.error('Error during date conversion:', err);
     }
-
     console.log('After conversion:', createTicketDto);
 
     // Use the UUIDs directly
@@ -44,12 +44,12 @@ export class TicketsService {
     const assigneeUserId = createTicketDto.assignee;
     console.log('Assignee User ID:', assigneeUserId);
 
-    // checks if users exist
+    // Check if users exist
     const assignedUser = await this.userRepository.findOneBy({
       id: assignedUserId.toString(),
     });
     const assigneeUser = await this.userRepository.findOneBy({
-      id: assignedUserId.toString(),
+      id: assigneeUserId.toString(), // Use the correct ID for assignee
     });
 
     console.log('Assigned User:', assignedUser);
@@ -67,7 +67,7 @@ export class TicketsService {
       ...createTicketDto,
       assigned: assignedUser, // Use the entire User object
       assignee: assigneeUser, // Use the entire User object
-      activities: createTicketDto.activities, // Change the type of activities to string[]
+      activities: createTicketDto.activities, // Ensure activities are properly mapped
     });
 
     console.log('New Ticket:', newTicket);
