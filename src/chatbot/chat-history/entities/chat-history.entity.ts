@@ -19,4 +19,13 @@ export class ChatHistory {
 
   @Column()
   timestamp: Date;
+
+  @Column({ default: false })
+  isRead: boolean;
+
+  @Column({ default: 'text' })
+  messageType: 'text' | 'form';
+
+  @Column({ nullable: true, type: 'json' })
+  formData: any;
 }

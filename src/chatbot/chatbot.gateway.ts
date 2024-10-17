@@ -12,17 +12,19 @@ import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({ cors: true })
 export class ChatbotGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
   private clientRoles = new Map<string, string>();
   private botActiveStatusPerRoom: Map<string, boolean> = new Map();
   private clientRoomMap = new Map<string, string>();
+
   // Define getBotContinuationMessage as a method within the class
   private getBotContinuationMessage(state: string): string {
     switch (state) {
       case 'awaitingName':
         return 'Continuando... Por favor, indícame tu nombre.';
+      case 'awaitingFormCompletion':
+        return 'Continuando... Por favor, llena el formulario.';
       case 'awaitingEmail':
         return '¿Me podrías indicar tu email?';
       case 'awaitingPhoneNumber':
@@ -31,10 +33,11 @@ export class ChatbotGateway
         return 'El bot ha retomado. Estoy aquí para ayudar.';
     }
   }
+
   constructor(
     private readonly chatbotService: ChatbotService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async handleConnection(client: Socket) {
     const token = client.handshake.auth.token;
@@ -263,8 +266,10 @@ export class ChatbotGateway
     switch (currentState) {
       case 'initialGreeting':
         responseMessage =
-          'Para darte una atención más personalizada ¿Me podrías indicar tu nombre?';
-        this.chatbotService.updateConversationState(client.id, 'awaitingName');
+          'Para darte una atención más personalizada ¿Me podrías ayudar llenando el siguiente formulario?';
+        this.chatbotService.updateConversationState(client.id, 'awaitingFormCompletion');
+        // Emit an event to show the form component
+        this.wss.to(roomName).emit('show-form');
         break;
       case 'awaitingName':
         if (payload.message.trim()) {

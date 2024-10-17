@@ -10,7 +10,7 @@ export class ChatHistoryService {
   constructor(
     @InjectRepository(ChatHistory)
     private chatHistoryRepository: Repository<ChatHistory>,
-  ) {}
+  ) { }
 
   async create(
     createChatHistoryDto: CreateChatHistoryDto,
@@ -24,8 +24,12 @@ export class ChatHistoryService {
     return await this.chatHistoryRepository.find();
   }
 
-  async findOne(roomId: string): Promise<ChatHistory[]> {
+  async findOneByRoomId(roomId: string): Promise<ChatHistory[]> {
     return await this.chatHistoryRepository.find({ where: { roomId } });
+  }
+
+  async findOneById(id: number): Promise<ChatHistory[]> {
+    return await this.chatHistoryRepository.find({ where: { id } });
   }
 
   async update(
@@ -37,7 +41,7 @@ export class ChatHistoryService {
       where: { id },
     });
     if (!updatedChatHistory) {
-      throw new NotFoundException(`ChatHistory with ID "${id}" not found`);
+      throw new NotFoundException(`Chat con ID "${id}" no encontrado`);
     }
     return updatedChatHistory;
   }
@@ -45,8 +49,22 @@ export class ChatHistoryService {
   async remove(id: number): Promise<void> {
     const result = await this.chatHistoryRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`ChatHistory with ID "${id}" not found`);
+      throw new NotFoundException(`Chat con ID "${id}" no encontrado`);
     }
     return;
+  }
+
+  async markAsRead(id: number): Promise<void> {
+    const message = await this.chatHistoryRepository.findOne({
+      where: { id },
+    });
+
+    if (!message) {
+      throw new NotFoundException(`Chat con ID ${id} no encontrado`);
+    }
+
+    message.isRead = true;
+
+    await this.chatHistoryRepository.save(message);
   }
 }

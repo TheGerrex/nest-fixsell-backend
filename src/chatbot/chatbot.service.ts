@@ -12,6 +12,7 @@ import { ChatHistory } from './chat-history/entities/chat-history.entity';
 type ConversationState =
   | 'initialGreeting'
   | 'awaitingGreetingResponse'
+  | 'awaitingFormCompletion'
   | 'awaitingName'
   | 'awaitingEmail'
   | 'awaitingPhoneNumber'
@@ -189,6 +190,7 @@ export class ChatbotService {
     console.log('Getting room for client:', clientId);
     return this.connectedClients[clientId]?.roomName;
   }
+
   removeClient(clientId: string) {
     console.log(`Removing client: ${clientId}`);
     delete this.connectedClients[clientId];
@@ -236,6 +238,7 @@ export class ChatbotService {
       this.connectedClients[clientId].socket.emit('chatState', newState);
     }
   }
+
   //for lead
   saveConversationData(
     clientId: string,
@@ -258,6 +261,7 @@ export class ChatbotService {
       this.updateChatHistoryWithName(clientId);
     }
   }
+
   //create lead
   async saveConversationToDatabase(roomName: string) {
     const chatHistory = await this.getChatHistory(roomName);

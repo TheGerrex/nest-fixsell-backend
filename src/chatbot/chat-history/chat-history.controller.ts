@@ -13,7 +13,7 @@ import { UpdateChatHistoryDto } from './dto/update-chat-history.dto';
 
 @Controller('chat-history')
 export class ChatHistoryController {
-  constructor(private readonly chatHistoryService: ChatHistoryService) {}
+  constructor(private readonly chatHistoryService: ChatHistoryService) { }
 
   @Post()
   create(@Body() createChatHistoryDto: CreateChatHistoryDto) {
@@ -25,9 +25,14 @@ export class ChatHistoryController {
     return this.chatHistoryService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.chatHistoryService.findOne(id);
+  @Get('room/:id')
+  findOneByRoomId(@Param('id') id: string) {
+    return this.chatHistoryService.findOneByRoomId(id);
+  }
+
+  @Get('message/:id')
+  findOneById(@Param('id') id: string) {
+    return this.chatHistoryService.findOneById(+id);
   }
 
   @Patch(':id')
@@ -41,5 +46,10 @@ export class ChatHistoryController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.chatHistoryService.remove(+id);
+  }
+
+  @Patch(':id/read')
+  markAsRead(@Param('id') id: string) {
+    return this.chatHistoryService.markAsRead(+id);
   }
 }
