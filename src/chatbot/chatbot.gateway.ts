@@ -245,12 +245,34 @@ export class ChatbotGateway
     return this.botActiveStatusPerRoom.get(roomName) !== false;
   }
 
+  @SubscribeMessage('join-room')
+  async handleJoinRoom(client: Socket, roomName: string) {
+    this.chatbotService.registerUser(client, client.id, roomName);
+    client.join(roomName);
+
+    // Send initial greeting
+    const initialGreeting = '¡Hola! 👋 Estoy aquí para ayudarte en lo que necesites.';
+    this.wss.to(roomName).emit('message-from-server', {
+      sender: 'Fixy',
+      message: initialGreeting,
+    });
+
+    // Set initial state
+    this.chatbotService.updateConversationState(client.id, 'initialGreeting');
+  }
+
   @SubscribeMessage('message-from-client')
   async handleMessage(client: Socket, payload: NewMessageDto) {
     const roomName = this.chatbotService.getClientRoom(client.id);
 
     if (!roomName) {
       console.error(`No room found for client ${client.id}`);
+      return;
+    }
+
+    // Check if the message is empty and return early if it is
+    if (!payload.message.trim()) {
+      console.warn(`Empty message received from client ${client.id}`);
       return;
     }
 
@@ -340,4 +362,6 @@ export class ChatbotGateway
       });
     }
   }
+
+
 }
