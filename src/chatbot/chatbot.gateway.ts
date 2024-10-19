@@ -39,6 +39,10 @@ export class ChatbotGateway
     private readonly jwtService: JwtService,
   ) { }
 
+  isBotActiveForRoom(roomName: string): boolean {
+    return this.botActiveStatusPerRoom.get(roomName) !== false;
+  }
+
   async handleConnection(client: Socket) {
     const token = client.handshake.auth.token;
     const role = client.handshake.auth.role;
@@ -241,9 +245,7 @@ export class ChatbotGateway
     this.wss.emit('clients-updated', this.chatbotService.getConnectedClients());
   }
 
-  isBotActiveForRoom(roomName: string): boolean {
-    return this.botActiveStatusPerRoom.get(roomName) !== false;
-  }
+
 
   @SubscribeMessage('join-room')
   async handleJoinRoom(client: Socket, roomName: string) {
@@ -348,6 +350,9 @@ export class ChatbotGateway
       isAdmin: isAdmin,
     });
 
+    console.log(`Message from ${senderName} sent to room ${roomName}: ${payload.message}`);
+
+
     if (this.isBotActiveForRoom(roomName) && responseMessage) {
       await this.chatbotService.saveChatMessage(
         roomName,
@@ -360,6 +365,8 @@ export class ChatbotGateway
         RoomName: roomName,
         isAdmin: false,
       });
+      console.log(`Bot response sent to room ${roomName}: ${responseMessage}`);
+
     }
   }
 
