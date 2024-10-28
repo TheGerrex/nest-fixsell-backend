@@ -23,6 +23,9 @@ export class Product {
   sellable: boolean;
 
   @Column({ nullable: true })
+  soldCount: number;
+
+  @Column({ nullable: true })
   product_image: string;
 
   @Column()
