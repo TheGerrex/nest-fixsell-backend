@@ -23,6 +23,8 @@ import { SaleCommunicationModule } from './sales/sale-communication/sale-communi
 import { TicketsModule } from './tickets/tickets.module';
 import { ActivityModule } from './activity/activity.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
+import { CurrencyModule } from './currency/currency.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -89,6 +91,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     TicketsModule,
     ActivityModule,
     ChatbotModule,
+    CurrencyModule,
   ],
 })
 export class AppModule {}
