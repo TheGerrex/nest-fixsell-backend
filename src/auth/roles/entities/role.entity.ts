@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
 
 @Entity()
 export class Role {
@@ -9,6 +17,15 @@ export class Role {
   @Column({ unique: true })
   name: string;
 
-  @ManyToMany(() => User, (user) => user.roles)
+  @OneToMany(() => User, (user) => user.role)
   users: User[];
+
+  @OneToOne(() => Permission, (permission) => permission.role, {
+    cascade: ['insert', 'update', 'remove'], // Enable cascading operations
+    eager: true, // Enable eager loading here
+    onDelete: 'CASCADE', // Cascade delete
+    nullable: true, // Allow null permissions
+  })
+  @JoinColumn()
+  permission: Permission;
 }

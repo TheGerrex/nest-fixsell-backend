@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { PermissionsGuard } from './auth/permissions/permissions.guard'; // Added
+import { PermissionsModule } from './auth/permissions/permissions.module'; // Added
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { PrintersModule } from './printers/printers.module';
@@ -25,6 +28,8 @@ import { ActivityModule } from './activity/activity.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
 import { CurrencyModule } from './currency/currency.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RolesModule } from './auth/roles/roles.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -35,7 +40,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       load: [EnvConfiguration],
       validationSchema: JoiValidationSchema,
     }),
-    // postgresql
+    // PostgreSQL Configuration
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -52,13 +57,13 @@ import { ScheduleModule } from '@nestjs/schedule';
           username: config.get<string>('POSTGRES_DB_USERNAME'),
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           database: config.get<string>('POSTGRES_DB_NAME'),
-          synchronize: true,
+          synchronize: true, // Set to false in production
           logging: true,
           ssl: isProduction ? {} : false,
         };
 
         if (isProduction) {
-          // Add extra SSL configuration for production
+          // Extra SSL configuration for production
           baseConfig.ssl = {
             rejectUnauthorized: false,
             trustServerCertificate: true,
@@ -71,9 +76,12 @@ import { ScheduleModule } from '@nestjs/schedule';
       },
     }),
 
+    // Application Modules
     EmailModule,
     PrintersModule,
     AuthModule,
+    PermissionsModule, // Added PermissionsModule
+    RolesModule,
     ProductModule,
     ProductCategoriesModule,
     ProductOperationsLogisticsModule,
@@ -92,6 +100,13 @@ import { ScheduleModule } from '@nestjs/schedule';
     ActivityModule,
     ChatbotModule,
     CurrencyModule,
+    ScheduleModule.forRoot(),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard, // Register PermissionsGuard globally
+    },
   ],
 })
 export class AppModule {}

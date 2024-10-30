@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsEmail,
+  IsOptional,
   IsString,
   IsStrongPassword,
 } from 'class-validator';
@@ -21,9 +22,11 @@ export class RegisterUserDto {
   })
   password: string;
 
+  @IsOptional()
   @IsBoolean()
-  isActive = true;
+  isActive?: boolean;
 
-  @IsString({ each: true })
-  roles: string[] = ['user'];
+  @IsOptional()
+  @IsString()
+  role?: string;
 }

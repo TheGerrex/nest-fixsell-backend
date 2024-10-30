@@ -2,13 +2,14 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  JoinTable,
-  ManyToMany,
+  ManyToOne,
+  JoinColumn,
   OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../roles/entities/role.entity';
 import { Lead } from 'src/sales/leads/entities/lead.entity';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -27,11 +28,10 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToMany(() => Role, (role) => role.users, { eager: true })
-  @JoinTable()
-  roles: Role[];
+  @ManyToOne(() => Role, (role) => role.users, { eager: true, nullable: true })
+  role: Role;
 
-  // optional leads
+  // Optional leads
   @OneToMany(() => Lead, (lead) => lead.assigned)
   leads: Lead[];
 }
