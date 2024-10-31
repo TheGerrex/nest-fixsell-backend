@@ -6,6 +6,7 @@ import { Currency } from './entities/currency.entity';
 import { CreateCurrencyDto } from './dto/create-currency.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { lastValueFrom } from 'rxjs';
+import * as cheerio from 'cheerio';
 
 @Injectable()
 export class CurrencyService {
@@ -27,44 +28,45 @@ export class CurrencyService {
 
   async updateExchangeRates() {
     const currencies = await this.currencyRepository.find();
-    const date = 'latest';
-    const apiVersion = 'v1';
-    const endpoint = 'currencies';
+    const url =
+      'https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?sector=6&accion=consultarCuadro&idCuadro=CF102&locale=es';
 
     try {
-      // Fetch exchange rates with USD as the base currency
-      const usdResponse = await lastValueFrom(
-        this.httpService.get(
-          `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${date}/${apiVersion}/${endpoint}/usd.json`,
-        ),
-      );
+      const response = await lastValueFrom(this.httpService.get(url));
+      const html = response.data;
+      const $ = cheerio.load(html);
 
-      // Fetch exchange rates with MXN as the base currency
-      const mxnResponse = await lastValueFrom(
-        this.httpService.get(
-          `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${date}/${apiVersion}/${endpoint}/mxn.json`,
-        ),
-      );
+      // Select the <td> with the specific classes and extract the text
+      const exchangeRateText = $('td.cd_tabla_renglon.tdObservacion.paddingr')
+        .first()
+        .text()
+        .trim();
+      const usdExchangeRate = parseFloat(exchangeRateText.replace(',', '.'));
 
-      // Log the API responses to verify their structure
-      console.log('USD Response:', usdResponse.data);
-      console.log('MXN Response:', mxnResponse.data);
+      if (!isNaN(usdExchangeRate)) {
+        let mxnCurrency: Currency | undefined;
 
-      if (usdResponse.data && mxnResponse.data) {
         for (const currency of currencies) {
-          let exchangeRate = 0;
           if (currency.name.toLowerCase() === 'usd') {
-            exchangeRate = mxnResponse.data.mxn['usd'];
-          } else if (currency.name.toLowerCase() === 'mxn') {
-            exchangeRate = usdResponse.data.usd['mxn'];
-          }
-
-          if (exchangeRate) {
-            currency.exchangeRate = exchangeRate;
+            currency.exchangeRate = usdExchangeRate;
             currency.lastUpdated = new Date();
             await this.currencyRepository.save(currency);
+          } else if (currency.name.toLowerCase() === 'mxn') {
+            mxnCurrency = currency;
           }
         }
+
+        if (mxnCurrency) {
+          mxnCurrency.exchangeRate = parseFloat(
+            (1 / usdExchangeRate).toFixed(6),
+          );
+          mxnCurrency.lastUpdated = new Date();
+          await this.currencyRepository.save(mxnCurrency);
+        } else {
+          console.error('MXN currency not found');
+        }
+      } else {
+        console.error('Failed to parse USD exchange rate');
       }
     } catch (error) {
       console.error('Failed to update exchange rates', error);

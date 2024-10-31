@@ -3,31 +3,33 @@
 import {
   Injectable,
   BadRequestException,
+  ConflictException,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { Role } from './roles/entities/role.entity';
 import { Repository } from 'typeorm';
 import * as bcryptjs from 'bcryptjs';
-import { JwtPayload } from './interfaces/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
-import { LoginResponse } from './interfaces/login-response';
-import { RegisterUserDto, LoginDto, CreateUserDto, UpdateAuthDto } from './dto';
-import { UserResponse } from './entities/user-response.interface';
 import { ConfigService } from '@nestjs/config';
-import { Role } from './roles/entities/role.entity';
+import { RegisterUserDto, LoginDto, CreateUserDto, UpdateAuthDto } from './dto';
+import { LoginResponse } from './interfaces/login-response';
+import { UserResponse } from './entities/user-response.interface';
+import { JwtPayload } from './interfaces/jwt-payload';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private jwtService: JwtService,
-    private configService: ConfigService,
 
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+
+    private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   /**
@@ -36,46 +38,69 @@ export class AuthService {
    * @returns The created user without the password.
    */
   async create(createUserDto: CreateUserDto): Promise<UserResponse> {
+    const { password, role, isActive = true, ...userData } = createUserDto;
+
+    // Validate that role is provided
+    if (!role) {
+      throw new BadRequestException({
+        message: 'Role ID is required.',
+        code: 'ROLE_ID_REQUIRED',
+      });
+    }
+
+    // Validate role ID format (basic check for UUID structure)
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(role)) {
+      throw new BadRequestException({
+        message: 'Invalid role ID format.',
+        code: 'INVALID_ROLE_ID_FORMAT',
+      });
+    }
+
+    // Fetch the role from the database by ID
+    const roleEntity = await this.roleRepository.findOne({
+      where: { id: role },
+    });
+
+    if (!roleEntity) {
+      throw new BadRequestException({
+        message: `Role with ID '${role}' does not exist.`,
+        code: 'ROLE_NOT_FOUND',
+      });
+    }
+
+    // Hash the password
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+
+    // Create the new user with the hashed password and assigned role
+    const newUser = this.userRepository.create({
+      password: hashedPassword,
+      role: roleEntity,
+      isActive,
+      ...userData,
+    });
+
     try {
-      const { password, role, isActive, ...userData } = createUserDto;
-
-      // Assign default values if not provided
-      const userIsActive = isActive !== undefined ? isActive : true;
-      const userRoleName = role || 'user';
-
-      // Fetch the role from the database by name
-      const roleEntity = await this.roleRepository.findOne({
-        where: { name: userRoleName },
-      });
-
-      if (!roleEntity) {
-        throw new BadRequestException(`Role '${userRoleName}' does not exist.`);
-      }
-
-      // Create the new user with the hashed password and assigned role
-      const newUser = this.userRepository.create({
-        password: bcryptjs.hashSync(password, 10),
-        role: roleEntity,
-        isActive: userIsActive,
-        ...userData,
-      });
-
       await this.userRepository.save(newUser);
-
-      // Exclude the password from the returned user object
-      const { password: _, ...user } = newUser;
-
-      return user as UserResponse;
     } catch (error) {
       if (error.code === '23505') {
-        throw new BadRequestException(
-          `User with email '${createUserDto.email}' already exists.`,
-        );
+        // Duplicate email error
+        throw new ConflictException({
+          message: `User with email '${createUserDto.email}' already exists.`,
+          code: 'EMAIL_EXISTS',
+        });
       }
-      throw new InternalServerErrorException(
-        'An unexpected error occurred. Please try again.',
-      );
+      // For all other errors, throw a generic internal server error
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred. Please try again.',
+        code: 'UNEXPECTED_ERROR',
+      });
     }
+
+    // Exclude the password from the returned user object
+    const { password: _, ...user } = newUser;
+    return user as UserResponse;
   }
 
   /**
@@ -87,7 +112,7 @@ export class AuthService {
     const user = await this.create(registerDto as CreateUserDto);
 
     return {
-      user: user,
+      user,
       token: this.getJwtToken({ id: user.id }),
     };
   }
@@ -107,13 +132,19 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials - email');
+      throw new UnauthorizedException({
+        message: 'Invalid credentials.',
+        code: 'INVALID_CREDENTIALS',
+      });
     }
 
     // Validate the password
     const isPasswordValid = bcryptjs.compareSync(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials - password');
+      throw new UnauthorizedException({
+        message: 'Invalid credentials.',
+        code: 'INVALID_CREDENTIALS',
+      });
     }
 
     // Exclude the password from the returned user object
@@ -142,32 +173,23 @@ export class AuthService {
    * @returns The user without the password.
    */
   async findUserById(id: string): Promise<UserResponse> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: ['role', 'role.permission'],
-    });
-
-    if (!user) {
-      throw new BadRequestException(`User with ID '${id}' not found.`);
+    if (!this.isValidUUID(id)) {
+      throw new BadRequestException({
+        message: 'Invalid user ID format.',
+        code: 'INVALID_USER_ID_FORMAT',
+      });
     }
 
-    const { password, ...rest } = user;
-    return rest as UserResponse;
-  }
-
-  /**
-   * Finds a user by their ID.
-   * @param id The ID of the user.
-   * @returns The user without the password.
-   */
-  async findOne(id: string): Promise<UserResponse> {
     const user = await this.userRepository.findOne({
       where: { id },
       relations: ['role', 'role.permission'],
     });
 
     if (!user) {
-      throw new BadRequestException(`User with ID '${id}' not found.`);
+      throw new BadRequestException({
+        message: `User with ID '${id}' not found.`,
+        code: 'USER_NOT_FOUND',
+      });
     }
 
     const { password, ...rest } = user;
@@ -184,13 +206,23 @@ export class AuthService {
     id: string,
     updateAuthDto: UpdateAuthDto,
   ): Promise<UserResponse> {
+    if (!this.isValidUUID(id)) {
+      throw new BadRequestException({
+        message: 'Invalid user ID format.',
+        code: 'INVALID_USER_ID_FORMAT',
+      });
+    }
+
     const user = await this.userRepository.findOne({
       where: { id },
       relations: ['role', 'role.permission'],
     });
 
     if (!user) {
-      throw new BadRequestException(`User with ID '${id}' not found.`);
+      throw new BadRequestException({
+        message: `User with ID '${id}' not found.`,
+        code: 'USER_NOT_FOUND',
+      });
     }
 
     // Update email if provided
@@ -210,14 +242,23 @@ export class AuthService {
 
     // Update role if provided
     if (updateAuthDto.role) {
+      // Validate role ID format
+      if (!this.isValidUUID(updateAuthDto.role)) {
+        throw new BadRequestException({
+          message: 'Invalid role ID format.',
+          code: 'INVALID_ROLE_ID_FORMAT',
+        });
+      }
+
       const roleEntity = await this.roleRepository.findOne({
-        where: { name: updateAuthDto.role },
+        where: { id: updateAuthDto.role },
       });
 
       if (!roleEntity) {
-        throw new BadRequestException(
-          `Role '${updateAuthDto.role}' does not exist.`,
-        );
+        throw new BadRequestException({
+          message: `Role with ID '${updateAuthDto.role}' does not exist.`,
+          code: 'ROLE_NOT_FOUND',
+        });
       }
 
       user.role = roleEntity;
@@ -225,33 +266,43 @@ export class AuthService {
 
     // Update password if provided
     if (updateAuthDto.oldPassword && updateAuthDto.newPassword) {
-      const isOldPasswordValid = await bcryptjs.compare(
+      const isOldPasswordValid = bcryptjs.compareSync(
         updateAuthDto.oldPassword,
         user.password,
       );
 
       if (!isOldPasswordValid) {
-        throw new BadRequestException('Old password is invalid.');
+        throw new BadRequestException({
+          message: 'Old password is invalid.',
+          code: 'INVALID_OLD_PASSWORD',
+        });
       }
 
-      user.password = await bcryptjs.hash(updateAuthDto.newPassword, 10);
+      user.password = bcryptjs.hashSync(updateAuthDto.newPassword, 10);
     } else if (updateAuthDto.password) {
-      user.password = await bcryptjs.hash(updateAuthDto.password, 10);
+      user.password = bcryptjs.hashSync(updateAuthDto.password, 10);
     }
 
-    // Save the updated user
     try {
       await this.userRepository.save(user);
-      const { password, ...rest } = user;
-      return rest as UserResponse;
     } catch (error) {
       if (error.code === '23505') {
-        throw new BadRequestException(
-          `User with email '${updateAuthDto.email}' already exists.`,
-        );
+        // Duplicate email error
+        throw new ConflictException({
+          message: `User with email '${updateAuthDto.email}' already exists.`,
+          code: 'EMAIL_EXISTS',
+        });
       }
-      throw new InternalServerErrorException(error.message);
+      // For all other errors, throw a generic internal server error
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred. Please try again.',
+        code: 'UNEXPECTED_ERROR',
+      });
     }
+
+    // Exclude the password from the returned user object
+    const { password: _, ...updatedUser } = user;
+    return updatedUser as UserResponse;
   }
 
   /**
@@ -259,25 +310,51 @@ export class AuthService {
    * @param id The ID of the user to remove.
    */
   async remove(id: string): Promise<void> {
-    try {
-      const result = await this.userRepository.delete(id);
-      if (result.affected === 0) {
-        throw new BadRequestException(`User with ID '${id}' not found.`);
-      }
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
+    if (!this.isValidUUID(id)) {
+      throw new BadRequestException({
+        message: 'Invalid user ID format.',
+        code: 'INVALID_USER_ID_FORMAT',
+      });
+    }
+
+    const result = await this.userRepository.delete(id);
+    if (result.affected === 0) {
+      throw new BadRequestException({
+        message: `User with ID '${id}' not found.`,
+        code: 'USER_NOT_FOUND',
+      });
     }
   }
 
   /**
-   * Generates a JWT token for a given payload.
-   * @param payload The payload to include in the JWT.
-   * @returns The signed JWT token.
+   * Generates a JWT token for a given user.
+   * @param user The user for whom to generate the token.
+   * @returns LoginResponse containing user data and JWT token.
    */
-  getJwtToken(payload: JwtPayload): string {
+  async generateToken(user: User): Promise<LoginResponse> {
+    const { password, ...userData } = user;
+    return {
+      user: userData as UserResponse,
+      token: this.getJwtToken({ id: user.id }),
+    };
+  }
+
+  // Make getJwtToken public if needed
+  private getJwtToken(payload: JwtPayload): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_SEED'),
-      expiresIn: '1h', // Adjust expiration as needed
+      expiresIn: '1h',
     });
+  }
+
+  /**
+   * Validates if a string is a valid UUID.
+   * @param id The string to validate.
+   * @returns Boolean indicating if the string is a valid UUID.
+   */
+  private isValidUUID(id: string): boolean {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(id);
   }
 }

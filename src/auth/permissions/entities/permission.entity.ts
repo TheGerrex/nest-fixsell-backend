@@ -61,6 +61,48 @@ export class Permission {
   @Column({ default: false })
   canViewPackage: boolean;
 
+  // leads
+  @Column({ default: false })
+  canCreateLead: boolean;
+  @Column({ default: false })
+  canDeleteLead: boolean;
+  @Column({ default: false })
+  canUpdateLead: boolean;
+  @Column({ default: false })
+  canViewLead: boolean;
+
+  // user
+  @Column({ default: false })
+  canCreateUser: boolean;
+  @Column({ default: false })
+  canDeleteUser: boolean;
+  @Column({ default: false })
+  canUpdateUser: boolean;
+  @Column({ default: false })
+  canViewUser: boolean;
+
+  // tickets
+  @Column({ default: false })
+  canCreateTicket: boolean;
+  @Column({ default: false })
+  canDeleteTicket: boolean;
+  @Column({ default: false })
+  canUpdateTicket: boolean;
+  @Column({ default: false })
+  canViewTicket: boolean;
+  @Column({ default: false })
+  canManageUserConfig: boolean;
+
+  // chat
+  @Column({ default: false })
+  canCreateChat: boolean;
+  @Column({ default: false })
+  canDeleteChat: boolean;
+  @Column({ default: false })
+  canUpdateChat: boolean;
+  @Column({ default: false })
+  canViewChat: boolean;
+
   @OneToOne(() => Role, (role) => role.permission, {
     cascade: ['insert', 'update'], // Enable cascading operations if needed
     nullable: true, // Allow null roles if necessary

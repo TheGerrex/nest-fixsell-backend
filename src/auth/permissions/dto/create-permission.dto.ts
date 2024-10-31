@@ -44,4 +44,46 @@ export class CreatePermissionDto {
   canUpdatePackage: boolean;
   @IsBoolean()
   canViewPackage: boolean;
+
+  // leads
+  @IsBoolean()
+  canCreateLead: boolean;
+  @IsBoolean()
+  canDeleteLead: boolean;
+  @IsBoolean()
+  canUpdateLead: boolean;
+  @IsBoolean()
+  canViewLead: boolean;
+
+  // user
+  @IsBoolean()
+  canCreateUser: boolean;
+  @IsBoolean()
+  canDeleteUser: boolean;
+  @IsBoolean()
+  canUpdateUser: boolean;
+  @IsBoolean()
+  canViewUser: boolean;
+
+  // tickets
+  @IsBoolean()
+  canCreateTicket: boolean;
+  @IsBoolean()
+  canDeleteTicket: boolean;
+  @IsBoolean()
+  canUpdateTicket: boolean;
+  @IsBoolean()
+  canViewTicket: boolean;
+  @IsBoolean()
+  canManageUserConfig: boolean;
+
+  // chat
+  @IsBoolean()
+  canCreateChat: boolean;
+  @IsBoolean()
+  canDeleteChat: boolean;
+  @IsBoolean()
+  canUpdateChat: boolean;
+  @IsBoolean()
+  canViewChat: boolean;
 }
