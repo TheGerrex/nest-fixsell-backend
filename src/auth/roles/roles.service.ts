@@ -34,6 +34,14 @@ export class RolesService {
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const { name, permission } = createRoleDto;
 
+    // Check if the role already exists
+    const existingRole = await this.rolesRepository.findOne({
+      where: { name },
+    });
+    if (existingRole) {
+      throw new ConflictException('Role name already exists.');
+    }
+
     // Automatically set permission.name based on role name
     const permissionWithName = {
       ...permission,
