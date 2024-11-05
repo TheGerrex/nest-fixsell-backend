@@ -14,6 +14,28 @@ export class CreatePermissionDto {
   canUpdatePrinter: boolean;
   @IsBoolean()
   canViewPrinter: boolean;
+  @IsBoolean()
+  canManagePrinterCRUD: boolean;
+
+  //categories
+  @IsBoolean()
+  canCreateCategory: boolean;
+  @IsBoolean()
+  canDeleteCategory: boolean;
+  @IsBoolean()
+  canUpdateCategory: boolean;
+  @IsBoolean()
+  canViewCategory: boolean;
+
+  //brands
+  @IsBoolean()
+  canCreateBrand: boolean;
+  @IsBoolean()
+  canDeleteBrand: boolean;
+  @IsBoolean()
+  canUpdateBrand: boolean;
+  @IsBoolean()
+  canViewBrand: boolean;
 
   // consumables
   @IsBoolean()
@@ -54,6 +76,15 @@ export class CreatePermissionDto {
   canUpdateLead: boolean;
   @IsBoolean()
   canViewLead: boolean;
+  //lead communications
+  @IsBoolean()
+  canCreateLeadCommunication: boolean;
+  @IsBoolean()
+  canDeleteLeadCommunication: boolean;
+  @IsBoolean()
+  canUpdateLeadCommunication: boolean;
+  @IsBoolean()
+  canViewLeadCommunication: boolean;
 
   // user
   @IsBoolean()
@@ -76,6 +107,8 @@ export class CreatePermissionDto {
   canViewTicket: boolean;
   @IsBoolean()
   canManageUserConfig: boolean;
+  @IsBoolean()
+  canViewAllTickets: boolean;
 
   // chat
   @IsBoolean()
@@ -86,4 +119,11 @@ export class CreatePermissionDto {
   canUpdateChat: boolean;
   @IsBoolean()
   canViewChat: boolean;
+
+  // configs
+  @IsBoolean()
+  canConfigureWebsite: boolean;
+
+  @IsBoolean()
+  canConfigureSupport: boolean;
 }
