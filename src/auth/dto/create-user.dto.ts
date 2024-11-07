@@ -1,9 +1,9 @@
 import {
   IsBoolean,
   IsEmail,
+  IsOptional,
   IsString,
   IsStrongPassword,
-  isBoolean,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -22,9 +22,11 @@ export class CreateUserDto {
   })
   password: string;
 
+  @IsOptional()
   @IsBoolean()
-  isActive = true;
+  isActive?: boolean;
 
-  @IsString({ each: true })
-  roles: string[] = ['user'];
+  @IsOptional()
+  @IsString()
+  role?: string;
 }

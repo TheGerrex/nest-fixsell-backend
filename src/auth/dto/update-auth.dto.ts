@@ -11,14 +11,12 @@ import {
 export class UpdateAuthDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsOptional()
   @IsString()
-  name: string;
+  name?: string;
 
-  // @IsStrongPassword({minLength:8, minLowercase:1, minUppercase:1, minNumbers:1, minSymbols:1})
-  // password :string;
   @IsOptional()
   @IsStrongPassword({
     minLength: 8,
@@ -27,7 +25,8 @@ export class UpdateAuthDto extends PartialType(CreateUserDto) {
     minNumbers: 1,
     minSymbols: 1,
   })
-  oldPassword: string;
+  oldPassword?: string;
+
   @IsOptional()
   @IsStrongPassword({
     minLength: 8,
@@ -36,13 +35,13 @@ export class UpdateAuthDto extends PartialType(CreateUserDto) {
     minNumbers: 1,
     minSymbols: 1,
   })
-  newPassword!: string;
+  newPassword?: string;
 
   @IsOptional()
   @IsBoolean()
-  isActive = true;
+  isActive?: boolean;
 
   @IsOptional()
-  @IsString({ each: true })
-  roles: string[] = ['user'];
+  @IsString()
+  role?: string;
 }

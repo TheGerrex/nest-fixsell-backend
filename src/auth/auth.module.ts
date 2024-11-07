@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/entities/role.entity';
 import { Lead } from 'src/sales/leads/entities/lead.entity';
+import { PermissionsModule } from './permissions/permissions.module';
 @Module({
   controllers: [AuthController],
   providers: [AuthService],
@@ -20,6 +21,7 @@ import { Lead } from 'src/sales/leads/entities/lead.entity';
       signOptions: { expiresIn: '6h' },
     }),
     RolesModule,
+    PermissionsModule,
   ],
   exports: [TypeOrmModule, JwtModule],
 })
