@@ -85,6 +85,10 @@ export class CreatePermissionDto {
   canUpdateLeadCommunication: boolean;
   @IsBoolean()
   canViewLeadCommunication: boolean;
+  @IsBoolean()
+  canViewAllLeads: boolean;
+  @IsBoolean()
+  canBeAssignedToLead: boolean;
 
   // user
   @IsBoolean()

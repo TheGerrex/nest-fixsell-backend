@@ -17,18 +17,24 @@ export class LeadsService {
     @InjectRepository(SaleCommunication)
     private readonly SaleCommunicationRepository: Repository<SaleCommunication>,
   ) {}
+
   async create(createLeadDto: CreateLeadDto): Promise<Lead> {
-    // Get all vendors with their assigned leads
+    // Get all vendors with the canBeAssignedToLead permission
     const vendors = await this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.roles', 'role')
+      .leftJoinAndSelect('user.role', 'role')
+      .leftJoinAndSelect('role.permission', 'permission')
       .leftJoinAndSelect('user.leads', 'lead')
-      .where('role.name = :roleName', { roleName: 'vendor' })
+      .where('permission.canBeAssignedToLead = :canBeAssignedToLead', {
+        canBeAssignedToLead: true,
+      })
       .getMany();
 
-    // If there are no vendors, throw an error
+    // If there are no vendors, log a message
     if (!vendors.length) {
-      throw new NotFoundException('No vendor found');
+      console.log('No vendor found with the canBeAssignedToLead permission');
+      // Optionally, you can return null or handle this case differently
+      return null;
     }
 
     // Sort vendors by the number of assigned leads in ascending order
@@ -37,7 +43,7 @@ export class LeadsService {
     // Select the vendor with the least number of assigned leads
     const selectedVendor = vendors[0];
 
-    // creates a new lead and assigns it to a vendor at random balancing the load
+    // Create a new lead and assign it to the selected vendor
     const lead = this.leadRepository.create({
       ...createLeadDto,
       assigned: selectedVendor,

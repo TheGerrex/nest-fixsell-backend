@@ -81,6 +81,10 @@ export class Permission {
   canUpdateLead: boolean;
   @Column({ default: false })
   canViewLead: boolean;
+  @Column({ default: false })
+  canViewAllLeads: boolean;
+  @Column({ default: false })
+  canBeAssignedToLead: boolean;
 
   // user
   @Column({ default: false })
