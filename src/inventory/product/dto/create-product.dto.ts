@@ -21,6 +21,10 @@ export class CreateProductDto {
   @IsBoolean()
   sellable: boolean;
 
+  @IsNumber()
+  @IsOptional()
+  soldCount?: number;
+
   @IsOptional()
   @IsString()
   product_image?: string;
