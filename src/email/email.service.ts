@@ -26,7 +26,7 @@ export class EmailService {
     const emailContent = `
         Hay un nuevo prospecto buscando contacto, sus credenciales son:\n
         Nombre: ${formData.name}\n
-        Numero de Telefono: ${formData.number}\n
+        Numero de Telefono: ${formData.phone}\n
         Email: ${formData.email}\n
         Mensaje: ${formData.message}
         `;
