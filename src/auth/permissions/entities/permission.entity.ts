@@ -130,6 +130,16 @@ export class Permission {
   @Column({ default: false })
   canViewLeadCommunication: boolean;
 
+  // events
+  @Column({ default: false })
+  canCreateEvent: boolean;
+  @Column({ default: false })
+  canDeleteEvent: boolean;
+  @Column({ default: false })
+  canUpdateEvent: boolean;
+  @Column({ default: false })
+  canViewEvent: boolean;
+
   //configs
   @Column({ default: false })
   canConfigureWebsite: boolean;

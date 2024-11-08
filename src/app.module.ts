@@ -29,6 +29,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
 import { CurrencyModule } from './currency/currency.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RolesModule } from './auth/roles/roles.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -101,6 +102,7 @@ import { RolesModule } from './auth/roles/roles.module';
     ChatbotModule,
     CurrencyModule,
     ScheduleModule.forRoot(),
+    EventsModule,
   ],
   providers: [
     {
