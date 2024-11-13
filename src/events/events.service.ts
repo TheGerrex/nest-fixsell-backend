@@ -100,15 +100,7 @@ export class EventsService {
     }
 
     try {
-      // Set event reference to null for all associated deals
-      if (event.deals && event.deals.length > 0) {
-        for (const deal of event.deals) {
-          deal.event = null;
-          await this.dealsRepository.save(deal);
-        }
-      }
-
-      // Remove the event
+      // Remove the event, cascade will delete associated deals
       await this.eventsRepository.remove(event);
     } catch (error) {
       console.error('Error removing event:', error);
