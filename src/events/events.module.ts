@@ -5,9 +5,10 @@ import { EventsController } from './events.controller';
 import { Event } from './entities/event.entity';
 import { FileUploadModule } from '../file-upload/file-upload.module';
 import { FileUploadService } from '../file-upload/file-upload.service';
+import { Deal } from '../deals/entities/deal.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event]), FileUploadModule],
+  imports: [TypeOrmModule.forFeature([Event, Deal]), FileUploadModule],
   controllers: [EventsController],
   providers: [EventsService, FileUploadService],
 })

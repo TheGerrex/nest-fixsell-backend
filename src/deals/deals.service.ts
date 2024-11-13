@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDealDto } from './dto/create-deal.dto';
@@ -6,6 +11,7 @@ import { UpdateDealDto } from './dto/update-deal.dto';
 import { Deal } from './entities/deal.entity';
 import { Printer } from '../printers/entities/printer.entity';
 import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity';
+import { Event } from '../events/entities/event.entity';
 
 @Injectable()
 export class DealsService {
@@ -16,6 +22,8 @@ export class DealsService {
     private printerRepository: Repository<Printer>,
     @InjectRepository(Consumible)
     private consumibleRepository: Repository<Consumible>,
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>,
   ) {}
 
   async create(createDealDto: CreateDealDto) {
@@ -156,41 +164,44 @@ export class DealsService {
 
     return await this.dealRepository.save(deal);
   }
-
-  async remove(id: number) {
-    const deal = await this.dealRepository.findOne({ where: { id } });
+  async remove(id: number): Promise<string> {
+    const deal = await this.dealRepository.findOne({
+      where: { id },
+      relations: ['event', 'printer', 'consumible'],
+    });
 
     if (!deal) {
-      throw new Error(`Deal with ID ${id} not found`);
+      throw new NotFoundException(`Deal with ID ${id} not found`);
     }
 
-    // Remove the reference from the printer to the deal
-    const printer = await this.printerRepository
-      .createQueryBuilder('printer')
-      .leftJoinAndSelect('printer.deals', 'deal')
-      .where('deal.id = :id', { id })
-      .getOne();
+    try {
+      // Remove from event if exists
+      if (deal.event) {
+        deal.event.deals = deal.event.deals.filter((d) => d.id !== id);
+        await this.eventRepository.save(deal.event);
+      }
 
-    if (printer) {
-      printer.deals = printer.deals.filter((deal) => deal.id !== id);
-      await this.printerRepository.save(printer);
+      // Remove from printer if exists
+      if (deal.printer) {
+        deal.printer.deals = deal.printer.deals.filter((d) => d.id !== id);
+        await this.printerRepository.save(deal.printer);
+      }
+
+      // Remove from consumible if exists
+      if (deal.consumible) {
+        deal.consumible.deals = deal.consumible.deals.filter(
+          (d) => d.id !== id,
+        );
+        await this.consumibleRepository.save(deal.consumible);
+      }
+
+      // Delete the deal
+      await this.dealRepository.remove(deal);
+
+      return `Deal with ID ${id} has been successfully removed`;
+    } catch (error) {
+      console.error('Error removing deal:', error);
+      throw new InternalServerErrorException('Failed to remove deal');
     }
-
-    // Remove the reference from the consumible to the deal
-    const consumible = await this.consumibleRepository
-      .createQueryBuilder('consumible')
-      .leftJoinAndSelect('consumible.deals', 'deal')
-      .where('deal.id = :id', { id })
-      .getOne();
-
-    if (consumible) {
-      consumible.deals = consumible.deals.filter((deal) => deal.id !== id);
-      await this.consumibleRepository.save(consumible);
-    }
-
-    // Now you can delete the deal
-    const result = await this.dealRepository.delete({ id });
-
-    return `Deal with ID ${id} has been removed` + result;
   }
 }

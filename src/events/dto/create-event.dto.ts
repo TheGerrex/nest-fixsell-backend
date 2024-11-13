@@ -1,4 +1,4 @@
-import { IsString, IsDate } from 'class-validator';
+import { IsString, IsDate, IsArray, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateEventDto {
@@ -18,4 +18,8 @@ export class CreateEventDto {
 
   @IsString()
   description: string;
+
+  @IsOptional()
+  @IsArray()
+  dealIds?: string[];
 }

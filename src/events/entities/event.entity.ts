@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Deal } from '../../deals/entities/deal.entity';
 
 @Entity()
 export class Event {
@@ -19,4 +20,10 @@ export class Event {
 
   @Column()
   description: string;
+
+  @OneToMany(() => Deal, (deal) => deal.event, {
+    nullable: true,
+    cascade: true,
+  })
+  deals: Deal[];
 }

@@ -1,11 +1,18 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Printer } from 'src/printers/entities/printer.entity';
 import { Consumible } from '../../ecommerce/consumibles/entities/consumible.entity';
+import { Event } from '../../events/entities/event.entity';
 
 @Entity()
 export class Deal {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @ManyToOne(() => Event, (event) => event.deals, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  event: Event;
 
   @ManyToOne(() => Printer, (printer) => printer.deals, {
     nullable: true,
