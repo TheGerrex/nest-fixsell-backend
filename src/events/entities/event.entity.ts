@@ -24,6 +24,7 @@ export class Event {
   @OneToMany(() => Deal, (deal) => deal.event, {
     nullable: true,
     cascade: true,
+    onDelete: 'CASCADE', // cascade deletes the deals when the event is deleted
   })
   deals: Deal[];
 }

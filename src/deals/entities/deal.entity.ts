@@ -10,7 +10,7 @@ export class Deal {
 
   @ManyToOne(() => Event, (event) => event.deals, {
     nullable: true,
-    onDelete: 'SET NULL',
+    onDelete: 'SET NULL', // set null so that the event is not deleted when the deal is deleted
   })
   event: Event;
 

@@ -30,10 +30,12 @@ export class DealsService {
     let printer;
     let consumible;
     let existingDeals;
+    let itemType;
+    let itemName;
 
     if (createDealDto.printer && createDealDto.consumible) {
-      throw new Error(
-        'A deal can have either a printer or a consumible but not both',
+      throw new BadRequestException(
+        'Una oferta puede tener una impresora o un consumible, pero no ambos',
       );
     }
 
@@ -44,10 +46,12 @@ export class DealsService {
       });
 
       if (!printer) {
-        throw new Error('Printer not found');
+        throw new NotFoundException('Impresora no encontrada');
       }
 
       existingDeals = printer.deals;
+      itemType = 'printer';
+      itemName = printer.model;
     }
 
     if (createDealDto.consumible) {
@@ -57,10 +61,12 @@ export class DealsService {
       });
 
       if (!consumible) {
-        throw new Error('Consumible not found');
+        throw new NotFoundException('Consumible no encontrado');
       }
 
       existingDeals = consumible.deals;
+      itemType = 'consumible';
+      itemName = consumible.model;
     }
 
     const overlappingDeal = existingDeals.find(
@@ -70,8 +76,18 @@ export class DealsService {
     );
 
     if (overlappingDeal) {
+      const formattedStartDate = new Date(
+        overlappingDeal.dealStartDate,
+      ).toLocaleDateString();
+      const formattedEndDate = new Date(
+        overlappingDeal.dealEndDate,
+      ).toLocaleDateString();
+
       throw new BadRequestException(
-        'Another promotion within those dates already exists.',
+        `Ya existe una promoción para ${
+          itemType === 'printer' ? 'la impresora' : 'el consumible'
+        } "${itemName}" durante estas fechas. ` +
+          `Oferta existente: ID ${overlappingDeal.id} del ${formattedStartDate} al ${formattedEndDate}`,
       );
     }
 
@@ -97,7 +113,7 @@ export class DealsService {
     });
 
     if (!deal) {
-      throw new Error(`Deal with ID ${id} not found`);
+      throw new Error(`Promocion con ID ${id} no encontrada`);
     }
 
     return deal;
@@ -110,7 +126,7 @@ export class DealsService {
 
     if (updateDealDto.printer && updateDealDto.consumible) {
       throw new Error(
-        'A deal can have either a printer or a consumible but not both',
+        'Una promocion puede tener una impresora o un consumible, pero no ambos',
       );
     }
 
@@ -121,7 +137,7 @@ export class DealsService {
       });
 
       if (!printer) {
-        throw new Error('Printer not found');
+        throw new Error('Impresora no encontrada');
       }
 
       existingDeals = printer.deals || [];
@@ -134,7 +150,7 @@ export class DealsService {
       });
 
       if (!consumible) {
-        throw new Error('Consumible not found');
+        throw new Error('Consumible no encontrado');
       }
 
       existingDeals = consumible.deals || [];
@@ -148,15 +164,13 @@ export class DealsService {
     );
 
     if (overlappingDeal) {
-      throw new BadRequestException(
-        'Another previous/future promotion already exists.',
-      );
+      throw new BadRequestException('Ya existe otra promoción previa/futura.');
     }
 
     const deal = await this.dealRepository.findOne({ where: { id } });
 
     if (!deal) {
-      throw new Error(`Deal with ID ${id} not found`);
+      throw new NotFoundException(`Promocion con ID ${id} no encontrada`);
     }
 
     // Update the deal
@@ -171,7 +185,7 @@ export class DealsService {
     });
 
     if (!deal) {
-      throw new NotFoundException(`Deal with ID ${id} not found`);
+      throw new NotFoundException(`Promocion con ID ${id} no encontrada`);
     }
 
     try {
@@ -197,11 +211,10 @@ export class DealsService {
 
       // Delete the deal
       await this.dealRepository.remove(deal);
-
-      return `Deal with ID ${id} has been successfully removed`;
+      return `Oferta con ID ${id} ha sido eliminada exitosamente`;
     } catch (error) {
-      console.error('Error removing deal:', error);
-      throw new InternalServerErrorException('Failed to remove deal');
+      console.error('Error al eliminar oferta:', error);
+      throw new InternalServerErrorException('Error al eliminar la oferta');
     }
   }
 }
