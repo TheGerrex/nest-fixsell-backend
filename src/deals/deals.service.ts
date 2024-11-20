@@ -102,14 +102,14 @@ export class DealsService {
 
   async findAll() {
     return await this.dealRepository.find({
-      relations: ['printer', 'consumible'],
+      relations: ['printer', 'consumible', 'event'],
     });
   }
 
   async findOne(id: number) {
     const deal = await this.dealRepository.findOne({
       where: { id },
-      relations: ['printer', 'consumible'],
+      relations: ['printer', 'consumible', 'event'],
     });
 
     if (!deal) {
