@@ -2,11 +2,9 @@ import {
   IsArray,
   IsBoolean,
   IsDecimal,
-  IsIn,
   IsInt,
   IsOptional,
   IsString,
-  IsUrl,
 } from 'class-validator';
 
 const brands = ['Konica Minolta', 'Kyocera', 'Epson', 'Audley', 'Prixato'];
