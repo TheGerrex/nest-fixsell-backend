@@ -30,13 +30,13 @@ import { CurrencyModule } from './currency/currency.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RolesModule } from './auth/roles/roles.module';
 import { SoftwaresModule } from './softwares/softwares.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/src/config/env/${
-        process.env.NODE_ENV
-      }.env`,
+      envFilePath: `${process.cwd()}/src/config/env/${process.env.NODE_ENV
+        }.env`,
       isGlobal: true,
       load: [EnvConfiguration],
       validationSchema: JoiValidationSchema,
@@ -103,6 +103,7 @@ import { SoftwaresModule } from './softwares/softwares.module';
     CurrencyModule,
     ScheduleModule.forRoot(),
     SoftwaresModule,
+    EventsModule,
   ],
   providers: [
     {
@@ -111,4 +112,4 @@ import { SoftwaresModule } from './softwares/softwares.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

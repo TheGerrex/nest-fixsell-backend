@@ -81,6 +81,10 @@ export class Permission {
   canUpdateLead: boolean;
   @Column({ default: false })
   canViewLead: boolean;
+  @Column({ default: false })
+  canViewAllLeads: boolean;
+  @Column({ default: false })
+  canBeAssignedToLead: boolean;
 
   // user
   @Column({ default: false })
@@ -125,6 +129,16 @@ export class Permission {
   canUpdateLeadCommunication: boolean;
   @Column({ default: false })
   canViewLeadCommunication: boolean;
+
+  // events
+  @Column({ default: false })
+  canCreateEvent: boolean;
+  @Column({ default: false })
+  canDeleteEvent: boolean;
+  @Column({ default: false })
+  canUpdateEvent: boolean;
+  @Column({ default: false })
+  canViewEvent: boolean;
 
   //configs
   @Column({ default: false })

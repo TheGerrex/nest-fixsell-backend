@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDealDto } from './dto/create-deal.dto';
@@ -6,6 +11,7 @@ import { UpdateDealDto } from './dto/update-deal.dto';
 import { Deal } from './entities/deal.entity';
 import { Printer } from '../printers/entities/printer.entity';
 import { Consumible } from 'src/ecommerce/consumibles/entities/consumible.entity';
+import { Event } from '../events/entities/event.entity';
 
 @Injectable()
 export class DealsService {
@@ -16,16 +22,20 @@ export class DealsService {
     private printerRepository: Repository<Printer>,
     @InjectRepository(Consumible)
     private consumibleRepository: Repository<Consumible>,
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>,
   ) {}
 
   async create(createDealDto: CreateDealDto) {
     let printer;
     let consumible;
     let existingDeals;
+    let itemType;
+    let itemName;
 
     if (createDealDto.printer && createDealDto.consumible) {
-      throw new Error(
-        'A deal can have either a printer or a consumible but not both',
+      throw new BadRequestException(
+        'Una oferta puede tener una impresora o un consumible, pero no ambos',
       );
     }
 
@@ -36,10 +46,12 @@ export class DealsService {
       });
 
       if (!printer) {
-        throw new Error('Printer not found');
+        throw new NotFoundException('Impresora no encontrada');
       }
 
       existingDeals = printer.deals;
+      itemType = 'printer';
+      itemName = printer.model;
     }
 
     if (createDealDto.consumible) {
@@ -49,10 +61,12 @@ export class DealsService {
       });
 
       if (!consumible) {
-        throw new Error('Consumible not found');
+        throw new NotFoundException('Consumible no encontrado');
       }
 
       existingDeals = consumible.deals;
+      itemType = 'consumible';
+      itemName = consumible.model;
     }
 
     const overlappingDeal = existingDeals.find(
@@ -62,8 +76,18 @@ export class DealsService {
     );
 
     if (overlappingDeal) {
+      const formattedStartDate = new Date(
+        overlappingDeal.dealStartDate,
+      ).toLocaleDateString();
+      const formattedEndDate = new Date(
+        overlappingDeal.dealEndDate,
+      ).toLocaleDateString();
+
       throw new BadRequestException(
-        'Another promotion within those dates already exists.',
+        `Ya existe una promoción para ${
+          itemType === 'printer' ? 'la impresora' : 'el consumible'
+        } "${itemName}" durante estas fechas. ` +
+          `Oferta existente: ID ${overlappingDeal.id} del ${formattedStartDate} al ${formattedEndDate}`,
       );
     }
 
@@ -78,18 +102,18 @@ export class DealsService {
 
   async findAll() {
     return await this.dealRepository.find({
-      relations: ['printer', 'consumible'],
+      relations: ['printer', 'consumible', 'event'],
     });
   }
 
   async findOne(id: number) {
     const deal = await this.dealRepository.findOne({
       where: { id },
-      relations: ['printer', 'consumible'],
+      relations: ['printer', 'consumible', 'event'],
     });
 
     if (!deal) {
-      throw new Error(`Deal with ID ${id} not found`);
+      throw new Error(`Promocion con ID ${id} no encontrada`);
     }
 
     return deal;
@@ -102,7 +126,7 @@ export class DealsService {
 
     if (updateDealDto.printer && updateDealDto.consumible) {
       throw new Error(
-        'A deal can have either a printer or a consumible but not both',
+        'Una promocion puede tener una impresora o un consumible, pero no ambos',
       );
     }
 
@@ -113,7 +137,7 @@ export class DealsService {
       });
 
       if (!printer) {
-        throw new Error('Printer not found');
+        throw new Error('Impresora no encontrada');
       }
 
       existingDeals = printer.deals || [];
@@ -126,7 +150,7 @@ export class DealsService {
       });
 
       if (!consumible) {
-        throw new Error('Consumible not found');
+        throw new Error('Consumible no encontrado');
       }
 
       existingDeals = consumible.deals || [];
@@ -140,15 +164,13 @@ export class DealsService {
     );
 
     if (overlappingDeal) {
-      throw new BadRequestException(
-        'Another previous/future promotion already exists.',
-      );
+      throw new BadRequestException('Ya existe otra promoción previa/futura.');
     }
 
     const deal = await this.dealRepository.findOne({ where: { id } });
 
     if (!deal) {
-      throw new Error(`Deal with ID ${id} not found`);
+      throw new NotFoundException(`Promocion con ID ${id} no encontrada`);
     }
 
     // Update the deal
@@ -156,41 +178,43 @@ export class DealsService {
 
     return await this.dealRepository.save(deal);
   }
-
-  async remove(id: number) {
-    const deal = await this.dealRepository.findOne({ where: { id } });
+  async remove(id: number): Promise<string> {
+    const deal = await this.dealRepository.findOne({
+      where: { id },
+      relations: ['event', 'printer', 'consumible'],
+    });
 
     if (!deal) {
-      throw new Error(`Deal with ID ${id} not found`);
+      throw new NotFoundException(`Promocion con ID ${id} no encontrada`);
     }
 
-    // Remove the reference from the printer to the deal
-    const printer = await this.printerRepository
-      .createQueryBuilder('printer')
-      .leftJoinAndSelect('printer.deals', 'deal')
-      .where('deal.id = :id', { id })
-      .getOne();
+    try {
+      // Remove from event if exists
+      if (deal.event) {
+        deal.event.deals = deal.event.deals.filter((d) => d.id !== id);
+        await this.eventRepository.save(deal.event);
+      }
 
-    if (printer) {
-      printer.deals = printer.deals.filter((deal) => deal.id !== id);
-      await this.printerRepository.save(printer);
+      // Remove from printer if exists
+      if (deal.printer) {
+        deal.printer.deals = deal.printer.deals.filter((d) => d.id !== id);
+        await this.printerRepository.save(deal.printer);
+      }
+
+      // Remove from consumible if exists
+      if (deal.consumible) {
+        deal.consumible.deals = deal.consumible.deals.filter(
+          (d) => d.id !== id,
+        );
+        await this.consumibleRepository.save(deal.consumible);
+      }
+
+      // Delete the deal
+      await this.dealRepository.remove(deal);
+      return `Oferta con ID ${id} ha sido eliminada exitosamente`;
+    } catch (error) {
+      console.error('Error al eliminar oferta:', error);
+      throw new InternalServerErrorException('Error al eliminar la oferta');
     }
-
-    // Remove the reference from the consumible to the deal
-    const consumible = await this.consumibleRepository
-      .createQueryBuilder('consumible')
-      .leftJoinAndSelect('consumible.deals', 'deal')
-      .where('deal.id = :id', { id })
-      .getOne();
-
-    if (consumible) {
-      consumible.deals = consumible.deals.filter((deal) => deal.id !== id);
-      await this.consumibleRepository.save(consumible);
-    }
-
-    // Now you can delete the deal
-    const result = await this.dealRepository.delete({ id });
-
-    return `Deal with ID ${id} has been removed` + result;
   }
 }

@@ -85,6 +85,10 @@ export class CreatePermissionDto {
   canUpdateLeadCommunication: boolean;
   @IsBoolean()
   canViewLeadCommunication: boolean;
+  @IsBoolean()
+  canViewAllLeads: boolean;
+  @IsBoolean()
+  canBeAssignedToLead: boolean;
 
   // user
   @IsBoolean()
@@ -110,6 +114,15 @@ export class CreatePermissionDto {
   @IsBoolean()
   canViewAllTickets: boolean;
 
+  // events
+  @IsBoolean()
+  canCreateEvent: boolean;
+  @IsBoolean()
+  canDeleteEvent: boolean;
+  @IsBoolean()
+  canUpdateEvent: boolean;
+  @IsBoolean()
+  canViewEvent: boolean;
   // chat
   @IsBoolean()
   canCreateChat: boolean;
