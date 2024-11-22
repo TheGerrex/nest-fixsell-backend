@@ -188,24 +188,38 @@ export class DealsService {
       throw new NotFoundException(`Promocion con ID ${id} no encontrada`);
     }
 
+    console.log('Deal to remove:', deal); // Log the deal object
+
     try {
       // Remove from event if exists
       if (deal.event) {
-        deal.event.deals = deal.event.deals.filter((d) => d.id !== id);
+        console.log('Associated Event:', deal.event);
+        console.log('Event deals before filtering:', deal.event.deals);
+        deal.event.deals = deal.event.deals?.filter((d) => d.id !== id) || [];
+        console.log('Event deals after filtering:', deal.event.deals);
         await this.eventRepository.save(deal.event);
       }
 
       // Remove from printer if exists
       if (deal.printer) {
-        deal.printer.deals = deal.printer.deals.filter((d) => d.id !== id);
+        console.log('Associated Printer:', deal.printer);
+        console.log('Printer deals before filtering:', deal.printer.deals);
+        deal.printer.deals =
+          deal.printer.deals?.filter((d) => d.id !== id) || [];
+        console.log('Printer deals after filtering:', deal.printer.deals);
         await this.printerRepository.save(deal.printer);
       }
 
       // Remove from consumible if exists
       if (deal.consumible) {
-        deal.consumible.deals = deal.consumible.deals.filter(
-          (d) => d.id !== id,
+        console.log('Associated Consumible:', deal.consumible);
+        console.log(
+          'Consumible deals before filtering:',
+          deal.consumible.deals,
         );
+        deal.consumible.deals =
+          deal.consumible.deals?.filter((d) => d.id !== id) || [];
+        console.log('Consumible deals after filtering:', deal.consumible.deals);
         await this.consumibleRepository.save(deal.consumible);
       }
 

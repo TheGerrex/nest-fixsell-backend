@@ -8,11 +8,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { ConfigService } from '@nestjs/config';
 import { Deal } from '../deals/entities/deal.entity';
 import * as path from 'path';
-
+import { In } from 'typeorm';
 @Injectable()
 export class EventsService {
   constructor(
@@ -81,12 +82,52 @@ export class EventsService {
       relations: ['deals'],
     });
   }
-
   findOne(id: string): Promise<Event> {
     return this.eventsRepository.findOne({
       where: { id },
       relations: ['deals'],
     });
+  }
+
+  async update(id: string, updateEventDto: UpdateEventDto): Promise<Event> {
+    const event = await this.eventsRepository.findOne({
+      where: { id },
+      relations: ['deals'],
+    });
+
+    if (!event) {
+      throw new NotFoundException(`Event with ID ${id} not found`);
+    }
+
+    Object.assign(event, updateEventDto);
+
+    if (updateEventDto.image) {
+      const url = new URL(updateEventDto.image);
+      const oldPath = url.pathname.substring(1);
+      const fileName = path.basename(oldPath);
+      const decodedFileName = decodeURIComponent(fileName);
+      const newPath = `events/images/${encodeURIComponent(
+        event.title.replace(/ /g, '_'),
+      )}/${encodeURIComponent(decodedFileName.replace(/ /g, '_'))}`;
+
+      await this.fileUploadService.renameFile(oldPath, newPath);
+      const newUrl = `https://${this.configService.get(
+        'AWS_BUCKET_NAME',
+      )}.s3.amazonaws.com/${newPath}`;
+      event.image = newUrl;
+    }
+
+    if (updateEventDto.dealIds && updateEventDto.dealIds.length > 0) {
+      const deals = await this.dealsRepository.findBy({
+        id: In(updateEventDto.dealIds),
+      });
+      if (deals.length !== updateEventDto.dealIds.length) {
+        throw new NotFoundException('One or more deals not found');
+      }
+      event.deals = deals;
+    }
+
+    return this.eventsRepository.save(event);
   }
 
   async remove(id: string): Promise<void> {
