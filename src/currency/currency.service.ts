@@ -50,7 +50,7 @@ export class CurrencyService {
 
       if (!isNaN(usdExchangeRate)) {
         let mxnCurrency: Currency | undefined;
-        let updatedCurrencies = [];
+        const updatedCurrencies = [];
 
         for (const currency of currencies) {
           if (currency.name.toLowerCase() === 'usd') {
