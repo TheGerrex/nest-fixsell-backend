@@ -9,7 +9,11 @@ export class CurrencyController {
   @Get('update')
   async updateExchangeRates() {
     await this.currencyService.updateExchangeRates();
-    return { message: 'Exchange rates updated successfully' };
+    const updatedCurrencies = await this.currencyService.getAllCurrencies();
+    return {
+      message: 'Exchange rates updated successfully',
+      currencies: updatedCurrencies,
+    };
   }
 
   @Post()

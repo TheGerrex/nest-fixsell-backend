@@ -28,6 +28,8 @@ export class CurrencyService {
 
   async updateExchangeRates() {
     const currencies = await this.currencyRepository.find();
+    console.log('Current currencies before update:', currencies);
+
     const url =
       'https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?sector=6&accion=consultarCuadro&idCuadro=CF102&locale=es';
 
@@ -41,16 +43,22 @@ export class CurrencyService {
         .first()
         .text()
         .trim();
+      console.log('Scraped exchange rate text:', exchangeRateText);
+
       const usdExchangeRate = parseFloat(exchangeRateText.replace(',', '.'));
+      console.log('Parsed USD exchange rate:', usdExchangeRate);
 
       if (!isNaN(usdExchangeRate)) {
         let mxnCurrency: Currency | undefined;
+        let updatedCurrencies = [];
 
         for (const currency of currencies) {
           if (currency.name.toLowerCase() === 'usd') {
             currency.exchangeRate = usdExchangeRate;
             currency.lastUpdated = new Date();
-            await this.currencyRepository.save(currency);
+            const updatedUSD = await this.currencyRepository.save(currency);
+            updatedCurrencies.push(updatedUSD);
+            console.log('Updated USD currency:', updatedUSD);
           } else if (currency.name.toLowerCase() === 'mxn') {
             mxnCurrency = currency;
           }
@@ -61,15 +69,25 @@ export class CurrencyService {
             (1 / usdExchangeRate).toFixed(6),
           );
           mxnCurrency.lastUpdated = new Date();
-          await this.currencyRepository.save(mxnCurrency);
+          const updatedMXN = await this.currencyRepository.save(mxnCurrency);
+          updatedCurrencies.push(updatedMXN);
+          console.log('Updated MXN currency:', updatedMXN);
         } else {
-          console.error('MXN currency not found');
+          console.error('MXN currency not found in database');
         }
+
+        const finalCurrencies = await this.currencyRepository.find();
+        console.log('Final currencies after update:', finalCurrencies);
+
+        return finalCurrencies;
       } else {
-        console.error('Failed to parse USD exchange rate');
+        const error = 'Failed to parse USD exchange rate';
+        console.error(error);
+        throw new Error(error);
       }
     } catch (error) {
-      console.error('Failed to update exchange rates', error);
+      console.error('Failed to update exchange rates:', error);
+      throw error;
     }
   }
 
