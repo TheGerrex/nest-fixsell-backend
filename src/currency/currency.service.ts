@@ -14,7 +14,28 @@ export class CurrencyService {
     @InjectRepository(Currency)
     private readonly currencyRepository: Repository<Currency>,
     private readonly httpService: HttpService,
-  ) {}
+  ) {
+    // Call initializeCurrencies when service is created
+    this.initializeCurrencies();
+  }
+
+  private async initializeCurrencies() {
+    const currencies = await this.getAllCurrencies();
+
+    // Check if USD exists, if not create it
+    const usdExists = currencies.some((c) => c.name.toLowerCase() === 'usd');
+    if (!usdExists) {
+      await this.addCurrency({ name: 'USD' });
+      console.log('USD currency initialized');
+    }
+
+    // Check if MXN exists, if not create it
+    const mxnExists = currencies.some((c) => c.name.toLowerCase() === 'mxn');
+    if (!mxnExists) {
+      await this.addCurrency({ name: 'MXN' });
+      console.log('MXN currency initialized');
+    }
+  }
 
   async addCurrency(createCurrencyDto: CreateCurrencyDto): Promise<Currency> {
     const { name } = createCurrencyDto;
