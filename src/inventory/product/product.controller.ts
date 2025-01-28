@@ -11,6 +11,7 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('product')
 export class ProductController {
@@ -21,11 +22,13 @@ export class ProductController {
     return this.productService.create(createProductDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.productService.findAll();
   }
 
+  @Public()
   @Get('id/:id')
   async findOneById(@Param('id') id: string) {
     return this.productService.findOneById(id);

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-import { PermissionsGuard } from './auth/permissions/permissions.guard'; // Added
-import { PermissionsModule } from './auth/permissions/permissions.module'; // Added
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthGuard } from './auth/guards/auth.guard'; // Import AuthGuard
+import { PermissionsGuard } from './auth/permissions/permissions.guard';
+import { PermissionsModule } from './auth/permissions/permissions.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { PrintersModule } from './printers/printers.module';
@@ -31,12 +32,15 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { RolesModule } from './auth/roles/roles.module';
 import { SoftwaresModule } from './softwares/softwares.module';
 import { EventsModule } from './events/events.module';
+import { ChangelogModule } from './changelog/changelog.module';
+import { LogInterceptor } from './changelog/log/log.interceptor'; // Import LogInterceptor
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/src/config/env/${process.env.NODE_ENV
-        }.env`,
+      envFilePath: `${process.cwd()}/src/config/env/${
+        process.env.NODE_ENV
+      }.env`,
       isGlobal: true,
       load: [EnvConfiguration],
       validationSchema: JoiValidationSchema,
@@ -76,7 +80,6 @@ import { EventsModule } from './events/events.module';
         return baseConfig as TypeOrmModuleOptions;
       },
     }),
-
     // Application Modules
     EmailModule,
     PrintersModule,
@@ -104,12 +107,22 @@ import { EventsModule } from './events/events.module';
     ScheduleModule.forRoot(),
     SoftwaresModule,
     EventsModule,
+    ChangelogModule,
   ],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: PermissionsGuard, // Register PermissionsGuard globally
+      useClass: AuthGuard, // Register AuthGuard globally first
     },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard, // Register PermissionsGuard globally next
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LogInterceptor, // Register LogInterceptor globally
+    },
+    // ... other providers
   ],
 })
-export class AppModule { }
+export class AppModule {}

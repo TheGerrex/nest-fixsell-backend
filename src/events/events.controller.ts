@@ -11,7 +11,7 @@ import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
-
+import { Public } from '../auth/public.decorator';
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
@@ -22,11 +22,13 @@ export class EventsController {
     return this.eventsService.create(createEventDto);
   }
 
+  @Public()
   @Get()
   findAll(): Promise<Event[]> {
     return this.eventsService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Event> {
     return this.eventsService.findOne(id);

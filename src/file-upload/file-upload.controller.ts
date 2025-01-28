@@ -1,28 +1,39 @@
-import { Controller, Post, UseInterceptors, UploadedFile, UploadedFiles, Body, Delete, BadRequestException, Get, Param, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  UploadedFiles,
+  Body,
+  Delete,
+  BadRequestException,
+  Get,
+  Param,
+  Res,
+} from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
 import { diskStorage } from 'multer';
 import { fileNamer, filePdfFilter, fileImageFilter } from './helpers';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-
+import { Public } from '../auth/public.decorator';
 @Controller('upload')
 export class FileUploadController {
-
   constructor(
-    private readonly fileUploadService: FileUploadService, 
-    private readonly configService: ConfigService
+    private readonly fileUploadService: FileUploadService,
+    private readonly configService: ConfigService,
   ) {}
 
+  @Public()
   @Get('image/:imageName')
   findProductImage(
     @Res() res: Response,
     @Param('imageName') imageName: string,
   ) {
-    const path = this.fileUploadService.getStaticProductImage(imageName)
+    const path = this.fileUploadService.getStaticProductImage(imageName);
     res.sendFile(path);
   }
-
 
   @Post('image')
   @UseInterceptors(
@@ -38,7 +49,6 @@ export class FileUploadController {
     @Body('brandFolder') brandFolder: string,
     @Body('modelFolder') modelFolder: string,
   ) {
-
     if (!file) {
       throw new BadRequestException('No hay archivo');
     }
@@ -58,7 +68,6 @@ export class FileUploadController {
     FilesInterceptor('image', 10, {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
       fileFilter: fileImageFilter,
-      
     }),
   )
   async uploadMultipleFiles(
@@ -68,8 +77,6 @@ export class FileUploadController {
     @Body('brandFolder') brandFolder: string,
     @Body('modelFolder') modelFolder: string,
   ) {
-    
-    
     if (!files) {
       throw new BadRequestException('No hay archivo');
     }
@@ -80,7 +87,7 @@ export class FileUploadController {
       typeFolder,
       brandFolder,
       modelFolder,
-      );
+    );
     return { urls };
   }
 
@@ -97,7 +104,7 @@ export class FileUploadController {
     @Body('typeFolder') typeFolder: string,
     @Body('brandFolder') brandFolder: string,
     @Body('modelFolder') modelFolder: string,
-    ) {
+  ) {
     const url = await this.fileUploadService.uploadFile(
       file,
       productFolder,
@@ -120,13 +127,15 @@ export class FileUploadController {
     @Body('productFolder') productFolder: string,
     @Body('typeFolder') typeFolder: string,
     @Body('brandFolder') brandFolder: string,
-    @Body('modelFolder') modelFolder: string,) {
+    @Body('modelFolder') modelFolder: string,
+  ) {
     const urls = await this.fileUploadService.uploadMultipleFiles(
       files,
       productFolder,
       typeFolder,
       brandFolder,
-      modelFolder);
+      modelFolder,
+    );
     return { urls };
   }
 

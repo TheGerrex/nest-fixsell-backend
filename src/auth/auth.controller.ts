@@ -16,6 +16,7 @@ import { CreateUserDto, UpdateAuthDto, LoginDto, RegisterUserDto } from './dto';
 import { AuthGuard } from './guards/auth.guard';
 import { LoginResponse } from './interfaces/login-response';
 import { User } from './entities/user.entity';
+import { Public } from './public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -36,6 +37,7 @@ export class AuthController {
    * @param loginDto Data transfer object containing login credentials.
    * @returns LoginResponse containing user data and JWT token.
    */
+  @Public()
   @Post('/login')
   login(@Body() loginDto: LoginDto): Promise<LoginResponse> {
     return this.authService.login(loginDto);
@@ -46,6 +48,7 @@ export class AuthController {
    * @param registerDto Data transfer object containing registration details.
    * @returns LoginResponse containing user data and JWT token.
    */
+  @Public()
   @Post('/register')
   register(@Body() registerDto: RegisterUserDto): Promise<LoginResponse> {
     return this.authService.register(registerDto);
