@@ -10,7 +10,7 @@ export class LogController {
     @Query('limit') limit: string,
     @Query('offset') offset: string,
   ) {
-    const limitNumber = parseInt(limit, 10) || 10;
+    const limitNumber = parseInt(limit, 1000) || 1000;
     const offsetNumber = parseInt(offset, 10) || 0;
     return this.logService.getAllLogs(limitNumber, offsetNumber);
   }

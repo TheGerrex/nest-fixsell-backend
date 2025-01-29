@@ -48,7 +48,7 @@ export class LogInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         // Log only if the action is relevant
-        if (action !== 'unknown') {
+        if (action !== 'unknown' && action !== 'read') {
           this.logService.logAction(
             userId,
             userName, // Pass userName

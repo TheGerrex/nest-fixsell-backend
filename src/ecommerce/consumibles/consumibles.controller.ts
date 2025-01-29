@@ -13,6 +13,7 @@ import { CreateConsumibleDto } from './dto/create-consumible.dto';
 import { UpdateConsumibleDto } from './dto/update-consumible.dto';
 import { FilterConsumibleDto } from './dto/filter-consumible.dto';
 import { Color } from './color.enum';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('consumibles')
 export class ConsumiblesController {
@@ -23,11 +24,13 @@ export class ConsumiblesController {
     return this.consumiblesService.create(createConsumibleDto);
   }
 
+  @Public()
   @Get()
-  findAll(@Query() filterConsumibleDto: FilterConsumibleDto){
+  findAll(@Query() filterConsumibleDto: FilterConsumibleDto) {
     return this.consumiblesService.findAll(filterConsumibleDto);
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.consumiblesService.findOne(id);

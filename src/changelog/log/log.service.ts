@@ -35,7 +35,7 @@ export class LogService {
     return this.logRepository.save(log);
   }
 
-  async getAllLogs(limit = 10, offset = 0) {
+  async getAllLogs(limit = 1000, offset = 0) {
     return this.logRepository.find({
       skip: offset,
       take: limit,
