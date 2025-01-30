@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from './permissions.decorator';
-import { Role } from '../roles/entities/role.entity';
+// import { Role } from '../roles/entities/role.entity';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -17,6 +17,7 @@ export class PermissionsGuard implements CanActivate {
       PERMISSIONS_KEY,
       [context.getHandler(), context.getClass()],
     );
+
     if (!requiredPermissions) {
       return true;
     }
@@ -26,23 +27,21 @@ export class PermissionsGuard implements CanActivate {
 
     console.log('User:', user);
     console.log('Required Permissions:', requiredPermissions);
-    console.log('User Roles:', user?.roles);
+    console.log('User Permissions:', user?.permissions);
 
-    if (!user || !user.roles) {
-      throw new ForbiddenException('No roles found for user');
+    if (!user || !user.permissions) {
+      throw new ForbiddenException('No permissions found for user');
     }
 
-    const userRoles: Role[] = user.roles;
-
-    const hasPermission = userRoles.some((role) => {
-      const permission = role.permission;
-      return requiredPermissions.every((perm) => permission[perm] === true);
-    });
+    // Check user.permissions directly
+    const hasPermission = requiredPermissions.every(
+      (perm) => user.permissions[perm] === true,
+    );
 
     if (!hasPermission) {
       throw new ForbiddenException('Insufficient permissions');
     }
 
-    return hasPermission;
+    return true;
   }
 }
