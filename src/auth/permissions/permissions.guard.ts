@@ -26,7 +26,7 @@ export class PermissionsGuard implements CanActivate {
 
     console.log('User:', user);
     console.log('Required Permissions:', requiredPermissions);
-    console.log('User Roles:', user.roles);
+    console.log('User Roles:', user?.roles);
 
     if (!user || !user.roles) {
       throw new ForbiddenException('No roles found for user');
