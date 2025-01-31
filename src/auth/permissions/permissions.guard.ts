@@ -26,6 +26,7 @@ export class PermissionsGuard implements CanActivate {
 
     console.log('User:', user);
     console.log('Required Permissions:', requiredPermissions);
+<<<<<<< Updated upstream
     console.log('User Roles:', user?.roles);
 
     if (!user || !user.roles) {
@@ -38,6 +39,19 @@ export class PermissionsGuard implements CanActivate {
       const permission = role.permission;
       return requiredPermissions.every((perm) => permission[perm] === true);
     });
+=======
+    console.log('User Role:', user.role);
+
+    if (!user || !user.role) {
+      throw new ForbiddenException('No role found for user');
+    }
+
+    const userRole: Role = user.role;
+
+    const hasPermission = requiredPermissions.every(
+      (perm) => userRole.permission[perm] === true,
+    );
+>>>>>>> Stashed changes
 
     if (!hasPermission) {
       throw new ForbiddenException('Insufficient permissions');
