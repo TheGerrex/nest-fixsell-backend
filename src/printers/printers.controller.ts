@@ -14,7 +14,7 @@ import { UpdatePrinterDto } from './dto/update-printer.dto';
 import { Printer } from './entities/printer.entity';
 import { FilterPrinterDto } from 'src/printers/dto/filter-printer.dto';
 import { RequiresPermissions } from '../auth/permissions/permissions.decorator';
-
+import { Public } from '../auth/public.decorator';
 @Controller('printers')
 export class PrintersController {
   constructor(private readonly printersService: PrintersService) {}
@@ -35,11 +35,13 @@ export class PrintersController {
     return this.printersService.removeAll();
   }
 
+  @Public()
   @Get()
   findAll(@Query() filterPrinterDto: FilterPrinterDto) {
     return this.printersService.findAll(filterPrinterDto);
   }
 
+  @Public()
   @Get(':term')
   findOne(@Param('term') term: string): Promise<Printer> {
     console.log('GET /printers/:term - calling findOne method');

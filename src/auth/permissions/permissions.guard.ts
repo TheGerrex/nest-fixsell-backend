@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from './permissions.decorator';
-// import { Role } from '../roles/entities/role.entity';
+import { Role } from '../roles/entities/role.entity';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
@@ -25,17 +25,24 @@ export class PermissionsGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    console.log('User:', user);
-    console.log('Required Permissions:', requiredPermissions);
-    console.log('User Permissions:', user?.permissions);
+    console.log('PermissionsGuard - User:', user);
+    console.log(
+      'PermissionsGuard - Required Permissions:',
+      requiredPermissions,
+    );
 
-    if (!user || !user.permissions) {
-      throw new ForbiddenException('No permissions found for user');
+    if (!user) {
+      throw new ForbiddenException('User not found in request');
     }
 
-    // Check user.permissions directly
+    if (!user.role) {
+      throw new ForbiddenException('No role found for user');
+    }
+
+    const userRole: Role = user.role;
+
     const hasPermission = requiredPermissions.every(
-      (perm) => user.permissions[perm] === true,
+      (perm) => userRole.permission[perm] === true,
     );
 
     if (!hasPermission) {

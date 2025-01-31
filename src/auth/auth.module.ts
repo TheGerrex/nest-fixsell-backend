@@ -9,6 +9,7 @@ import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/entities/role.entity';
 import { Lead } from 'src/sales/leads/entities/lead.entity';
 import { PermissionsModule } from './permissions/permissions.module';
+
 @Module({
   controllers: [AuthController],
   providers: [AuthService],
@@ -23,6 +24,6 @@ import { PermissionsModule } from './permissions/permissions.module';
     RolesModule,
     PermissionsModule,
   ],
-  exports: [TypeOrmModule, JwtModule],
+  exports: [TypeOrmModule, JwtModule, AuthService],
 })
 export class AuthModule {}

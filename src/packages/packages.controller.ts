@@ -10,6 +10,7 @@ import {
 import { PackagesService } from './packages.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
+import { Public } from '../auth/public.decorator';
 
 @Controller('packages')
 export class PackagesController {
@@ -20,11 +21,13 @@ export class PackagesController {
     return this.packagesService.create(createPackageDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.packagesService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.packagesService.findOne(+id);
