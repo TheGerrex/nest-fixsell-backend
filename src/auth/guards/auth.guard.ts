@@ -20,7 +20,6 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      console.log('No token found');
       throw new UnauthorizedException('You are not authorized (no token)');
     }
 
@@ -31,22 +30,19 @@ export class AuthGuard implements CanActivate {
 
       const user = await this.authService.findUserById(payload.id);
       if (!user) {
-        console.log('User does not exist');
         throw new UnauthorizedException('User does not exist');
       }
       if (!user.isActive) {
-        console.log('User is not active');
         throw new UnauthorizedException('User is not active');
       }
-
-      request['user'] = user; // Ensure user is set on the request object
-      console.log('User set in AuthGuard:', user); // Log the user
+      request['user'] = user;
     } catch (error) {
-      console.log('Invalid token');
-      throw new UnauthorizedException('You are not authorized (Invalid token)');
+      throw new UnauthorizedException('You are not authorized(Invalid token)');
     }
 
-    return true;
+    console.log({ token });
+
+    return Promise.resolve(true);
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
