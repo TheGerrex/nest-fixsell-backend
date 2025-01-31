@@ -137,6 +137,10 @@ export class CreatePermissionDto {
   @IsBoolean()
   canConfigureWebsite: boolean;
 
+  //logs
+  @IsBoolean()
+  canViewLogs: boolean;
+
   @IsBoolean()
   canConfigureSupport: boolean;
 }

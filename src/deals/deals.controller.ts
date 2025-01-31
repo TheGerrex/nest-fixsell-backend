@@ -10,7 +10,7 @@ import {
 import { DealsService } from './deals.service';
 import { CreateDealDto } from './dto/create-deal.dto';
 import { UpdateDealDto } from './dto/update-deal.dto';
-
+import { Public } from '../auth/public.decorator';
 @Controller('deals')
 export class DealsController {
   constructor(private readonly dealsService: DealsService) {}
@@ -20,11 +20,13 @@ export class DealsController {
     return this.dealsService.create(createDealDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.dealsService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.dealsService.findOne(+id);

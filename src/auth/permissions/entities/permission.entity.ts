@@ -144,6 +144,10 @@ export class Permission {
   @Column({ default: false })
   canConfigureWebsite: boolean;
 
+  //logs
+  @Column({ default: false })
+  canViewLogs: boolean;
+
   @OneToOne(() => Role, (role) => role.permission, {
     cascade: ['insert', 'update'], // Enable cascading operations if needed
     nullable: true, // Allow null roles if necessary

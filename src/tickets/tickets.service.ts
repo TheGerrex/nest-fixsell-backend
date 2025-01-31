@@ -4,13 +4,14 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { User } from '../auth/entities/user.entity';
 import { Activity } from 'src/activity/entities/activity.entity';
-
+import { AuthGuard } from '../auth/guards/auth.guard';
 @Injectable()
 export class TicketsService {
   constructor(
@@ -185,6 +186,7 @@ export class TicketsService {
     return updatedTicket;
   }
 
+  @UseGuards(AuthGuard)
   async remove(id: number): Promise<string> {
     const result = await this.ticketRepository.delete(id);
     if (result.affected === 0) {
