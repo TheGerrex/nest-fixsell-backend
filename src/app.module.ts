@@ -31,17 +31,17 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { RolesModule } from './auth/roles/roles.module';
 import { SoftwaresModule } from './softwares/softwares.module';
 import { EventsModule } from './events/events.module';
-
+import { AuthGuard } from './auth/guards/auth.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/src/config/env/${process.env.NODE_ENV
-        }.env`,
+      envFilePath: `${process.cwd()}/src/config/env/${
+        process.env.NODE_ENV
+      }.env`,
       isGlobal: true,
       load: [EnvConfiguration],
       validationSchema: JoiValidationSchema,
     }),
-    // PostgreSQL Configuration
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -49,7 +49,6 @@ import { EventsModule } from './events/events.module';
         config: ConfigService,
       ): Promise<TypeOrmModuleOptions> => {
         const isProduction = config.get<string>('NODE_ENV') === 'production';
-
         const baseConfig = {
           type: 'postgres',
           host: config.get<string>('POSTGRES_DB_HOST'),
@@ -58,13 +57,12 @@ import { EventsModule } from './events/events.module';
           username: config.get<string>('POSTGRES_DB_USERNAME'),
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           database: config.get<string>('POSTGRES_DB_NAME'),
-          synchronize: true, // Set to false in production
+          synchronize: true,
           logging: true,
           ssl: isProduction ? {} : false,
         };
 
         if (isProduction) {
-          // Extra SSL configuration for production
           baseConfig.ssl = {
             rejectUnauthorized: false,
             trustServerCertificate: true,
@@ -76,12 +74,11 @@ import { EventsModule } from './events/events.module';
         return baseConfig as TypeOrmModuleOptions;
       },
     }),
-
     // Application Modules
     EmailModule,
     PrintersModule,
     AuthModule,
-    PermissionsModule, // Added PermissionsModule
+    PermissionsModule,
     RolesModule,
     ProductModule,
     ProductCategoriesModule,
@@ -108,8 +105,12 @@ import { EventsModule } from './events/events.module';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: PermissionsGuard, // Register PermissionsGuard globally
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

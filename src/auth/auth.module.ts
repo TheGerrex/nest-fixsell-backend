@@ -23,6 +23,6 @@ import { PermissionsModule } from './permissions/permissions.module';
     RolesModule,
     PermissionsModule,
   ],
-  exports: [TypeOrmModule, JwtModule],
+  exports: [TypeOrmModule, JwtModule, AuthService],
 })
 export class AuthModule {}
