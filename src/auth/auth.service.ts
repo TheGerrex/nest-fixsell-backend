@@ -343,7 +343,7 @@ export class AuthService {
   private getJwtToken(payload: JwtPayload): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_SEED'),
-      expiresIn: '1h',
+      expiresIn: '24h',
     });
   }
 
