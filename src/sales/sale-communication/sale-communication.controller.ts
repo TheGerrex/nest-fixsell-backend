@@ -10,12 +10,14 @@ import {
 import { SaleCommunicationService } from './sale-communication.service';
 import { CreateSaleCommunicationDto } from './dto/create-sale-communication.dto';
 import { UpdateSaleCommunicationDto } from './dto/update-sale-communication.dto';
+import { Public } from 'src/auth/public.decorator';
 
+@Public()
 @Controller('sale-communication')
 export class SaleCommunicationController {
   constructor(
     private readonly saleCommunicationService: SaleCommunicationService,
-  ) {}
+  ) { }
 
   @Post()
   create(@Body() createSaleCommunicationDto: CreateSaleCommunicationDto) {
