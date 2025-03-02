@@ -2,10 +2,12 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { ContactForm } from './interfaces/contactForm.interface';
+import { Public } from 'src/auth/public.decorator';
 
+@Public()
 @Controller('email')
 export class EmailController {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(private readonly emailService: EmailService) { }
 
   @Post('send-email')
   async sendEmail(
