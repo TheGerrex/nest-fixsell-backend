@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -9,6 +9,8 @@ import { SaleCommunication } from '../sale-communication/entities/sale-communica
 
 @Injectable()
 export class LeadsService {
+  private readonly logger = new Logger(LeadsService.name);
+
   constructor(
     @InjectRepository(Lead)
     private readonly leadRepository: Repository<Lead>,
@@ -19,36 +21,81 @@ export class LeadsService {
   ) {}
 
   async create(createLeadDto: CreateLeadDto): Promise<Lead> {
-    // Get all vendors with the canBeAssignedToLead permission
-    const vendors = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.role', 'role')
-      .leftJoinAndSelect('role.permission', 'permission')
-      .leftJoinAndSelect('user.leads', 'lead')
-      .where('permission.canBeAssignedToLead = :canBeAssignedToLead', {
-        canBeAssignedToLead: true,
-      })
-      .getMany();
+    try {
+      this.logger.log(
+        `Creating lead with data: ${JSON.stringify(createLeadDto)}`,
+      );
 
-    // If there are no vendors, log a message
-    if (!vendors.length) {
-      console.log('No vendor found with the canBeAssignedToLead permission');
-      // Optionally, you can return null or handle this case differently
-      return null;
+      // Get all vendors with the canBeAssignedToLead permission
+      const vendorsQuery = this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.role', 'role')
+        .leftJoinAndSelect('role.permission', 'permission')
+        .leftJoinAndSelect('user.leads', 'lead')
+        .where('permission.canBeAssignedToLead = :canBeAssignedToLead', {
+          canBeAssignedToLead: true,
+        });
+
+      this.logger.debug(
+        `Executing vendor query: ${vendorsQuery.getQueryAndParameters()[0]}`,
+      );
+      const vendors = await vendorsQuery.getMany();
+
+      this.logger.log(
+        `Found ${vendors.length} vendors with canBeAssignedToLead permission`,
+      );
+
+      // If there are no vendors, log a message
+      if (!vendors.length) {
+        this.logger.warn(
+          'No vendor found with the canBeAssignedToLead permission. Lead creation aborted.',
+        );
+        return null;
+      }
+
+      // Log vendor details for debugging
+      vendors.forEach((vendor, index) => {
+        this.logger.debug(
+          `Vendor #${index + 1}: ID=${vendor.id}, Name=${
+            vendor.name
+          }, Lead Count=${vendor.leads?.length || 0}`,
+        );
+      });
+
+      // Sort vendors by the number of assigned leads in ascending order
+      vendors.sort((a, b) => (a.leads?.length || 0) - (b.leads?.length || 0));
+
+      // Select the vendor with the least number of assigned leads
+      const selectedVendor = vendors[0];
+      this.logger.log(
+        `Selected vendor for assignment: ID=${selectedVendor.id}, Name=${selectedVendor.name}`,
+      );
+
+      // Create a new lead and assign it to the selected vendor
+      const lead = this.leadRepository.create({
+        ...createLeadDto,
+        assigned: selectedVendor,
+      });
+
+      this.logger.debug(`Lead entity created: ${JSON.stringify(lead)}`);
+
+      try {
+        this.logger.log('Attempting to save lead to database...');
+        const savedLead = await this.leadRepository.save(lead);
+        this.logger.log(`Lead successfully saved with ID: ${savedLead.id}`);
+        return savedLead;
+      } catch (dbError) {
+        this.logger.error(
+          `Database error while saving lead: ${dbError.message}`,
+        );
+        this.logger.error(dbError.stack);
+        throw dbError;
+      }
+    } catch (error) {
+      this.logger.error(`Error in create lead method: ${error.message}`);
+      this.logger.error(error.stack);
+      throw error;
     }
-
-    // Sort vendors by the number of assigned leads in ascending order
-    vendors.sort((a, b) => a.leads.length - b.leads.length);
-
-    // Select the vendor with the least number of assigned leads
-    const selectedVendor = vendors[0];
-
-    // Create a new lead and assign it to the selected vendor
-    const lead = this.leadRepository.create({
-      ...createLeadDto,
-      assigned: selectedVendor,
-    });
-    return this.leadRepository.save(lead);
   }
 
   async findAll() {
