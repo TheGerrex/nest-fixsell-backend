@@ -15,7 +15,7 @@ import { Public } from 'src/auth/public.decorator';
 @Public()
 @Controller('leads')
 export class LeadsController {
-  constructor(private readonly leadsService: LeadsService) { }
+  constructor(private readonly leadsService: LeadsService) {}
 
   @Post()
   create(@Body() createLeadDto: CreateLeadDto) {

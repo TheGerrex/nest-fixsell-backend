@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,8 +13,11 @@ import { Ticket } from './entities/ticket.entity';
 import { User } from '../auth/entities/user.entity';
 import { Activity } from 'src/activity/entities/activity.entity';
 import { AuthGuard } from '../auth/guards/auth.guard';
+
 @Injectable()
 export class TicketsService {
+  private readonly logger = new Logger(TicketsService.name);
+
   constructor(
     @InjectRepository(Ticket)
     private ticketRepository: Repository<Ticket>,
@@ -26,49 +30,115 @@ export class TicketsService {
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
     console.log('Received DTO:', createTicketDto);
 
-    // Ensure correct date conversion
-    try {
-      createTicketDto.appointmentStartTime = new Date(
-        createTicketDto.appointmentStartTime,
-      );
-      createTicketDto.appointmentEndTime = new Date(
-        createTicketDto.appointmentEndTime,
-      );
-    } catch (err) {
-      console.error('Error during date conversion:', err);
+    // Set default dates if not provided or invalid
+    const now = new Date();
+    let startTime = now;
+    let endTime = new Date(now.getTime() + 60 * 60 * 1000); // Default 1 hour later
+
+    // Try to parse dates if provided
+    if (createTicketDto.appointmentStartTime) {
+      const parsedDate = new Date(createTicketDto.appointmentStartTime);
+      if (!isNaN(parsedDate.getTime())) {
+        startTime = parsedDate;
+      } else {
+        console.log(
+          'Invalid appointmentStartTime provided, using current time',
+        );
+      }
+    } else {
+      console.log('No appointmentStartTime provided, using current time');
     }
+
+    if (createTicketDto.appointmentEndTime) {
+      const parsedDate = new Date(createTicketDto.appointmentEndTime);
+      if (!isNaN(parsedDate.getTime())) {
+        endTime = parsedDate;
+      } else {
+        console.log(
+          'Invalid appointmentEndTime provided, using default end time',
+        );
+      }
+    } else {
+      console.log('No appointmentEndTime provided, using default end time');
+    }
+
+    createTicketDto.appointmentStartTime = startTime;
+    createTicketDto.appointmentEndTime = endTime;
+
     console.log('After conversion:', createTicketDto);
 
-    // Use the UUIDs directly
-    const assignedUserId = createTicketDto.assigned;
-    console.log('Assigned User ID:', assignedUserId);
-    const assigneeUserId = createTicketDto.assignee;
-    console.log('Assignee User ID:', assigneeUserId);
+    // Handle user assignments - make them optional
+    let assignedUser = null;
+    let assigneeUser = null;
 
-    // Check if users exist
-    const assignedUser = await this.userRepository.findOneBy({
-      id: assignedUserId.toString(),
-    });
-    const assigneeUser = await this.userRepository.findOneBy({
-      id: assigneeUserId.toString(), // Use the correct ID for assignee
-    });
+    if (createTicketDto.assigned) {
+      console.log('Assigned User ID:', createTicketDto.assigned);
+      assignedUser = await this.userRepository.findOneBy({
+        id: createTicketDto.assigned.toString(),
+      });
 
-    console.log('Assigned User:', assignedUser);
-    console.log('Assignee User:', assigneeUser);
-
-    if (!assignedUser) {
-      throw new NotFoundException('Assigned user not found');
+      if (!assignedUser) {
+        console.log(
+          `Assigned user not found with id: ${createTicketDto.assigned}`,
+        );
+      }
+    } else {
+      console.log('No assigned user provided');
     }
 
-    if (!assigneeUser) {
-      throw new NotFoundException('Assignee user not found');
+    if (createTicketDto.assignee) {
+      console.log('Assignee User ID:', createTicketDto.assignee);
+      assigneeUser = await this.userRepository.findOneBy({
+        id: createTicketDto.assignee.toString(),
+      });
+
+      if (!assigneeUser) {
+        console.log(
+          `Assignee user not found with id: ${createTicketDto.assignee}`,
+        );
+      }
+    } else {
+      console.log('No assignee user provided');
+    }
+
+    // If both assigned and assignee are not provided or not found, select a random user
+    if (!assignedUser || !assigneeUser) {
+      try {
+        console.log('Finding random user for assignment');
+        const users = await this.userRepository.find({ take: 10 }); // Limit to 10 to prevent loading too many users
+
+        if (users.length > 0) {
+          // Select a random user
+          const randomUser = users[Math.floor(Math.random() * users.length)];
+          console.log(
+            `Selected random user: ${randomUser.id} - ${
+              randomUser.name || randomUser.email
+            }`,
+          );
+
+          // Assign to both if not already assigned
+          if (!assignedUser) {
+            assignedUser = randomUser;
+            console.log(`Assigned user set to random user: ${randomUser.id}`);
+          }
+          if (!assigneeUser) {
+            assigneeUser = randomUser;
+            console.log(`Assignee user set to random user: ${randomUser.id}`);
+          }
+        } else {
+          console.log('No users found in database for random assignment');
+        }
+      } catch (error) {
+        console.error('Error selecting random user:', error);
+        // Continue without assignment if there's an error
+      }
     }
 
     const newTicket = this.ticketRepository.create({
       ...createTicketDto,
-      assigned: assignedUser, // Use the entire User object
-      assignee: assigneeUser, // Use the entire User object
-      activities: createTicketDto.activities, // Ensure activities are properly mapped
+      assigned: assignedUser, // May be null or random user
+      assignee: assigneeUser, // May be null or random user
+      activities: createTicketDto.activities || [], // Ensure activities are properly initialized
     });
 
     console.log('New Ticket:', newTicket);
@@ -76,6 +146,7 @@ export class TicketsService {
     try {
       await this.ticketRepository.save(newTicket);
     } catch (err) {
+      console.error('Error saving ticket:', err);
       throw new BadRequestException('Error saving the ticket');
     }
 

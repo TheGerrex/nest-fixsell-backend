@@ -5,7 +5,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '../../../auth/entities/user.entity';
 import { SaleCommunication } from 'src/sales/sale-communication/entities/sale-communication.entity';
 
 export enum Status {
