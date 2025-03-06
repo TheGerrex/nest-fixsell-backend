@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Logger,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -137,8 +142,13 @@ export class LeadsService {
     let lead;
 
     if (id) {
+      const numericId = Number(id);
+      if (isNaN(numericId)) {
+        throw new BadRequestException(`Invalid lead ID format: ${id}`);
+      }
+
       lead = await this.leadRepository.findOne({
-        where: { id: Number(id) }, // Convert id to a number
+        where: { id: numericId },
         relations: ['assigned', 'communications'],
       });
     } else if (name) {
@@ -160,8 +170,13 @@ export class LeadsService {
   }
 
   async update(id: number, updateLeadDto: UpdateLeadDto): Promise<Lead> {
+    const numericId = Number(id);
+    if (isNaN(numericId)) {
+      throw new BadRequestException(`Invalid lead ID format: ${id}`);
+    }
+
     const lead = await this.leadRepository.findOne({
-      where: { id: Number(id) }, // Convert id to a number
+      where: { id: numericId },
       relations: ['assigned', 'communications'],
     });
 
@@ -175,8 +190,13 @@ export class LeadsService {
   }
 
   async remove(id: number): Promise<{ message: string }> {
+    const numericId = Number(id);
+    if (isNaN(numericId)) {
+      throw new BadRequestException(`Invalid lead ID format: ${id}`);
+    }
+
     const lead = await this.leadRepository.findOne({
-      where: { id: Number(id) }, // Convert id to a number
+      where: { id: numericId },
       relations: ['assigned', 'communications'],
     });
 
@@ -187,7 +207,7 @@ export class LeadsService {
     const leadId = lead.id;
     const clientName = lead.client;
 
-    await this.leadRepository.remove(lead); // Fix: Replace the string argument with the lead object
+    await this.leadRepository.remove(lead);
 
     return {
       message: `Lead with id ${leadId} and client name ${clientName} removed successfully`,
