@@ -11,11 +11,13 @@ import {
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { Public } from '../auth/public.decorator';
 
 @Controller('tickets')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
+  @Public()
   @Post()
   create(@Body() createTicketDto: CreateTicketDto) {
     return this.ticketsService.create(createTicketDto);
