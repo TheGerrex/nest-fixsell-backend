@@ -7,7 +7,6 @@ import {
 import { isUUID } from 'class-validator';
 import { CreatePrinterDto } from './dto/create-printer.dto';
 import { UpdatePrinterDto } from './dto/update-printer.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { FilterPrinterDto } from './dto/filter-printer.dto';
 import { Printer } from './entities/printer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -27,7 +26,7 @@ export class PrintersService {
     private configService: ConfigService,
     private brandsService: BrandsService,
     private categoriesService: CategoriesService,
-  ) {}
+  ) { }
 
   async findAll(filtersPrinterDto: FilterPrinterDto = {}): Promise<Printer[]> {
     const {
@@ -48,6 +47,8 @@ export class PrintersService {
       applicableOS,
       printerFunctions,
       barcode,
+      deals,
+      packages,
       ...filterProps
     } = filtersPrinterDto;
 
@@ -64,8 +65,8 @@ export class PrintersService {
           filterProps[key] === 'true'
             ? true
             : filterProps[key] === 'false'
-            ? false
-            : filterProps[key];
+              ? false
+              : filterProps[key];
         query = query.andWhere(`printer.${key} = :${key}`, { [key]: value });
       }
     });
@@ -168,6 +169,22 @@ export class PrintersService {
 
     if (limit) {
       query = query.take(limit);
+    }
+
+    if (deals !== undefined) {
+      if (deals) {
+        query = query.andWhere('deals.id IS NOT NULL');
+      } else {
+        query = query.andWhere('deals.id IS NULL');
+      }
+    }
+
+    if (packages !== undefined) {
+      if (packages) {
+        query = query.andWhere('packages.id IS NOT NULL');
+      } else {
+        query = query.andWhere('packages.id IS NULL');
+      }
     }
 
     query = query.skip(offset);

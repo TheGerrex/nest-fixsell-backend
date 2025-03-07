@@ -23,57 +23,64 @@ import {
 // ];
 
 export class FilterConsumibleDto {
-    @IsOptional()
-    @IsPositive()
-    @Type(() => Number)
-    limit?: number;
+  @IsOptional()
+  @IsPositive()
+  @Type(() => Number)
+  limit?: number;
 
-    @IsOptional()
-    @Min(0)
-    @Type(() => Number)
-    offset?: number;
+  @IsOptional()
+  @Min(0)
+  @Type(() => Number)
+  offset?: number;
 
-    @IsString()
-    @IsOptional()
-    @Transform(({ value }) => value.toLowerCase())
-    name?: string;
+  @IsString()
+  @IsOptional()
+  @Transform(({ value }) => value.toLowerCase())
+  name?: string;
 
-    // @IsIn(brands, { each: true })
-    @IsString({ each: true })
-    @IsOptional()
-    brand?: string;
+  // @IsIn(brands, { each: true })
+  @IsString({ each: true })
+  @IsOptional()
+  brand?: string;
 
-    @IsOptional()
-    @IsDecimal()
-    price?: number;
+  @IsOptional()
+  @IsDecimal()
+  price?: number;
 
-    @IsString()
-    @IsOptional()
-    @Transform(({ value }) => value.toLowerCase())
-    sku?: string;
+  @IsString()
+  @IsOptional()
+  @Transform(({ value }) => value.toLowerCase())
+  sku?: string;
 
-    @IsEnum(Origen)
-    @IsOptional()
-    origen?: Origen;
+  @IsEnum(Origen)
+  @IsOptional()
+  origen?: Origen;
 
-    @IsOptional()
-    @IsDecimal()
-    volume?: number;
-    
-    @IsString({ each: true })
-    @IsOptional()
-    compatibleModels?: string[];
+  @IsOptional()
+  @IsDecimal()
+  volume?: number;
 
-    @IsEnum(Color)
-    @IsOptional()
-    color?: Color;
+  @IsString({ each: true })
+  @IsOptional()
+  compatibleModels?: string[];
 
-    @IsInt()
-    @IsOptional()
-    yield?: number;
+  @IsEnum(Color)
+  @IsOptional()
+  color?: Color;
 
-    // @IsIn(categories, { each: true })
-    @IsString()
-    @IsOptional()
-    category?: string;
+  @IsString({ each: true })
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.toLowerCase().split(',') : value,
+  )
+  yieldValue?: string[];
+
+  // @IsIn(categories, { each: true })
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => Array.isArray(value) ? value.length > 0 : value === 'true')
+  deals?: boolean;
 }
