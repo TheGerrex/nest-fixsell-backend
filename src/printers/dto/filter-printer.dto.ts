@@ -3,45 +3,45 @@ import {
   IsArray,
   IsBoolean,
   IsDecimal,
-  IsIn,
   IsOptional,
   IsPositive,
   IsString,
-  IsUrl,
   Min,
 } from 'class-validator';
 
-const brands = ['konica minolta', 'kyocera', 'epson', 'audley', 'prixato'];
-const categories = [
-  'oficina',
-  'produccion',
-  'inyeccion de tinta',
-  'artes graficas',
-  'etiquetas',
-  'plotter',
-];
+// const brands = ['konica minolta', 'kyocera', 'epson', 'audley', 'prixato'];
 
-const printSizes = [
-  'carta',
-  'doble carta',
-  'tabloide',
-  'tabloide plus',
-  'legal',
-  'rollo 4',
-  'rollo 4.25',
-  'rollo 8',
-  'rollo 8.34',
-  'rollo 13',
-];
-const printVelocity = [
-  '24-30',
-  '30-40',
-  '40-50',
-  '50-60',
-  '60-80',
-  '80-100',
-  '100+',
-];
+// const categories = [
+//   'oficina',
+//   'produccion',
+//   'inyeccion de tinta',
+//   'artes graficas',
+//   'etiquetas',
+//   'plotter',
+// ];
+
+// const printSizes = [
+//   'carta',
+//   'doble carta',
+//   'tabloide',
+//   'tabloide plus',
+//   'legal',
+//   'rollo 4',
+//   'rollo 4.25',
+//   'rollo 8',
+//   'rollo 8.34',
+//   'rollo 13',
+// ];
+
+// const printVelocity = [
+//   '24-30',
+//   '30-40',
+//   '40-50',
+//   '50-60',
+//   '60-80',
+//   '80-100',
+//   '100+',
+// ];
 
 export class FilterPrinterDto {
   @IsOptional()
@@ -54,7 +54,7 @@ export class FilterPrinterDto {
   @Type(() => Number) //enableImplicitConversions: true
   offset?: number;
 
-  @IsIn(brands, { each: true })
+  // @IsIn(brands, { each: true })
   @IsString({ each: true })
   @IsOptional()
   @Transform(({ value }) =>
@@ -71,7 +71,7 @@ export class FilterPrinterDto {
   @IsDecimal()
   price?: number;
 
-  @IsIn(categories, { each: true })
+  // @IsIn(categories, { each: true })
   @IsString({ each: true })
   @IsOptional()
   @Transform(({ value }) =>
@@ -136,7 +136,7 @@ export class FilterPrinterDto {
   @Transform(({ value }) => value.toLowerCase())
   maxPrintSize?: string;
 
-  @IsIn(printSizes, { each: true })
+  // @IsIn(printSizes, { each: true })
   @IsString({ each: true })
   @IsOptional()
   @Transform(({ value }) =>
@@ -174,4 +174,12 @@ export class FilterPrinterDto {
   @IsArray()
   @Transform(({ value }) => value.toLowerCase())
   barcode?: string[];
+
+  @IsOptional()
+  @Transform(({ value }) => Array.isArray(value) ? value.length > 0 : value === 'true')
+  deals?: boolean;
+
+  @IsOptional()
+  @Transform(({ value }) => Array.isArray(value) ? value.length > 0 : value === 'true')
+  packages?: boolean;
 }

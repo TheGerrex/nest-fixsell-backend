@@ -32,7 +32,7 @@ export class ConsumiblesService {
     private configService: ConfigService,
     private brandsService: BrandsService,
     private categoriesService: CategoriesService,
-  ) {}
+  ) { }
 
   async create(createConsumibleDto: CreateConsumibleDto) {
     try {
@@ -102,109 +102,127 @@ export class ConsumiblesService {
   }
 
   async findAll(filterConsumibleDto: FilterConsumibleDto = {}): Promise<Consumible[]> {
-  const {
-    limit,
-    offset = 0, 
-    name,
-    brand, 
-    price, 
-    sku,
-    origen,
-    volume, 
-    compatibleModels,
-    color, 
-    yield: yieldValue, 
-    category,
-    ...filterProps
-  } = filterConsumibleDto
+    const {
+      limit,
+      offset = 0,
+      name,
+      brand,
+      price,
+      sku,
+      origen,
+      volume,
+      compatibleModels,
+      color,
+      yieldValue,
+      category,
+      deals,
+      ...filterProps
+    } = filterConsumibleDto
 
-  let query = this.consumibleRepository
-    .createQueryBuilder('consumible')
-    .leftJoinAndSelect('consumible.printers', 'printers')
-    .leftJoinAndSelect('consumible.deals', 'deals')
-    .leftJoinAndSelect('consumible.counterparts', 'counterparts');
-
-  Object.keys(filterProps).forEach((key) => {
-    if (filterProps[key] !== undefined) {
-      const value =
-        filterProps[key] === 'true'
-          ? true
-          : filterProps[key] === 'false'
-          ? false
-          : filterProps[key];
-      query = query.andWhere(`consumible.${key} = :${key}`, { [key]: value });
-    }
-  });
-
-  if (name) {
-    query = query.andWhere('LOWER(consumible.name) = :name', { name: name.toLowerCase() });
-  }
-
-  if (brand) {
-    query = query.andWhere('LOWER(consumible.brand) = :brand', { brand: brand.toLowerCase() });
-  }
-
-  if (sku) {
-    query = query.andWhere('LOWER(consumible.sku) LIKE :sku', { sku: `%${sku.toLowerCase()}%` });
-  }
-
-  if (category) {
-    query = query.andWhere('LOWER(consumible.category) = :category', { category: category.toLowerCase() });
-  }
-
-  if (compatibleModels) {
-    query = query.andWhere(':compatibleModels = ANY(consumible.compatibleModels)', { compatibleModels });
-  }
-
-  if (color) {
-    query = query.andWhere('consumible.color = :color', { color });
-  }
-
-  if (yieldValue) {
-    query = query.andWhere('LOWER(consumible.yield) = :yieldValue', { yieldValue });
-  }
-
-  if (limit) {
-    query = query.take(limit);
-  }
-
-  query = query.skip(offset);
-
-  try {
-  return await query.getMany();
-} catch (error) {
-  console.error(error);
-  throw new InternalServerErrorException('Error executing query');
-}
-}
-
-
-async findOne(term: string): Promise<Consumible> {
-  let consumible: Consumible;
-
-  if (isUUID(term)) {
-    consumible = await this.consumibleRepository.findOne({
-      where: { id: term },
-      relations: ['printers', 'deals', 'counterparts'],
-    });
-  } else {
-    consumible = await this.consumibleRepository
+    let query = this.consumibleRepository
       .createQueryBuilder('consumible')
       .leftJoinAndSelect('consumible.printers', 'printers')
       .leftJoinAndSelect('consumible.deals', 'deals')
-      .leftJoinAndSelect('consumible.counterparts', 'counterparts')
-      .where(`UPPER(consumible.name) = :name`, {
-        name: term.toUpperCase(),
-      })
-      .getOne();
+      .leftJoinAndSelect('consumible.counterparts', 'counterparts');
+
+    Object.keys(filterProps).forEach((key) => {
+      if (filterProps[key] !== undefined) {
+        const value =
+          filterProps[key] === 'true'
+            ? true
+            : filterProps[key] === 'false'
+              ? false
+              : filterProps[key];
+        query = query.andWhere(`consumible.${key} = :${key}`, { [key]: value });
+      }
+    });
+
+    if (name) {
+      query = query.andWhere('LOWER(consumible.name) = :name', { name: name.toLowerCase() });
+    }
+
+    if (brand) {
+      query = query.andWhere('LOWER(consumible.brand) = :brand', { brand: brand.toLowerCase() });
+    }
+
+    if (sku) {
+      query = query.andWhere('LOWER(consumible.sku) LIKE :sku', { sku: `%${sku.toLowerCase()}%` });
+    }
+
+    if (category) {
+      query = query.andWhere('LOWER(consumible.category) = :category', { category: category.toLowerCase() });
+    }
+
+    if (compatibleModels) {
+      query = query.andWhere(':compatibleModels = ANY(consumible.compatibleModels)', { compatibleModels });
+    }
+
+    if (color) {
+      query = query.andWhere('consumible.color = :color', { color });
+    }
+
+    if (yieldValue) {
+      const yieldConditions = yieldValue.map((range) => {
+        const [min, max] = range.split('-').map(Number);
+        if (max) {
+          return `CAST(consumible.yield AS INTEGER) >= ${min} AND CAST(consumible.yield AS INTEGER) <= ${max}`;
+        } else {
+          return `CAST(consumible.yield AS INTEGER) >= ${min}`;
+        }
+      }).join(' OR ');
+
+      query = query.andWhere(`(${yieldConditions})`);
+    }
+
+    if (deals !== undefined) {
+      if (deals) {
+        query = query.andWhere('deals.id IS NOT NULL');
+      } else {
+        query = query.andWhere('deals.id IS NULL');
+      }
+    }
+
+    if (limit) {
+      query = query.take(limit);
+    }
+
+    query = query.skip(offset);
+
+    try {
+      return await query.getMany();
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('Error executing query');
+    }
   }
 
-  if (!consumible) {
-    throw new NotFoundException('Consumible not found');
-  }
 
-  return consumible;
-}
+  async findOne(term: string): Promise<Consumible> {
+    let consumible: Consumible;
+
+    if (isUUID(term)) {
+      consumible = await this.consumibleRepository.findOne({
+        where: { id: term },
+        relations: ['printers', 'deals', 'counterparts'],
+      });
+    } else {
+      consumible = await this.consumibleRepository
+        .createQueryBuilder('consumible')
+        .leftJoinAndSelect('consumible.printers', 'printers')
+        .leftJoinAndSelect('consumible.deals', 'deals')
+        .leftJoinAndSelect('consumible.counterparts', 'counterparts')
+        .where(`UPPER(consumible.name) = :name`, {
+          name: term.toUpperCase(),
+        })
+        .getOne();
+    }
+
+    if (!consumible) {
+      throw new NotFoundException('Consumible not found');
+    }
+
+    return consumible;
+  }
 
   async update(id: string, updateConsumibleDto: UpdateConsumibleDto) {
     console.log('Updating consumible with ID:', id);
