@@ -34,6 +34,7 @@ import { SoftwaresModule } from './softwares/softwares.module';
 import { EventsModule } from './events/events.module';
 import { ChangelogModule } from './changelog/changelog.module';
 import { LogInterceptor } from './changelog/log/log.interceptor'; // Import LogInterceptor
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
   imports: [
@@ -108,6 +109,7 @@ import { LogInterceptor } from './changelog/log/log.interceptor'; // Import LogI
     SoftwaresModule,
     EventsModule,
     ChangelogModule,
+    ClientsModule,
   ],
   providers: [
     {
