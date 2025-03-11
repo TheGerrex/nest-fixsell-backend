@@ -37,7 +37,10 @@ export class ClientsService {
 
   async findAll(): Promise<Client[]> {
     try {
-      return await this.clientRepository.find({ where: { isActive: true } });
+      return await this.clientRepository.find({
+        where: { isActive: true },
+        relations: ['accounts', 'clientPrinters', 'clientPrinters.printer'],
+      });
     } catch (error) {
       throw new InternalServerErrorException('Error retrieving clients');
     }
@@ -49,10 +52,14 @@ export class ClientsService {
       throw new BadRequestException(`Invalid UUID format: ${id}`);
     }
     try {
-      const client = await this.clientRepository.findOneBy({
-        id,
-        isActive: true,
+      const client = await this.clientRepository.findOne({
+        where: {
+          id,
+          isActive: true,
+        },
+        relations: ['accounts', 'clientPrinters', 'clientPrinters.printer'],
       });
+
       if (!client) {
         throw new NotFoundException(`Client with id ${id} not found`);
       }

@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CfdiAllowedValues } from '../interfaces/cfdi.interface';
 import { ClientPrinter } from '../client-printers/entities/client-printer.entity';
+import { ClientAccount } from '../client-accounts/entities/client-account.entity';
 
 @Entity({ name: 'clients' })
 export class Client {
@@ -93,4 +94,8 @@ export class Client {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  // Client has many accounts (One to Many)
+  @OneToMany(() => ClientAccount, (account) => account.client)
+  accounts: ClientAccount[];
 }

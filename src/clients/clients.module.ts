@@ -4,9 +4,14 @@ import { ClientsController } from './clients.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
 import { ClientPrintersModule } from './client-printers/client-printers.module';
+import { ClientAccountsModule } from './client-accounts/client-accounts.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Client]), ClientPrintersModule],
+  imports: [
+    TypeOrmModule.forFeature([Client]),
+    ClientPrintersModule,
+    ClientAccountsModule,
+  ],
   controllers: [ClientsController],
   providers: [ClientsService],
   exports: [ClientsService],
