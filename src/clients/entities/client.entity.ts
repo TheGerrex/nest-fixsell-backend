@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CfdiAllowedValues } from '../interfaces/cfdi.interface';
+import { ClientPrinter } from '../client-printers/entities/client-printer.entity';
 
 @Entity({ name: 'clients' })
 export class Client {
@@ -77,6 +78,11 @@ export class Client {
 
   @Column('bool', { default: true })
   isActive: boolean;
+
+  @OneToMany(() => ClientPrinter, (clientPrinter) => clientPrinter.client, {
+    cascade: true,
+  })
+  clientPrinters: ClientPrinter[];
 
   // timestamp created at and updated at
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
