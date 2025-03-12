@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Client } from '../../entities/client.entity';
 import { PaymentMethod } from '../../interfaces/payment-method.interface';
+import { PaymentComplementInfo } from '../../payment-complement-info/entities/payment-complement-info.entity';
 
 @Entity('client_accounts')
 export class ClientAccount {
@@ -54,4 +56,7 @@ export class ClientAccount {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @OneToMany(() => PaymentComplementInfo, (info) => info.clientAccount)
+  paymentComplementInfo: PaymentComplementInfo[];
 }

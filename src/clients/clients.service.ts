@@ -39,9 +39,23 @@ export class ClientsService {
     try {
       return await this.clientRepository.find({
         where: { isActive: true },
-        relations: ['accounts', 'clientPrinters', 'clientPrinters.printer'],
+        relations: [
+          'accounts',
+          'accounts.paymentComplementInfo',
+          'clientPrinters',
+          'clientPrinters.printer',
+          'contacts',
+          'shippingAddresses',
+          'billingAddresses',
+          'suspensionConfig',
+          'commercialConditions',
+          'commercialConditions.assignedExecutive',
+          'commercialConditions.collectionExecutive',
+          'classifications',
+        ],
       });
     } catch (error) {
+      console.error('Error retrieving clients:', error);
       throw new InternalServerErrorException('Error retrieving clients');
     }
   }
@@ -57,7 +71,20 @@ export class ClientsService {
           id,
           isActive: true,
         },
-        relations: ['accounts', 'clientPrinters', 'clientPrinters.printer'],
+        relations: [
+          'accounts',
+          'accounts.paymentComplementInfo',
+          'clientPrinters',
+          'clientPrinters.printer',
+          'contacts',
+          'shippingAddresses',
+          'billingAddresses',
+          'suspensionConfig',
+          'commercialConditions',
+          'commercialConditions.assignedExecutive',
+          'commercialConditions.collectionExecutive',
+          'classifications',
+        ],
       });
 
       if (!client) {
@@ -71,6 +98,7 @@ export class ClientsService {
       ) {
         throw error;
       }
+      console.error('Error retrieving client:', error);
       throw new InternalServerErrorException('Error retrieving client');
     }
   }

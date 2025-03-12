@@ -1,7 +1,20 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CfdiAllowedValues } from '../interfaces/cfdi.interface';
 import { ClientPrinter } from '../client-printers/entities/client-printer.entity';
 import { ClientAccount } from '../client-accounts/entities/client-account.entity';
+import { ClientContact } from '../client-contacts/entities/client-contact.entity';
+import { ClientShippingAddress } from '../client-shipping-addresses/entities/client-shipping-address.entity';
+import { ClientBillingAddress } from '../client-billing-addresses/entities/client-billing-address.entity';
+import { PaymentComplementInfo } from '../payment-complement-info/entities/payment-complement-info.entity';
+import { ClientSuspensionConfig } from '../client-suspension-configs/entities/client-suspension-config.entity';
+import { ClientCommercialCondition } from '../client-commercial-conditions/entities/client-commercial-condition.entity';
+import { ClientClassification } from '../client-classifications/entities/client-classification.entity';
 
 @Entity({ name: 'clients' })
 export class Client {
@@ -98,4 +111,37 @@ export class Client {
   // Client has many accounts (One to Many)
   @OneToMany(() => ClientAccount, (account) => account.client)
   accounts: ClientAccount[];
+
+  // Client has many contacts (One to Many)
+  @OneToMany(() => ClientContact, (contact) => contact.client)
+  contacts: ClientContact[];
+
+  // Client has many shipping addresses (One to Many)
+  @OneToMany(() => ClientShippingAddress, (address) => address.client)
+  shippingAddresses: ClientShippingAddress[];
+
+  // Client has many billing addresses (One to Many)
+  @OneToMany(() => ClientBillingAddress, (address) => address.client)
+  billingAddresses: ClientBillingAddress[];
+
+  @OneToOne(() => ClientSuspensionConfig, (config) => config.client, {
+    cascade: true,
+  })
+  suspensionConfig: ClientSuspensionConfig;
+
+  @OneToOne(
+    () => ClientCommercialCondition,
+    (conditions) => conditions.client,
+    { cascade: true },
+  )
+  commercialConditions: ClientCommercialCondition;
+
+  @OneToOne(
+    () => ClientClassification,
+    (classification) => classification.client,
+    {
+      cascade: true,
+    },
+  )
+  classifications: ClientClassification;
 }
