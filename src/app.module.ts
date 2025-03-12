@@ -34,6 +34,7 @@ import { SoftwaresModule } from './softwares/softwares.module';
 import { EventsModule } from './events/events.module';
 import { ChangelogModule } from './changelog/changelog.module';
 import { LogInterceptor } from './changelog/log/log.interceptor'; // Import LogInterceptor
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
   imports: [
@@ -65,6 +66,25 @@ import { LogInterceptor } from './changelog/log/log.interceptor'; // Import LogI
           synchronize: true, // Set to false in production
           logging: true,
           ssl: isProduction ? {} : false,
+
+          // Add connection stability improvements
+          connectTimeoutMS: 10000,
+          maxQueryExecutionTime: 30000,
+          retryAttempts: 3,
+          retryDelay: 3000,
+
+          // Add connection pool settings
+          extra: {
+            // Pool configuration to improve stability
+            poolSize: 20,
+            max: 20,
+            idleTimeoutMillis: 30000,
+            // Auto-disconnect idle clients after 30s
+            application_name: 'nest-fixsell-backend',
+            // Handle TCP keepalive to detect dead connections
+            keepAlive: true,
+            keepAliveInitialDelayMillis: 10000,
+          },
         };
 
         if (isProduction) {
@@ -108,6 +128,7 @@ import { LogInterceptor } from './changelog/log/log.interceptor'; // Import LogI
     SoftwaresModule,
     EventsModule,
     ChangelogModule,
+    ClientsModule,
   ],
   providers: [
     {

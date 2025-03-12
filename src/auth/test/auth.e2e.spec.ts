@@ -77,12 +77,23 @@ describe('Auth Module (e2e)', () => {
                 password: config.get<string>('POSTGRES_PASSWORD'),
                 username: config.get<string>('POSTGRES_DB_USERNAME'),
                 database: config.get<string>('POSTGRES_DB_NAME'),
-                // Remove the explicit entities array
-                // entities: [User, Role, Permission, Lead],
-                autoLoadEntities: true, // Use this instead
+                // Replace autoLoadEntities with explicit entities needed for testing
+                entities: [User, Role, Permission, Lead, SaleCommunication],
+                // Or use path-based loading like in your app module:
+                // entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
                 synchronize: false,
-                logging: ['error'], // Reduce logging to only errors
+                logging: ['error'],
                 ssl: isProduction ? {} : false,
+                // Add the connection stability settings from your app module
+                connectTimeoutMS: 10000,
+                maxQueryExecutionTime: 30000,
+                retryAttempts: 3,
+                retryDelay: 3000,
+                extra: {
+                  poolSize: 20,
+                  max: 20,
+                  idleTimeoutMillis: 30000,
+                },
               };
 
               return baseConfig as TypeOrmModuleOptions;
@@ -228,11 +239,18 @@ describe('Auth Module (e2e)', () => {
         const roleRepo = dataSource.getRepository(Role);
         const permissionRepo = dataSource.getRepository(Permission);
 
+        // First, delete all the test users that were created
         if (testUserId) {
           console.log(`Deleting test user: ${testUserId}`);
           await userRepo.delete(testUserId);
         }
 
+        // Delete the admin and regular users that were created during setup
+        console.log('Deleting admin and regular test users by email...');
+        await userRepo.delete({ email: adminUser.email });
+        await userRepo.delete({ email: regularUser.email });
+
+        // Now that all users are deleted, we can safely delete the roles
         // Delete roles and permissions created for this test
         if (adminRoleId) {
           console.log(`Deleting admin role: ${adminRoleId}`);
@@ -241,9 +259,10 @@ describe('Auth Module (e2e)', () => {
             relations: ['permission'],
           });
           if (adminRole) {
+            const permissionId = adminRole.permission?.id;
             await roleRepo.remove(adminRole);
-            if (adminRole.permission) {
-              await permissionRepo.delete(adminRole.permission.id);
+            if (permissionId) {
+              await permissionRepo.delete(permissionId);
             }
           }
         }
@@ -255,9 +274,10 @@ describe('Auth Module (e2e)', () => {
             relations: ['permission'],
           });
           if (regularRole) {
+            const permissionId = regularRole.permission?.id;
             await roleRepo.remove(regularRole);
-            if (regularRole.permission) {
-              await permissionRepo.delete(regularRole.permission.id);
+            if (permissionId) {
+              await permissionRepo.delete(permissionId);
             }
           }
         }
