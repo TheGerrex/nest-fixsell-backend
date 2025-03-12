@@ -38,7 +38,6 @@ export class ClientsService {
   async findAll(): Promise<Client[]> {
     try {
       return await this.clientRepository.find({
-        where: { isActive: true },
         relations: [
           'accounts',
           'accounts.paymentComplementInfo',
