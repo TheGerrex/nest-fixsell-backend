@@ -4,28 +4,36 @@ import { Status, ProductType } from '../entities/lead.entity';
 export class CreateLeadDto {
   @IsOptional()
   @IsString()
-  client: string;
+  client?: string;
 
   @IsOptional()
   @IsEnum(Status)
-  status: Status;
+  status?: Status;
 
   @IsOptional()
-  assigned: string;
+  assigned?: string;
 
   @IsOptional()
   @IsString()
-  product_interested: string;
+  product_interested?: string;
 
   @IsOptional()
   @IsEnum(ProductType)
-  type_of_product: ProductType;
+  type_of_product?: ProductType;
 
   @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsOptional()
   @IsString()
-  phone: string;
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  regionLocation?: string;
+
+  @IsOptional()
+  @IsString()
+  zoneLocation?: string;
 }

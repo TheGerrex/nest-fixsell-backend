@@ -19,6 +19,7 @@ export enum ProductType {
   RENT_PACKAGE = 'rent_package',
   PROMOTION = 'promotion',
   SOFTWARE = 'software',
+  CONTACT = 'contact',
   // Add other product types here
 }
 
@@ -58,6 +59,12 @@ export class Lead {
 
   @Column({ nullable: true })
   phone: string;
+
+  @Column({ nullable: true })
+  regionLocation: string;
+
+  @Column({ nullable: true })
+  zoneLocation: string;
 
   @OneToMany(
     () => SaleCommunication,
