@@ -90,6 +90,21 @@ export class CreatePermissionDto {
   @IsBoolean()
   canBeAssignedToLead: boolean;
 
+  // clients
+  // clients
+  @IsBoolean()
+  canCreateClient: boolean;
+  @IsBoolean()
+  canDeleteClient: boolean;
+  @IsBoolean()
+  canUpdateClient: boolean;
+  @IsBoolean()
+  canViewClient: boolean;
+  @IsBoolean()
+  canViewAllClients: boolean;
+  @IsBoolean()
+  canBeAssignedToClient: boolean;
+
   // user
   @IsBoolean()
   canCreateUser: boolean;

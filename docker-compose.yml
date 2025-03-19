@@ -3,7 +3,7 @@ version: '3'
 services:
   postgres_db:
     container_name: postgres_fixsell_db
-    image: postgres:14.3
+    image: postgres:15.5 # updated version
     restart: always
     ports:
       - '5432:5432'

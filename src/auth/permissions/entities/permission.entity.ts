@@ -86,6 +86,20 @@ export class Permission {
   @Column({ default: false })
   canBeAssignedToLead: boolean;
 
+  // clients
+  @Column({ default: false })
+  canCreateClient: boolean;
+  @Column({ default: false })
+  canDeleteClient: boolean;
+  @Column({ default: false })
+  canUpdateClient: boolean;
+  @Column({ default: false })
+  canViewClient: boolean;
+  @Column({ default: false })
+  canViewAllClients: boolean;
+  @Column({ default: false })
+  canBeAssignedToClient: boolean;
+
   // user
   @Column({ default: false })
   canCreateUser: boolean;
@@ -143,6 +157,8 @@ export class Permission {
   //configs
   @Column({ default: false })
   canConfigureWebsite: boolean;
+  @Column({ default: false })
+  canConfigureSupport: boolean;
 
   //logs
   @Column({ default: false })
