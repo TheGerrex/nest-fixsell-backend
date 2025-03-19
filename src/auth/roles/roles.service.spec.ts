@@ -145,6 +145,12 @@ describe('RolesService', () => {
           canConfigureWebsite: true,
           canViewLogs: true,
           canConfigureSupport: true,
+          canCreateClient: false,
+          canDeleteClient: false,
+          canUpdateClient: false,
+          canViewClient: false,
+          canViewAllClients: false,
+          canBeAssignedToClient: false,
         },
       };
 
@@ -321,6 +327,12 @@ describe('RolesService', () => {
           canConfigureWebsite: true,
           canViewLogs: true,
           canConfigureSupport: true,
+          canCreateClient: false,
+          canDeleteClient: false,
+          canUpdateClient: false,
+          canViewClient: false,
+          canViewAllClients: false,
+          canBeAssignedToClient: false,
         },
       };
 

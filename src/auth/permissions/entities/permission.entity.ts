@@ -157,6 +157,8 @@ export class Permission {
   //configs
   @Column({ default: false })
   canConfigureWebsite: boolean;
+  @Column({ default: false })
+  canConfigureSupport: boolean;
 
   //logs
   @Column({ default: false })

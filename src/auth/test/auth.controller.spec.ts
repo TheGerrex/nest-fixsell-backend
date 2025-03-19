@@ -77,7 +77,14 @@ describe('AuthController', () => {
     canViewEvent: true,
     canConfigureWebsite: true,
     canViewLogs: true,
-    role: undefined, // This is circular reference, can be undefined in tests
+    role: undefined,
+    canCreateClient: false,
+    canDeleteClient: false,
+    canUpdateClient: false,
+    canViewClient: false,
+    canViewAllClients: false,
+    canBeAssignedToClient: false,
+    canConfigureSupport: false,
   };
 
   // Mock user data with required leads property
