@@ -156,6 +156,7 @@ export class TicketsService {
   async findAll(): Promise<Ticket[]> {
     return await this.ticketRepository.find({
       relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],
+      order: { updatedDate: 'ASC' },
     });
   }
 
@@ -164,6 +165,7 @@ export class TicketsService {
       .createQueryBuilder('ticket')
       .innerJoinAndSelect('ticket.assigned', 'assigned')
       .where('assigned.id = :userId', { userId })
+      .orderBy('ticket.updatedDate', 'ASC')
       .getMany();
   }
 
