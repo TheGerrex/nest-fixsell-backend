@@ -203,7 +203,8 @@ export class TicketsService {
       updateTicketDto.appointmentEndTime,
     );
 
-    let updateData = { ...updateTicketDto };
+    // Merge updateTicketDto with the current timestamp for updatedDate (Ultima Actualización)
+    let updateData = { ...updateTicketDto, updatedDate: new Date() };
 
     // Assigned user update
     if (updateTicketDto.assigned) {
@@ -225,13 +226,11 @@ export class TicketsService {
       const assigneeUser = await this.userRepository.findOneBy({
         id: assigneeUserId.toString(),
       });
-
       if (!assigneeUser) {
         throw new NotFoundException(
           `Assignee user not found with id: ${assigneeUserId}`,
         );
       }
-
       updateData = { ...updateData, assignee: assigneeUser };
     }
 
@@ -247,15 +246,12 @@ export class TicketsService {
 
     // Update the ticket
     await this.ticketRepository.update(id, updateData);
-
     console.log('Ticket updated successfully with:', updateData);
 
     const updatedTicket = await this.ticketRepository.findOneBy({ id });
-
     if (!updatedTicket) {
       throw new NotFoundException('Ticket not found');
     }
-
     return updatedTicket;
   }
 
