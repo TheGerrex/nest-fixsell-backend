@@ -66,6 +66,17 @@ export class ActivityService {
     // Save the activity
     await this.activitiesRepository.save(activity);
 
+    // Update the ticket's updatedDate with the current date and time
+    const currentUtcDate = new Date().toISOString();
+    await this.ticketRepository.query(
+      `UPDATE ticket SET "updatedDate" = $1 WHERE id = $2`,
+      [currentUtcDate, ticket.id],
+    );
+
+    console.log(
+      `Updated ticket ${ticket.id} updatedDate to ${currentUtcDate} after activity creation`,
+    );
+
     return activity;
   }
 
@@ -138,6 +149,18 @@ export class ActivityService {
     if (!updatedActivity) {
       throw new NotFoundException(`Actividad no encontrada con el id: ${id}`);
     }
+
+    // Update the ticket's updatedDate with the current date and time
+    const currentUtcDate = new Date().toISOString();
+    await this.ticketRepository.query(
+      `UPDATE ticket SET "updatedDate" = $1 WHERE id = $2`,
+      [currentUtcDate, ticket.id],
+    );
+
+    // Log the update (optional)
+    console.log(
+      `Updated ticket ${ticket.id} updatedDate to ${currentUtcDate} after activity update`,
+    );
 
     return updatedActivity;
   }

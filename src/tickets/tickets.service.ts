@@ -180,76 +180,61 @@ export class TicketsService {
     console.log('updateTicketDto:', updateTicketDto);
     console.log('Updating ticket with ID:', id);
 
+    // First get the existing ticket
+    const ticket = await this.ticketRepository.findOne({
+      where: { id },
+      relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],
+    });
+
+    if (!ticket) {
+      throw new NotFoundException('Ticket not found');
+    }
+
+    // Track if we've updated activities
+    let activitiesChanged = false;
+    if (
+      updateTicketDto.activities &&
+      updateTicketDto.activities.length !== ticket.activities.length
+    ) {
+      activitiesChanged = true;
+      this.logger.log(
+        `Activities changed from ${ticket.activities.length} to ${updateTicketDto.activities.length}`,
+      );
+    }
+
+    // Apply all the regular updates
+    if (updateTicketDto.activities)
+      ticket.activities = updateTicketDto.activities;
     if (updateTicketDto.appointmentStartTime) {
-      updateTicketDto.appointmentStartTime = new Date(
+      ticket.appointmentStartTime = new Date(
         updateTicketDto.appointmentStartTime,
       );
     }
     if (updateTicketDto.appointmentEndTime) {
-      updateTicketDto.appointmentEndTime = new Date(
-        updateTicketDto.appointmentEndTime,
-      );
+      ticket.appointmentEndTime = new Date(updateTicketDto.appointmentEndTime);
     }
+    // ... all other field updates
 
-    console.log(
-      'Converted appointmentStartTime:',
-      updateTicketDto.appointmentStartTime,
+    // CRITICAL: First save the basic entity with all changes EXCEPT date
+    await this.ticketRepository.save(ticket);
+
+    // THEN force update the date field with direct SQL as a separate transaction
+    const currentUtcDate = new Date().toISOString();
+    await this.ticketRepository.query(
+      `UPDATE ticket SET "updatedDate" = $1 WHERE id = $2`,
+      [currentUtcDate, id],
     );
-    console.log(
-      'Converted appointmentEndTime:',
-      updateTicketDto.appointmentEndTime,
-    );
 
-    // Simply merge your DTO without manually setting updatedDate
-    let updateData = { ...updateTicketDto };
+    this.logger.log(`Force updated date to: ${currentUtcDate}`);
 
-    // Assigned user update
-    if (updateTicketDto.assigned) {
-      const assignedUserId = updateTicketDto.assigned;
-      const assignedUser = await this.userRepository.findOneBy({
-        id: assignedUserId.toString(),
-      });
-      if (!assignedUser) {
-        throw new NotFoundException(
-          `Assigned user not found with id: ${assignedUserId}`,
-        );
-      }
-      updateData = { ...updateData, assigned: assignedUser };
-    }
+    // Get a completely fresh entity to ensure we have the correct data
+    const freshTicket = await this.ticketRepository.findOne({
+      where: { id },
+      relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],
+    });
 
-    // Assignee user update
-    if (updateTicketDto.assignee) {
-      const assigneeUserId = updateTicketDto.assignee;
-      const assigneeUser = await this.userRepository.findOneBy({
-        id: assigneeUserId.toString(),
-      });
-      if (!assigneeUser) {
-        throw new NotFoundException(
-          `Assignee user not found with id: ${assigneeUserId}`,
-        );
-      }
-      updateData = { ...updateData, assignee: assigneeUser };
-    }
-
-    // Ticket activity update
-    if (updateTicketDto.activities) {
-      updateData = { ...updateData, activities: updateTicketDto.activities };
-    }
-
-    // Ticket priority update
-    if (updateTicketDto.priority) {
-      updateData = { ...updateData, priority: updateTicketDto.priority };
-    }
-
-    // Update the ticket (Note: no manual updatedDate needed)
-    await this.ticketRepository.update(id, updateData);
-    console.log('Ticket updated successfully with:', updateData);
-
-    const updatedTicket = await this.ticketRepository.findOneBy({ id });
-    if (!updatedTicket) {
-      throw new NotFoundException('Ticket not found');
-    }
-    return updatedTicket;
+    this.logger.log(`Final ticket date: ${freshTicket.updatedDate}`);
+    return freshTicket;
   }
 
   @UseGuards(AuthGuard)
