@@ -177,11 +177,9 @@ export class TicketsService {
   }
 
   async update(id: number, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
-    // Log the updateTicketDto object
     console.log('updateTicketDto:', updateTicketDto);
     console.log('Updating ticket with ID:', id);
 
-    // Convert appointment start and end times to Date objects if they are not null
     if (updateTicketDto.appointmentStartTime) {
       updateTicketDto.appointmentStartTime = new Date(
         updateTicketDto.appointmentStartTime,
@@ -193,7 +191,6 @@ export class TicketsService {
       );
     }
 
-    // Log the converted dates
     console.log(
       'Converted appointmentStartTime:',
       updateTicketDto.appointmentStartTime,
@@ -203,8 +200,8 @@ export class TicketsService {
       updateTicketDto.appointmentEndTime,
     );
 
-    // Merge updateTicketDto with the current timestamp for updatedDate (Ultima Actualización)
-    let updateData = { ...updateTicketDto, updatedDate: new Date() };
+    // Simply merge your DTO without manually setting updatedDate
+    let updateData = { ...updateTicketDto };
 
     // Assigned user update
     if (updateTicketDto.assigned) {
@@ -244,7 +241,7 @@ export class TicketsService {
       updateData = { ...updateData, priority: updateTicketDto.priority };
     }
 
-    // Update the ticket
+    // Update the ticket (Note: no manual updatedDate needed)
     await this.ticketRepository.update(id, updateData);
     console.log('Ticket updated successfully with:', updateData);
 
