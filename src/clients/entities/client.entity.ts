@@ -15,6 +15,7 @@ import { PaymentComplementInfo } from '../payment-complement-info/entities/payme
 import { ClientSuspensionConfig } from '../client-suspension-configs/entities/client-suspension-config.entity';
 import { ClientCommercialCondition } from '../client-commercial-conditions/entities/client-commercial-condition.entity';
 import { ClientClassification } from '../client-classifications/entities/client-classification.entity';
+import { TaxRegimeInterface } from '../interfaces/tax_regime.interface';
 
 @Entity({ name: 'clients' })
 export class Client {
@@ -87,10 +88,10 @@ export class Client {
   legalRepresentative: string;
 
   // regimen Fiscal
-  @Column('text')
-  taxRegime: string;
+  @Column('json', { default: () => "'{}'" })
+  taxRegime: TaxRegimeInterface;
 
-  @Column('bool', { default: true })
+  @Column('boolean', { default: true })
   isActive: boolean;
 
   @OneToMany(() => ClientPrinter, (clientPrinter) => clientPrinter.client, {

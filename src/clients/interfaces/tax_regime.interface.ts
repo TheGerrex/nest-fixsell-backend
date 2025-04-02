@@ -1,9 +1,9 @@
-export interface TaxRegime {
+export interface TaxRegimeInterface {
   code: number;
   description: string;
 }
 
-export const taxRegimes: TaxRegime[] = [
+export const taxRegimes: TaxRegimeInterface[] = [
   { code: 601, description: 'REGIMEN GENERAL DE LEY PERSONAS MORALES' },
   { code: 602, description: 'RÉGIMEN SIMPLIFICADO DE LEY PERSONAS MORALES' },
   { code: 603, description: 'PERSONAS MORALES CON FINES NO LUCRATIVOS' },
