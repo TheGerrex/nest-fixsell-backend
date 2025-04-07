@@ -13,7 +13,7 @@ import { Ticket } from './entities/ticket.entity';
 import { User } from '../auth/entities/user.entity';
 import { Activity } from 'src/activity/entities/activity.entity';
 import { AuthGuard } from '../auth/guards/auth.guard';
-
+import { EventEmitter2 } from '@nestjs/event-emitter';
 @Injectable()
 export class TicketsService {
   private readonly logger = new Logger(TicketsService.name);
@@ -25,6 +25,7 @@ export class TicketsService {
     private userRepository: Repository<User>,
     @InjectRepository(Activity)
     private activityRepository: Repository<Activity>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
@@ -136,8 +137,8 @@ export class TicketsService {
 
     const newTicket = this.ticketRepository.create({
       ...createTicketDto,
-      assigned: assignedUser, // May be null or random user
-      assignee: assigneeUser, // May be null or random user
+      assigned: assignedUser, // May be null or a random user
+      assignee: assigneeUser, // May be null or a random user
       activities: createTicketDto.activities || [], // Ensure activities are properly initialized
     });
 
@@ -150,9 +151,11 @@ export class TicketsService {
       throw new BadRequestException('Error saving the ticket');
     }
 
+    // Emit an event so the NotificationsService can create a notification
+    this.eventEmitter.emit('ticket.created', { ticket: newTicket });
+
     return newTicket;
   }
-
   async findAll(): Promise<Ticket[]> {
     return await this.ticketRepository.find({
       relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],

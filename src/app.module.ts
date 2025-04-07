@@ -35,6 +35,7 @@ import { EventsModule } from './events/events.module';
 import { ChangelogModule } from './changelog/changelog.module';
 import { LogInterceptor } from './changelog/log/log.interceptor'; // Import LogInterceptor
 import { ClientsModule } from './clients/clients.module';
+import { NotificationsModule } from './notifications/notifications.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -109,6 +110,7 @@ import { ClientsModule } from './clients/clients.module';
     EventsModule,
     ChangelogModule,
     ClientsModule,
+    NotificationsModule,
   ],
   providers: [
     {
