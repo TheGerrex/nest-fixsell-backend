@@ -28,7 +28,7 @@ export class NotificationsService {
       notification,
     );
 
-    // Emit event for real-time notification delivery
+    // Emitir evento para la entrega de notificaciones en tiempo real
     this.eventEmitter.emit('notification.created', savedNotification);
 
     return savedNotification;
@@ -63,7 +63,7 @@ export class NotificationsService {
       where: { id },
     });
     if (!notification) {
-      throw new NotFoundException(`Notification with ID ${id} not found`);
+      throw new NotFoundException(`Notificación con ID ${id} no encontrada`);
     }
     return notification;
   }
@@ -93,7 +93,7 @@ export class NotificationsService {
   async remove(id: string): Promise<void> {
     const result = await this.notificationsRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Notification with ID ${id} not found`);
+      throw new NotFoundException(`Notificación con ID ${id} no encontrada`);
     }
   }
 
@@ -108,16 +108,16 @@ export class NotificationsService {
 
   @OnEvent('ticket.created')
   async handleTicketCreatedEvent(payload: { ticket: any }): Promise<void> {
-    console.log('Ticket created event received:', payload.ticket);
+    console.log('Evento de ticket creado recibido:', payload.ticket);
     const createNotificationDto: CreateNotificationDto = {
       type: NotificationType.TICKET_CREATED,
-      title: 'New Ticket Created',
-      message: `A new ticket (ID: ${payload.ticket.id}) has been created.`,
+      title: 'Nuevo ticket creado',
+      message: `Se ha creado un nuevo ticket (ID: ${payload.ticket.id} Cliente: ${payload.ticket.clientName}).`,
       recipientId: payload.ticket.assigned?.id || '',
       status: NotificationStatus.UNREAD,
       entityId: payload.ticket.id.toString(),
       entityType: 'ticket',
-      data: { ...payload.ticket }, // or select specific details
+      data: { ...payload.ticket },
     };
 
     await this.create(createNotificationDto);
