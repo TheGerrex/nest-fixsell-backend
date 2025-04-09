@@ -122,4 +122,73 @@ export class NotificationsService {
 
     await this.create(createNotificationDto);
   }
+
+  @OnEvent('ticket.updated')
+  async handleTicketUpdatedEvent(payload: {
+    ticket: any;
+    changes: any;
+  }): Promise<void> {
+    console.log('Evento de ticket actualizado recibido:', payload.ticket);
+
+    const ticket = payload.ticket;
+    const changes = payload.changes;
+
+    // Create a list of users who should be notified
+    const notifyUserIds = new Set<string>();
+
+    // Always notify the assigned user if available
+    if (ticket.assigned?.id) {
+      notifyUserIds.add(ticket.assigned.id);
+    }
+
+    // Always notify the assignee user if available
+    if (ticket.assignee?.id) {
+      notifyUserIds.add(ticket.assignee.id);
+    }
+
+    // If the update came from a specific user, add their ID
+    if (changes.updatedBy) {
+      notifyUserIds.add(changes.updatedBy);
+    }
+
+    // Prepare notification title and message
+    let title = 'Ticket actualizado';
+    let detailMessage = '';
+
+    if (changes.status) {
+      title = `Ticket cambiado a ${changes.status}`;
+      detailMessage += ` Estado actualizado a "${changes.status}".`;
+    }
+
+    if (changes.priority) {
+      detailMessage += ` Prioridad actualizada a "${changes.priority}".`;
+    }
+
+    if (changes.assigned) {
+      detailMessage += ` Asignado a un nuevo usuario.`;
+    }
+
+    if (changes.appointmentStartTime || changes.appointmentEndTime) {
+      detailMessage += ` Horario de la cita actualizado.`;
+    }
+
+    // Send notifications to all relevant users
+    for (const userId of notifyUserIds) {
+      const createNotificationDto: CreateNotificationDto = {
+        type: NotificationType.TICKET_UPDATED,
+        title: title,
+        message: `El ticket #${ticket.id} (${ticket.clientName}) ha sido actualizado.${detailMessage}`,
+        recipientId: userId,
+        status: NotificationStatus.UNREAD,
+        entityId: ticket.id.toString(),
+        entityType: 'ticket',
+        data: {
+          ...ticket,
+          changes: Object.keys(changes),
+        },
+      };
+
+      await this.create(createNotificationDto);
+    }
+  }
 }

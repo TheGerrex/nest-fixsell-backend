@@ -253,11 +253,21 @@ export class TicketsService {
 
     console.log('Ticket updated successfully with:', updateData);
 
-    const updatedTicket = await this.ticketRepository.findOneBy({ id });
+    // Get the updated ticket WITH relationships loaded
+    const updatedTicket = await this.ticketRepository.findOne({
+      where: { id },
+      relations: ['assigned', 'assignee'],
+    });
 
     if (!updatedTicket) {
       throw new NotFoundException('Ticket not found');
     }
+
+    // Emit event for ticket updated notification
+    this.eventEmitter.emit('ticket.updated', {
+      ticket: updatedTicket,
+      changes: updateTicketDto,
+    });
 
     return updatedTicket;
   }
