@@ -11,7 +11,7 @@ import { Lead } from './entities/lead.entity';
 import { User } from 'src/auth/entities/user.entity';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { SaleCommunication } from '../sale-communication/entities/sale-communication.entity';
-
+import { EventEmitter2 } from '@nestjs/event-emitter';
 @Injectable()
 export class LeadsService {
   private readonly logger = new Logger(LeadsService.name);
@@ -23,6 +23,7 @@ export class LeadsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(SaleCommunication)
     private readonly SaleCommunicationRepository: Repository<SaleCommunication>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async create(createLeadDto: CreateLeadDto): Promise<Lead> {
@@ -88,6 +89,10 @@ export class LeadsService {
         this.logger.log('Attempting to save lead to database...');
         const savedLead = await this.leadRepository.save(lead);
         this.logger.log(`Lead successfully saved with ID: ${savedLead.id}`);
+
+        // Emit an event for lead creation notification
+        this.eventEmitter.emit('lead.created', { lead: savedLead });
+
         return savedLead;
       } catch (dbError) {
         this.logger.error(
@@ -184,9 +189,33 @@ export class LeadsService {
       throw new NotFoundException(`Lead #${id} not found`);
     }
 
+    // Store the previous assigned user ID for comparison
+    const previousAssignedId = lead.assigned?.id;
+
+    // Apply updates
     Object.assign(lead, updateLeadDto);
 
-    return this.leadRepository.save(lead);
+    // Save the updated lead
+    const updatedLead = await this.leadRepository.save(lead);
+
+    // If a lead is assigned to a different user, emit a lead.assigned event
+    if (
+      updateLeadDto.assigned &&
+      previousAssignedId !== updateLeadDto.assigned
+    ) {
+      this.eventEmitter.emit('lead.assigned', {
+        lead: updatedLead,
+        previousAssignedId,
+      });
+    }
+
+    // Also emit a general update event
+    this.eventEmitter.emit('lead.updated', {
+      lead: updatedLead,
+      changes: updateLeadDto,
+    });
+
+    return updatedLead;
   }
 
   async remove(id: number): Promise<{ message: string }> {

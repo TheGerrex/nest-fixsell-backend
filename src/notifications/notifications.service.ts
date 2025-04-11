@@ -191,4 +191,100 @@ export class NotificationsService {
       await this.create(createNotificationDto);
     }
   }
+
+  @OnEvent('lead.created')
+  async handleLeadCreatedEvent(payload: { lead: any }): Promise<void> {
+    console.log('Evento de lead creado recibido:', payload.lead);
+
+    // Create notification for the assigned user
+    if (payload.lead.assigned?.id) {
+      const createNotificationDto: CreateNotificationDto = {
+        type: NotificationType.LEAD_CREATED,
+        title: 'Nuevo lead creado',
+        message: `Se ha creado un nuevo lead (ID: ${payload.lead.id}, Cliente: ${payload.lead.client}).`,
+        recipientId: payload.lead.assigned.id,
+        status: NotificationStatus.UNREAD,
+        entityId: payload.lead.id.toString(),
+        entityType: 'lead',
+        data: { ...payload.lead },
+      };
+
+      await this.create(createNotificationDto);
+    }
+  }
+
+  @OnEvent('lead.assigned')
+  async handleLeadAssignedEvent(payload: {
+    lead: any;
+    previousAssignedId?: string;
+  }): Promise<void> {
+    console.log('Evento de lead asignado recibido:', payload.lead);
+
+    // If there's a newly assigned user, notify them
+    if (payload.lead.assigned?.id) {
+      const createNotificationDto: CreateNotificationDto = {
+        type: NotificationType.LEAD_ASSIGNED,
+        title: 'Nuevo lead asignado',
+        message: `Se te ha asignado el lead #${payload.lead.id} (${payload.lead.client}).`,
+        recipientId: payload.lead.assigned.id,
+        status: NotificationStatus.UNREAD,
+        entityId: payload.lead.id.toString(),
+        entityType: 'lead',
+        data: { ...payload.lead },
+      };
+
+      await this.create(createNotificationDto);
+    }
+  }
+
+  @OnEvent('lead.updated')
+  async handleLeadUpdatedEvent(payload: {
+    lead: any;
+    changes: any;
+  }): Promise<void> {
+    console.log('Evento de lead actualizado recibido:', payload.lead);
+
+    const lead = payload.lead;
+    const changes = payload.changes;
+
+    // Create a set of user IDs to notify
+    const notifyUserIds = new Set<string>();
+
+    // Always notify the assigned user if available
+    if (lead.assigned?.id) {
+      notifyUserIds.add(lead.assigned.id);
+    }
+
+    // Prepare notification title and message
+    let title = 'Lead actualizado';
+    let detailMessage = '';
+
+    if (changes.status) {
+      title = `Lead cambiado a ${changes.status}`;
+      detailMessage += ` Estado actualizado a "${changes.status}".`;
+    }
+
+    if (changes.priority) {
+      detailMessage += ` Prioridad actualizada a "${changes.priority}".`;
+    }
+
+    // Send notifications to all relevant users
+    for (const userId of notifyUserIds) {
+      const createNotificationDto: CreateNotificationDto = {
+        type: NotificationType.DEAL_UPDATED,
+        title: title,
+        message: `El lead #${lead.id} (${lead.client}) ha sido actualizado.${detailMessage}`,
+        recipientId: userId,
+        status: NotificationStatus.UNREAD,
+        entityId: lead.id.toString(),
+        entityType: 'lead',
+        data: {
+          ...lead,
+          changes: Object.keys(changes),
+        },
+      };
+
+      await this.create(createNotificationDto);
+    }
+  }
 }
