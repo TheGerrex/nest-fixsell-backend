@@ -5,17 +5,16 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CfdiAllowedValues } from '../interfaces/cfdi.interface';
 import { ClientPrinter } from '../client-printers/entities/client-printer.entity';
 import { ClientAccount } from '../client-accounts/entities/client-account.entity';
 import { ClientContact } from '../client-contacts/entities/client-contact.entity';
 import { ClientShippingAddress } from '../client-shipping-addresses/entities/client-shipping-address.entity';
 import { ClientBillingAddress } from '../client-billing-addresses/entities/client-billing-address.entity';
-import { PaymentComplementInfo } from '../payment-complement-info/entities/payment-complement-info.entity';
 import { ClientSuspensionConfig } from '../client-suspension-configs/entities/client-suspension-config.entity';
 import { ClientCommercialCondition } from '../client-commercial-conditions/entities/client-commercial-condition.entity';
 import { ClientClassification } from '../client-classifications/entities/client-classification.entity';
 import { TaxRegimeInterface } from '../interfaces/tax_regime.interface';
+import { CfdiInterface } from '../interfaces/cfdi.interface';
 
 @Entity({ name: 'clients' })
 export class Client {
@@ -52,8 +51,8 @@ export class Client {
   neighborhood: string;
 
   // Uso de CFDI
-  @Column('text')
-  cfdiUse: CfdiAllowedValues;
+  @Column('json', { default: () => "'{}'" })
+  cfdiUse: CfdiInterface;
 
   // retencion ISR
   @Column('boolean', { default: false })
