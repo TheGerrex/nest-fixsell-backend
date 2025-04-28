@@ -38,6 +38,7 @@ export class TicketsController {
     return this.ticketsService.findOne(+id);
   }
 
+  @Public()
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
     return this.ticketsService.update(+id, updateTicketDto);
