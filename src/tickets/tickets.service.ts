@@ -6,6 +6,7 @@ import {
   NotFoundException,
   UseGuards,
   Logger,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -157,10 +158,19 @@ export class TicketsService {
     return newTicket;
   }
   async findAll(): Promise<Ticket[]> {
-    return await this.ticketRepository.find({
-      relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],
-      order: { updatedDate: 'ASC' },
-    });
+    try {
+      return await this.ticketRepository.find({
+        relations: [
+          'assigned',
+          'assignee',
+          'activities',
+          'ratings', // Add this relation
+        ],
+      });
+    } catch (error) {
+      console.error('Error retrieving tickets:', error);
+      throw new InternalServerErrorException('Error retrieving tickets');
+    }
   }
 
   async findAllAssignedToUser(userId: string): Promise<Ticket[]> {
@@ -173,10 +183,29 @@ export class TicketsService {
   }
 
   async findOne(id: number): Promise<Ticket> {
-    return await this.ticketRepository.findOne({
-      where: { id: id },
-      relations: ['assigned', 'assignee', 'activities', 'activities.addedBy'],
-    });
+    try {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id },
+        relations: [
+          'assigned',
+          'assignee',
+          'activities',
+          'ratings', // Add this relation
+        ],
+      });
+
+      if (!ticket) {
+        throw new NotFoundException(`Ticket with id ${id} not found`);
+      }
+      return ticket;
+    } catch (error) {
+      // Re-throw any NotFoundException
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error('Error retrieving ticket:', error);
+      throw new InternalServerErrorException('Error retrieving ticket');
+    }
   }
 
   async update(id: number, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
@@ -246,11 +275,6 @@ export class TicketsService {
     // Ticket priority update
     if (updateTicketDto.priority) {
       updateData = { ...updateData, priority: updateTicketDto.priority };
-    }
-
-    // ticket rating update
-    if (updateTicketDto.rating !== undefined) {
-      updateData = { ...updateData, rating: updateTicketDto.rating };
     }
 
     // Update the ticket

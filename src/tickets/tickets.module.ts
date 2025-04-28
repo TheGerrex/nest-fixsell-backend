@@ -7,13 +7,18 @@ import { User } from '../auth/entities/user.entity';
 import { Activity } from 'src/activity/entities/activity.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RatingsModule } from './ratings/ratings.module';
+import { Rating } from './ratings/entities/rating.entity';
+
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Ticket, User, Activity]),
+    TypeOrmModule.forFeature([Ticket, User, Activity, Rating]),
     AuthModule,
     EventEmitterModule.forRoot(),
+    RatingsModule,
   ],
   controllers: [TicketsController],
   providers: [TicketsService],
+  exports: [TicketsService],
 })
 export class TicketsModule {}

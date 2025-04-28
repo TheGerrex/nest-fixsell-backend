@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { Activity } from 'src/activity/entities/activity.entity';
+import { Rating } from '../ratings/entities/rating.entity';
 
 export enum Priority {
   LOW = 'low',
@@ -102,6 +103,9 @@ export class Ticket {
   @Column({ type: 'timestamp', nullable: true })
   appointmentEndTime: Date;
 
-  @Column({ nullable: true })
-  rating: number;
+  // @Column({ nullable: true })
+  // rating: number;
+
+  @OneToMany(() => Rating, (rating) => rating.ticket)
+  ratings: Rating[];
 }

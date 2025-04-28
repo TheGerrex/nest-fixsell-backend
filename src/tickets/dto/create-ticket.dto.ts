@@ -6,11 +6,13 @@ import {
   IsOptional,
   IsDate,
   IsNumber,
+  ValidateNested,
 } from 'class-validator';
 import { Priority, Status } from '../entities/ticket.entity';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { User } from 'src/auth/entities/user.entity';
 import { Activity } from 'src/activity/entities/activity.entity';
+import { CreateRatingDto } from '../ratings/dto/create-rating.dto';
 
 export class CreateTicketDto {
   @IsOptional()
@@ -77,7 +79,13 @@ export class CreateTicketDto {
   @Transform(({ value }) => (value ? new Date(value) : null))
   appointmentEndTime: Date;
 
+  // @IsOptional()
+  // @IsNumber()
+  // rating: number;
+
   @IsOptional()
-  @IsNumber()
-  rating: number;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateRatingDto)
+  ratings: CreateRatingDto[];
 }
