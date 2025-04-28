@@ -5,6 +5,7 @@ import {
   IsArray,
   IsOptional,
   IsDate,
+  IsNumber,
 } from 'class-validator';
 import { Priority, Status } from '../entities/ticket.entity';
 import { Transform } from 'class-transformer';
@@ -75,4 +76,8 @@ export class CreateTicketDto {
   @IsDate()
   @Transform(({ value }) => (value ? new Date(value) : null))
   appointmentEndTime: Date;
+
+  @IsOptional()
+  @IsNumber()
+  rating: number;
 }

@@ -248,6 +248,11 @@ export class TicketsService {
       updateData = { ...updateData, priority: updateTicketDto.priority };
     }
 
+    // ticket rating update
+    if (updateTicketDto.rating !== undefined) {
+      updateData = { ...updateData, rating: updateTicketDto.rating };
+    }
+
     // Update the ticket
     await this.ticketRepository.update(id, updateData);
 

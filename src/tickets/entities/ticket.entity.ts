@@ -101,4 +101,7 @@ export class Ticket {
 
   @Column({ type: 'timestamp', nullable: true })
   appointmentEndTime: Date;
+
+  @Column({ nullable: true })
+  rating: number;
 }
