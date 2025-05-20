@@ -4,7 +4,9 @@ export class CreatePermissionDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-  //  website permissions
+
+  //------------ Website permissions --------------//
+
   // printers
   @IsBoolean()
   canCreatePrinter: boolean;
@@ -67,6 +69,18 @@ export class CreatePermissionDto {
   @IsBoolean()
   canViewPackage: boolean;
 
+  // events
+  @IsBoolean()
+  canCreateEvent: boolean;
+  @IsBoolean()
+  canDeleteEvent: boolean;
+  @IsBoolean()
+  canUpdateEvent: boolean;
+  @IsBoolean()
+  canViewEvent: boolean;
+
+  //------------ Sales permissions --------------//
+
   // leads
   @IsBoolean()
   canCreateLead: boolean;
@@ -76,21 +90,7 @@ export class CreatePermissionDto {
   canUpdateLead: boolean;
   @IsBoolean()
   canViewLead: boolean;
-  //lead communications
-  @IsBoolean()
-  canCreateLeadCommunication: boolean;
-  @IsBoolean()
-  canDeleteLeadCommunication: boolean;
-  @IsBoolean()
-  canUpdateLeadCommunication: boolean;
-  @IsBoolean()
-  canViewLeadCommunication: boolean;
-  @IsBoolean()
-  canViewAllLeads: boolean;
-  @IsBoolean()
-  canBeAssignedToLead: boolean;
 
-  // clients
   // clients
   @IsBoolean()
   canCreateClient: boolean;
@@ -105,15 +105,21 @@ export class CreatePermissionDto {
   @IsBoolean()
   canBeAssignedToClient: boolean;
 
-  // user
+  //lead communications
   @IsBoolean()
-  canCreateUser: boolean;
+  canCreateLeadCommunication: boolean;
   @IsBoolean()
-  canDeleteUser: boolean;
+  canDeleteLeadCommunication: boolean;
   @IsBoolean()
-  canUpdateUser: boolean;
+  canUpdateLeadCommunication: boolean;
   @IsBoolean()
-  canViewUser: boolean;
+  canViewLeadCommunication: boolean;
+  @IsBoolean()
+  canViewAllLeads: boolean;
+  @IsBoolean()
+  canBeAssignedToLead: boolean;
+
+  //------------ Support permissions --------------//
 
   // tickets
   @IsBoolean()
@@ -129,15 +135,24 @@ export class CreatePermissionDto {
   @IsBoolean()
   canViewAllTickets: boolean;
 
-  // events
+  //------------ Users permissions --------------//
+
+  // user
   @IsBoolean()
-  canCreateEvent: boolean;
+  canCreateUser: boolean;
   @IsBoolean()
-  canDeleteEvent: boolean;
+  canDeleteUser: boolean;
   @IsBoolean()
-  canUpdateEvent: boolean;
+  canUpdateUser: boolean;
   @IsBoolean()
-  canViewEvent: boolean;
+  canViewUser: boolean;
+
+  //logs
+  @IsBoolean()
+  canViewLogs: boolean;
+
+  //------------ Chat permissions --------------//
+
   // chat
   @IsBoolean()
   canCreateChat: boolean;
@@ -148,14 +163,13 @@ export class CreatePermissionDto {
   @IsBoolean()
   canViewChat: boolean;
 
+  //------------ Settings permissions --------------//
+
   // configs
   @IsBoolean()
   canConfigureWebsite: boolean;
-
-  //logs
-  @IsBoolean()
-  canViewLogs: boolean;
-
   @IsBoolean()
   canConfigureSupport: boolean;
+  @IsBoolean()
+  canConfigureSales: boolean;
 }

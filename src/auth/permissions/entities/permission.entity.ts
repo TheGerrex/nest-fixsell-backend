@@ -9,7 +9,7 @@ export class Permission {
   @Column({ unique: true })
   name: string;
 
-  // Website permissions
+  //------------ Website permissions --------------//
   // printers
   @Column({ default: false })
   canCreatePrinter: boolean;
@@ -72,6 +72,19 @@ export class Permission {
   @Column({ default: false })
   canViewPackage: boolean;
 
+
+  // events
+  @Column({ default: false })
+  canCreateEvent: boolean;
+  @Column({ default: false })
+  canDeleteEvent: boolean;
+  @Column({ default: false })
+  canUpdateEvent: boolean;
+  @Column({ default: false })
+  canViewEvent: boolean;
+
+
+  //------------ Sales permissions --------------//
   // leads
   @Column({ default: false })
   canCreateLead: boolean;
@@ -100,15 +113,17 @@ export class Permission {
   @Column({ default: false })
   canBeAssignedToClient: boolean;
 
-  // user
+  // lead communications
   @Column({ default: false })
-  canCreateUser: boolean;
+  canCreateLeadCommunication: boolean;
   @Column({ default: false })
-  canDeleteUser: boolean;
+  canDeleteLeadCommunication: boolean;
   @Column({ default: false })
-  canUpdateUser: boolean;
+  canUpdateLeadCommunication: boolean;
   @Column({ default: false })
-  canViewUser: boolean;
+  canViewLeadCommunication: boolean;
+
+  //------------ Support permissions --------------//
 
   // tickets
   @Column({ default: false })
@@ -120,9 +135,27 @@ export class Permission {
   @Column({ default: false })
   canViewTicket: boolean;
   @Column({ default: false })
-  canManageUserConfig: boolean;
-  @Column({ default: false })
   canViewAllTickets: boolean;
+
+  //------------ Users permissions --------------//
+
+  // user
+  @Column({ default: false })
+  canCreateUser: boolean;
+  @Column({ default: false })
+  canDeleteUser: boolean;
+  @Column({ default: false })
+  canUpdateUser: boolean;
+  @Column({ default: false })
+  canViewUser: boolean;
+  @Column({ default: false })
+  canManageUserConfig: boolean;
+
+  //logs
+  @Column({ default: false })
+  canViewLogs: boolean;
+
+  //------------ Chat permissions --------------//
 
   // chat
   @Column({ default: false })
@@ -134,35 +167,15 @@ export class Permission {
   @Column({ default: false })
   canViewChat: boolean;
 
-  // lead communications
-  @Column({ default: false })
-  canCreateLeadCommunication: boolean;
-  @Column({ default: false })
-  canDeleteLeadCommunication: boolean;
-  @Column({ default: false })
-  canUpdateLeadCommunication: boolean;
-  @Column({ default: false })
-  canViewLeadCommunication: boolean;
-
-  // events
-  @Column({ default: false })
-  canCreateEvent: boolean;
-  @Column({ default: false })
-  canDeleteEvent: boolean;
-  @Column({ default: false })
-  canUpdateEvent: boolean;
-  @Column({ default: false })
-  canViewEvent: boolean;
-
+  //------------ Settings permissions --------------//
   //configs
   @Column({ default: false })
   canConfigureWebsite: boolean;
   @Column({ default: false })
   canConfigureSupport: boolean;
-
-  //logs
   @Column({ default: false })
-  canViewLogs: boolean;
+  canConfigureSales: boolean;
+
 
   @OneToOne(() => Role, (role) => role.permission, {
     cascade: ['insert', 'update'], // Enable cascading operations if needed
